@@ -1,0 +1,123 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# benchmarks.yaml — which benchmarks (capability dimensions) to run.
+#
+# Kept separate from models.yaml on purpose: any model set × any benchmark set.
+# `sample` caps how many tasks we run (edge models are slow); null = full set.
+# `revision` pins the dataset version so scores stay reproducible over time.
+#
+# SAMPLING (decided 2026-07-27): ALWAYS a random sample (fixed seed for repro),
+# STRATIFIED across categories when a benchmark has them, so every category is
+# represented and results carry a per-category breakdown. `sample` = size per
+# benchmark; `seed` fixes the exact subset. Sizes are per-benchmark (below).
+# ─────────────────────────────────────────────────────────────────────────────
+
+seed: 42                               # global default; per-benchmark can override
+
+benchmarks:
+  - name: ifeval                       # dimension: Instruction-Following
+    dataset: { repo: google/IFEval, split: train }
+    revision: null                     # pin a commit hash once we lock the run
+    sample: 300                        # random, of 541 available
+    max_tokens: 1280                   # responses can be long-ish; give headroom
+
+  - name: gsm8k                        # dimension: Reasoning (math)
+    dataset: { repo: openai/gsm8k, split: test }
+    revision: null
+    sample: 300                        # random, of 1319 available (no sub-categories)
+    max_tokens: 1024                   # room for chain-of-thought
+
+  - name: mmlu_pro                     # dimension: Reasoning / knowledge (14 subjects)
+    dataset: { repo: TIGER-Lab/MMLU-Pro, split: test }
+    revision: null
+    sample: 280                        # stratified 20/subject across 14 subjects
+    max_tokens: 1024
+
+  - name: cruxeval                     # dimension: Coding (code reasoning)
+    dataset: { repo: cruxeval-org/cruxeval, split: test }
+    revision: null
+    sample: 300
+    max_tokens: 640
+
+  - name: jsonschemabench              # dimension: Instruction-Following (structured output)
+    dataset: { repo: epfl-dlab/JSONSchemaBench, split: test }
+    revision: null
+    sample: 300                        # stratified across 4 difficulty tiers
+    max_tokens: 768
+
+  - name: humaneval                    # dimension: Coding (code generation, floor)
+    dataset: { repo: evalplus/humanevalplus, split: test }
+    revision: null
+    sample: null                       # all 164 problems (small; contamination floor)
+    max_tokens: 900
+
+  - name: livecodebench                # dimension: Coding (code generation, PRIMARY)
+    dataset: { repo: livecodebench/code_generation_lite }
+    release_file: test5.jsonl          # v5, problems through Jan 2025
+    after_date: "2024-08"              # contamination cutoff (post most models' training)
+    revision: null
+    sample: 150                        # stratified across easy/medium/hard
+    max_tokens: 1536                   # competitive-programming solutions need room
+
+  - name: aime2026                     # dimension: Reasoning (competition math, contamination-free)
+    dataset: { repo: MathArena/aime_2026, split: train }
+    revision: null
+    sample: null                       # all 30 problems
+    max_tokens: 3072                   # olympiad math needs long reasoning
+
+  - name: zebralogic                   # dimension: Reasoning (logic puzzles)
+    dataset: { repo: WildEval/ZebraLogic, split: test }
+    revision: null
+    sample: 150                        # stratified across grid sizes (2x2 -> 6x6)
+    max_tokens: 2048
+
+  - name: babilong                     # dimension: Long-context (length scaling)
+    revision: null
+    sample: null                       # 25 x 3 lengths x 2 tasks = 150 (category = length)
+    max_tokens: 32
+
+  - name: bfcl                         # dimension: Agentic (tool-use / function-calling)
+    revision: null
+    sample: 240                        # stratified across simple/parallel/multiple/parallel_multiple
+    max_tokens: 512
+
+  - name: writing                      # dimension: Writing (JUDGE-BASED; see judge_writing.py)
+    revision: null
+    sample: 100                        # of 805 AlpacaEval prompts
+    max_tokens: 1024
+
+  - name: pinchbench_clawd             # dimension: Agentic — personal-task tool calls
+    dataset: { repo: hirundo-io/pinchbench-clawd-single-turn, split: train }
+    revision: null
+    per_type: 5                        # ~5 paraphrases per task_id (stratified across 23 types)
+    sample: null                       # sampling handled by per_type inside load()
+    max_tokens: 1024
+
+  - name: ruler                        # dimension: Long-context (retrieval @ 8k context)
+    dataset: { repo: simonjegou/ruler }
+    context_length: 8192               # config to load; fits 20480 n_ctx with headroom
+    revision: null
+    sample: 150                        # stratified across the 13 task types
+    max_tokens: 128                    # answers are short strings (needle values)
+
+  - name: simpleqa                     # dimension: Factuality (JUDGE-BASED; see judge_simpleqa.py)
+    dataset: { repo: google/simpleqa-verified, split: eval }
+    revision: null
+    sample: 300                        # random, of 1000 verified questions
+    max_tokens: 512
+
+  # Added as we build each slice (all judge-free, per the locked spec):
+  #   livecodebench, babilong, bfcl
+
+  # ── QUEUED, NOT ACTIVE (2026-07-28) ──────────────────────────────────────────
+  # GPQA Diamond — graduate-level science MCQ (physics/chem/bio). Judge-free
+  # (regex answer extraction, pass@1), a public benchmark from Artificial
+  # Analysis's Scientific-Reasoning category. Would add a science axis to the
+  # Reasoning dimension. Gated dataset -> needs HF auth at pull time.
+  #   dataset: { repo: Idavidrein/gpqa, config: gpqa_diamond, split: train }  # 198 Qs
+  # ACTIVE (2026-07-29): HF token provided, gate accepted, module tested.
+  # Needs HF_TOKEN env var set at run time (datasets auto-uses it for the gated pull).
+  - name: gpqa_diamond
+    dataset: { repo: Idavidrein/gpqa, config: gpqa_diamond, split: train }
+    revision: null
+    sample: null                     # all 198 (small set — no sampling needed)
+    max_tokens: 2048                 # allow CoT before the letter answer

@@ -1,0 +1,43 @@
+{
+  "metric": "accuracy",
+  "score": 0.5671,
+  "n": 164,
+  "passed": 93,
+  "failure_breakdown": {
+    "fail": 56,
+    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 2,
+    "error:nonzero_exit": 4,
+    "error:KeyError: 'oooo'": 1,
+    "error:ValueError: The largest non-zero coefficient must be at an even index.": 1,
+    "error:ValueError: Input list must have at least two elements": 1,
+    "error:ZeroDivisionError: float division by zero": 1,
+    "error:TypeError: type complex doesn't define __round__ method": 1,
+    "error:IndexError: list index out of range": 1,
+    "error:ValueError: max() iterable argument is empty": 1,
+    "error:NameError: name 'n' is not defined. Did you mean: 'np'?": 1,
+    "error:ValueError: Invalid input. Both inputs must be numbers or strings representing n": 1
+  },
+  "model": "llama-3.2-3b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202280,
+  "perf": {
+    "prefill_tps": 3870.8,
+    "decode_tps": 220.96,
+    "ttft_ms": 29.76,
+    "mean_prompt_tokens": 181.42,
+    "mean_completion_tokens": 248.57,
+    "total_gen_tokens": 40765,
+    "model_load_s": 4.0,
+    "gguf_mb": 2019.4,
+    "peak_vram_mb": 4286.0
+  },
+  "ci95": [
+    0.4906,
+    0.6405
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "metric": "accuracy",
+  "score": 0.4933,
+  "n": 150,
+  "passed": 74,
+  "by_category": {
+    "0k": {
+      "score": 0.66,
+      "n": 50
+    },
+    "16k": {
+      "score": 0.36,
+      "n": 50
+    },
+    "4k": {
+      "score": 0.46,
+      "n": 50
+    }
+  },
+  "failure_breakdown": {
+    "wrong_or_missing": 76
+  },
+  "model": "llama-3.1-8b-instruct",
+  "benchmark": "babilong",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/llama-3.1-8b-instruct/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785206458,
+  "perf": {
+    "prefill_tps": 4325.03,
+    "decode_tps": 151.41,
+    "ttft_ms": 757.38,
+    "mean_prompt_tokens": 6333.6,
+    "mean_completion_tokens": 3.51,
+    "total_gen_tokens": 526,
+    "model_load_s": 4.0,
+    "gguf_mb": 4920.7,
+    "peak_vram_mb": 7199.0
+  },
+  "ci95": [
+    0.4145,
+    0.5725
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "metric": "accuracy",
+  "score": 0.0733,
+  "n": 150,
+  "passed": 11,
+  "by_category": {
+    "2*2": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "2*3": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "2*4": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "2*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "2*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*2": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "3*3": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "3*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*6": {
+      "score": 0.0,
+      "n": 6
+    }
+  },
+  "failure_breakdown": {
+    "wrong_cells": 139
+  },
+  "model": "gemma-2-9b-it",
+  "benchmark": "zebralogic",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-2-9b-it/gemma-2-9b-it-Q4_K_M.gguf",
+  "run_ts": 1785207614,
+  "perf": {
+    "prefill_tps": 2544.4,
+    "decode_tps": 90.14,
+    "ttft_ms": 138.37,
+    "mean_prompt_tokens": 373.45,
+    "mean_completion_tokens": 89.67,
+    "total_gen_tokens": 13451,
+    "model_load_s": 6.0,
+    "gguf_mb": 5761.1,
+    "peak_vram_mb": 11927.0
+  },
+  "ci95": [
+    0.0414,
+    0.1265
+  ]
+}

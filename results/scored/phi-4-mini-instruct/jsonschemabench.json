@@ -1,0 +1,51 @@
+{
+  "metric": "accuracy",
+  "score": 0.2767,
+  "n": 300,
+  "passed": 83,
+  "by_category": {
+    "Github_easy": {
+      "score": 0.4324,
+      "n": 74
+    },
+    "Github_hard": {
+      "score": 0.0,
+      "n": 76
+    },
+    "Github_medium": {
+      "score": 0.3947,
+      "n": 76
+    },
+    "Github_trivial": {
+      "score": 0.2838,
+      "n": 74
+    }
+  },
+  "failure_breakdown": {
+    "invalid json": 87,
+    "schema violation": 130
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785239153,
+  "perf": {
+    "prefill_tps": 7568.8,
+    "decode_tps": 179.82,
+    "ttft_ms": 50.03,
+    "mean_prompt_tokens": 876.32,
+    "mean_completion_tokens": 399.12,
+    "total_gen_tokens": 119735,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5087.0
+  },
+  "ci95": [
+    0.2291,
+    0.3299
+  ]
+}

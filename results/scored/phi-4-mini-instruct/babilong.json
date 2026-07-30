@@ -1,0 +1,46 @@
+{
+  "metric": "accuracy",
+  "score": 0.3933,
+  "n": 150,
+  "passed": 59,
+  "by_category": {
+    "0k": {
+      "score": 0.8,
+      "n": 50
+    },
+    "16k": {
+      "score": 0.14,
+      "n": 50
+    },
+    "4k": {
+      "score": 0.24,
+      "n": 50
+    }
+  },
+  "failure_breakdown": {
+    "wrong_or_missing": 91
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "babilong",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785240426,
+  "perf": {
+    "prefill_tps": 8128.98,
+    "decode_tps": 229.69,
+    "ttft_ms": 379.49,
+    "mean_prompt_tokens": 6236.63,
+    "mean_completion_tokens": 2.51,
+    "total_gen_tokens": 377,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5120.0
+  },
+  "ci95": [
+    0.3188,
+    0.4732
+  ]
+}

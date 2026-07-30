@@ -1,0 +1,46 @@
+{
+  "metric": "accuracy",
+  "score": 0.0,
+  "n": 150,
+  "passed": 0,
+  "by_category": {
+    "0k": {
+      "score": 0.0,
+      "n": 50
+    },
+    "16k": {
+      "score": 0.0,
+      "n": 50
+    },
+    "4k": {
+      "score": 0.0,
+      "n": 50
+    }
+  },
+  "failure_breakdown": {
+    "wrong_or_missing": 150
+  },
+  "model": "qwen3-8b",
+  "benchmark": "babilong",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen_Qwen3-8B-Q4_K_M.gguf",
+  "run_ts": 1785298077,
+  "perf": {
+    "prefill_tps": 4162.21,
+    "decode_tps": 112.09,
+    "ttft_ms": 747.6,
+    "mean_prompt_tokens": 6359.37,
+    "mean_completion_tokens": 96.0,
+    "total_gen_tokens": 14400,
+    "model_load_s": 4.0,
+    "gguf_mb": 5027.8,
+    "peak_vram_mb": 7589.0
+  },
+  "ci95": [
+    0.0,
+    0.025
+  ]
+}

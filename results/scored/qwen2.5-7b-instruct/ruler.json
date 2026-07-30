@@ -1,0 +1,86 @@
+{
+  "metric": "accuracy",
+  "score": 0.8467,
+  "n": 150,
+  "passed": 127,
+  "ci95": [
+    0.7804,
+    0.8956
+  ],
+  "by_category": {
+    "cwe": {
+      "score": 0.7273,
+      "n": 11
+    },
+    "fwe": {
+      "score": 0.9167,
+      "n": 12
+    },
+    "niah_multikey_1": {
+      "score": 1.0,
+      "n": 11
+    },
+    "niah_multikey_2": {
+      "score": 1.0,
+      "n": 11
+    },
+    "niah_multikey_3": {
+      "score": 1.0,
+      "n": 12
+    },
+    "niah_multiquery": {
+      "score": 1.0,
+      "n": 11
+    },
+    "niah_multivalue": {
+      "score": 0.6667,
+      "n": 12
+    },
+    "niah_single_1": {
+      "score": 1.0,
+      "n": 12
+    },
+    "niah_single_2": {
+      "score": 1.0,
+      "n": 11
+    },
+    "niah_single_3": {
+      "score": 1.0,
+      "n": 14
+    },
+    "qa_1": {
+      "score": 0.1818,
+      "n": 11
+    },
+    "qa_2": {
+      "score": 0.4545,
+      "n": 11
+    },
+    "vt": {
+      "score": 1.0,
+      "n": 11
+    }
+  },
+  "failure_breakdown": {
+    "missing_needle": 23
+  },
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "ruler",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785432677,
+  "perf": {
+    "prefill_tps": 5185.99,
+    "decode_tps": 127.57,
+    "ttft_ms": 1474.86,
+    "mean_prompt_tokens": 8272.94,
+    "mean_completion_tokens": 42.45,
+    "total_gen_tokens": 6367,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5554.0
+  }
+}

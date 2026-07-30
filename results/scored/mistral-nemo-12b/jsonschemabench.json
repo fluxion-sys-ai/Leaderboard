@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.7167,
+  "n": 300,
+  "passed": 215,
+  "by_category": {
+    "Github_easy": {
+      "score": 0.8243,
+      "n": 74
+    },
+    "Github_hard": {
+      "score": 0.6053,
+      "n": 76
+    },
+    "Github_medium": {
+      "score": 0.8289,
+      "n": 76
+    },
+    "Github_trivial": {
+      "score": 0.6081,
+      "n": 74
+    }
+  },
+  "failure_breakdown": {
+    "schema violation": 59,
+    "no json found": 8,
+    "invalid json": 18
+  },
+  "model": "mistral-nemo-12b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/mistral-nemo-12b/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf",
+  "run_ts": 1785209395,
+  "perf": {
+    "prefill_tps": 2654.88,
+    "decode_tps": 98.51,
+    "ttft_ms": 151.19,
+    "mean_prompt_tokens": 900.32,
+    "mean_completion_tokens": 172.62,
+    "total_gen_tokens": 51787,
+    "model_load_s": 4.0,
+    "gguf_mb": 7477.2,
+    "peak_vram_mb": 10152.0
+  },
+  "ci95": [
+    0.6632,
+    0.7647
+  ]
+}

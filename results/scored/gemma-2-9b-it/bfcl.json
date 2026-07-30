@@ -1,0 +1,51 @@
+{
+  "metric": "accuracy",
+  "score": 0.8333,
+  "n": 240,
+  "passed": 200,
+  "by_category": {
+    "multiple": {
+      "score": 0.8,
+      "n": 60
+    },
+    "parallel": {
+      "score": 0.85,
+      "n": 60
+    },
+    "parallel_multiple": {
+      "score": 0.7833,
+      "n": 60
+    },
+    "simple": {
+      "score": 0.9,
+      "n": 60
+    }
+  },
+  "failure_breakdown": {
+    "wrong_call": 38,
+    "no_call_parsed": 2
+  },
+  "model": "gemma-2-9b-it",
+  "benchmark": "bfcl",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-2-9b-it/gemma-2-9b-it-Q4_K_M.gguf",
+  "run_ts": 1785208983,
+  "perf": {
+    "prefill_tps": 2447.35,
+    "decode_tps": 90.18,
+    "ttft_ms": 134.08,
+    "mean_prompt_tokens": 361.06,
+    "mean_completion_tokens": 95.07,
+    "total_gen_tokens": 22816,
+    "model_load_s": 6.0,
+    "gguf_mb": 5761.1,
+    "peak_vram_mb": 11927.0
+  },
+  "ci95": [
+    0.781,
+    0.8752
+  ]
+}

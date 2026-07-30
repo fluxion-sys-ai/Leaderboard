@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.88,
+  "n": 300,
+  "passed": 264,
+  "failure_breakdown": {
+    "wrong_answer": 36
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "gsm8k",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785238352,
+  "perf": {
+    "prefill_tps": 2820.24,
+    "decode_tps": 184.7,
+    "ttft_ms": 30.79,
+    "mean_prompt_tokens": 76.34,
+    "mean_completion_tokens": 187.14,
+    "total_gen_tokens": 56141,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5068.0
+  },
+  "ci95": [
+    0.8383,
+    0.912
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "metric": "accuracy",
+  "score": 0.6524,
+  "n": 164,
+  "passed": 107,
+  "failure_breakdown": {
+    "fail": 47,
+    "error:nonzero_exit": 3,
+    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 3,
+    "error:TypeError: Value after * must be an iterable, not NoneType": 1,
+    "error:SyntaxError: invalid syntax": 3
+  },
+  "model": "deepseek-r1-distill-qwen-7b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/deepseek-r1-distill-qwen-7b/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf",
+  "run_ts": 1785222358,
+  "perf": {
+    "prefill_tps": 1926.92,
+    "decode_tps": 136.53,
+    "ttft_ms": 56.0,
+    "mean_prompt_tokens": 152.22,
+    "mean_completion_tokens": 2368.37,
+    "total_gen_tokens": 388412,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5554.0
+  },
+  "ci95": [
+    0.5768,
+    0.7211
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.6533,
+  "instruction_accuracy": 0.758,
+  "n": 300,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 0.7333,
+      "n": 15
+    },
+    "change_case:english_capital": {
+      "acc": 0.8947,
+      "n": 19
+    },
+    "change_case:english_lowercase": {
+      "acc": 0.7273,
+      "n": 22
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.5217,
+      "n": 23
+    },
+    "combination:two_responses": {
+      "acc": 0.75,
+      "n": 16
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.6667,
+      "n": 12
+    },
+    "detectable_content:postscript": {
+      "acc": 0.8824,
+      "n": 17
+    },
+    "detectable_format:constrained_response": {
+      "acc": 0.75,
+      "n": 4
+    },
+    "detectable_format:json_format": {
+      "acc": 0.8,
+      "n": 10
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 1.0,
+      "n": 9
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 0.5263,
+      "n": 19
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 0.913,
+      "n": 23
+    },
+    "detectable_format:title": {
+      "acc": 1.0,
+      "n": 17
+    },
+    "keywords:existence": {
+      "acc": 0.88,
+      "n": 25
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.8462,
+      "n": 26
+    },
+    "keywords:frequency": {
+      "acc": 0.7143,
+      "n": 21
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.5789,
+      "n": 19
+    },
+    "language:response_language": {
+      "acc": 1.0,
+      "n": 9
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 0.6,
+      "n": 5
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.1579,
+      "n": 19
+    },
+    "length_constraints:number_sentences": {
+      "acc": 0.6875,
+      "n": 32
+    },
+    "length_constraints:number_words": {
+      "acc": 0.7419,
+      "n": 31
+    },
+    "punctuation:no_comma": {
+      "acc": 0.7895,
+      "n": 38
+    },
+    "startend:end_checker": {
+      "acc": 0.9375,
+      "n": 16
+    },
+    "startend:quotation": {
+      "acc": 1.0,
+      "n": 20
+    }
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "ifeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785238184,
+  "perf": {
+    "prefill_tps": 2303.63,
+    "decode_tps": 184.1,
+    "ttft_ms": 17.89,
+    "mean_prompt_tokens": 48.82,
+    "mean_completion_tokens": 366.11,
+    "total_gen_tokens": 109834,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5061.0
+  },
+  "ci95": [
+    0.5978,
+    0.7049
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.7006,
+  "instruction_accuracy": 0.7854,
+  "n": 541,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 0.72,
+      "n": 25
+    },
+    "change_case:english_capital": {
+      "acc": 0.8,
+      "n": 25
+    },
+    "change_case:english_lowercase": {
+      "acc": 0.8974,
+      "n": 39
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.5854,
+      "n": 41
+    },
+    "combination:two_responses": {
+      "acc": 0.875,
+      "n": 24
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.8148,
+      "n": 27
+    },
+    "detectable_content:postscript": {
+      "acc": 0.9231,
+      "n": 26
+    },
+    "detectable_format:constrained_response": {
+      "acc": 0.5,
+      "n": 10
+    },
+    "detectable_format:json_format": {
+      "acc": 0.7059,
+      "n": 17
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 1.0,
+      "n": 14
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 0.8065,
+      "n": 31
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 0.875,
+      "n": 48
+    },
+    "detectable_format:title": {
+      "acc": 0.973,
+      "n": 37
+    },
+    "keywords:existence": {
+      "acc": 0.8718,
+      "n": 39
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.7143,
+      "n": 49
+    },
+    "keywords:frequency": {
+      "acc": 0.8333,
+      "n": 42
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.5455,
+      "n": 33
+    },
+    "language:response_language": {
+      "acc": 0.9677,
+      "n": 31
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 0.4167,
+      "n": 12
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.3333,
+      "n": 27
+    },
+    "length_constraints:number_sentences": {
+      "acc": 0.7308,
+      "n": 52
+    },
+    "length_constraints:number_words": {
+      "acc": 0.6154,
+      "n": 52
+    },
+    "punctuation:no_comma": {
+      "acc": 0.9394,
+      "n": 66
+    },
+    "startend:end_checker": {
+      "acc": 0.8846,
+      "n": 26
+    },
+    "startend:quotation": {
+      "acc": 0.878,
+      "n": 41
+    }
+  },
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "ifeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202538,
+  "perf": {
+    "prefill_tps": 1322.5,
+    "decode_tps": 139.92,
+    "ttft_ms": 32.54,
+    "mean_prompt_tokens": 75.39,
+    "mean_completion_tokens": 297.92,
+    "total_gen_tokens": 161173,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5481.0
+  },
+  "ci95": [
+    0.6607,
+    0.7376
+  ]
+}

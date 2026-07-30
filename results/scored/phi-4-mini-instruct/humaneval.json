@@ -1,0 +1,43 @@
+{
+  "metric": "accuracy",
+  "score": 0.6037,
+  "n": 164,
+  "passed": 99,
+  "failure_breakdown": {
+    "fail": 51,
+    "error:nonzero_exit": 4,
+    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 1,
+    "error:NameError: name 'List' is not defined. Did you mean: 'list'?": 1,
+    "error:SyntaxError: invalid syntax": 1,
+    "error:ValueError: Input must be a positive integer": 1,
+    "error:SyntaxError: closing parenthesis ']' does not match opening parenthesis '('": 1,
+    "error:ValueError: invalid literal for int() with base 10: 'and'": 1,
+    "error:ValueError: max() iterable argument is empty": 1,
+    "error:IndentationError: unexpected indent": 1,
+    "error:IndexError: list index out of range": 1,
+    "error:TypeError: '>' not supported between instances of 'int' and 'str'": 1
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785239434,
+  "perf": {
+    "prefill_tps": 3649.98,
+    "decode_tps": 183.32,
+    "ttft_ms": 31.52,
+    "mean_prompt_tokens": 149.46,
+    "mean_completion_tokens": 220.42,
+    "total_gen_tokens": 36149,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5087.0
+  },
+  "ci95": [
+    0.5272,
+    0.6753
+  ]
+}

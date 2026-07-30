@@ -1,0 +1,37 @@
+{
+  "metric": "accuracy",
+  "score": 0.5549,
+  "n": 164,
+  "passed": 91,
+  "failure_breakdown": {
+    "fail": 63,
+    "error:nonzero_exit": 2,
+    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 4,
+    "error:SyntaxError: invalid syntax": 2,
+    "error:TypeError: Value after * must be an iterable, not NoneType": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 47)": 1
+  },
+  "model": "qwen3-8b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen_Qwen3-8B-Q4_K_M.gguf",
+  "run_ts": 1785285914,
+  "perf": {
+    "prefill_tps": 2031.57,
+    "decode_tps": 116.48,
+    "ttft_ms": 53.81,
+    "mean_prompt_tokens": 157.22,
+    "mean_completion_tokens": 2040.49,
+    "total_gen_tokens": 334640,
+    "model_load_s": 4.0,
+    "gguf_mb": 5027.8,
+    "peak_vram_mb": 7589.0
+  },
+  "ci95": [
+    0.4784,
+    0.6288
+  ]
+}

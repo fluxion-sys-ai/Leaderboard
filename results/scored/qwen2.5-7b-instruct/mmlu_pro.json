@@ -1,0 +1,91 @@
+{
+  "metric": "accuracy",
+  "score": 0.5429,
+  "n": 280,
+  "passed": 152,
+  "by_category": {
+    "biology": {
+      "score": 0.6,
+      "n": 20
+    },
+    "business": {
+      "score": 0.55,
+      "n": 20
+    },
+    "chemistry": {
+      "score": 0.65,
+      "n": 20
+    },
+    "computer science": {
+      "score": 0.5,
+      "n": 20
+    },
+    "economics": {
+      "score": 0.6,
+      "n": 20
+    },
+    "engineering": {
+      "score": 0.35,
+      "n": 20
+    },
+    "health": {
+      "score": 0.55,
+      "n": 20
+    },
+    "history": {
+      "score": 0.6,
+      "n": 20
+    },
+    "law": {
+      "score": 0.35,
+      "n": 20
+    },
+    "math": {
+      "score": 0.8,
+      "n": 20
+    },
+    "other": {
+      "score": 0.5,
+      "n": 20
+    },
+    "philosophy": {
+      "score": 0.4,
+      "n": 20
+    },
+    "physics": {
+      "score": 0.55,
+      "n": 20
+    },
+    "psychology": {
+      "score": 0.6,
+      "n": 20
+    }
+  },
+  "failure_breakdown": {
+    "wrong_answer": 121,
+    "no_answer_parsed": 7
+  },
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "mmlu_pro",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202540,
+  "perf": {
+    "prefill_tps": 2397.28,
+    "decode_tps": 138.61,
+    "ttft_ms": 75.66,
+    "mean_prompt_tokens": 240.77,
+    "mean_completion_tokens": 498.09,
+    "total_gen_tokens": 139466,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5481.0
+  },
+  "ci95": [
+    0.4843,
+    0.6002
+  ]
+}

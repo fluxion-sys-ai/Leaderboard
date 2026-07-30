@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.8633,
+  "n": 300,
+  "passed": 259,
+  "failure_breakdown": {
+    "wrong_answer": 41
+  },
+  "model": "llama-3.1-8b-instruct",
+  "benchmark": "gsm8k",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/llama-3.1-8b-instruct/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785203921,
+  "perf": {
+    "prefill_tps": 1624.78,
+    "decode_tps": 129.25,
+    "ttft_ms": 54.55,
+    "mean_prompt_tokens": 108.77,
+    "mean_completion_tokens": 227.85,
+    "total_gen_tokens": 68354,
+    "model_load_s": 4.0,
+    "gguf_mb": 4920.7,
+    "peak_vram_mb": 7132.0
+  },
+  "ci95": [
+    0.8198,
+    0.8976
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "metric": "evalplus_pass@1",
+  "scorer": "evalplus",
+  "n": 164,
+  "score": 0.7744,
+  "score_base": 0.8232
+}

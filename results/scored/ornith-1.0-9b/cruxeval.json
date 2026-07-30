@@ -1,0 +1,33 @@
+{
+  "metric": "accuracy",
+  "score": 0.6267,
+  "n": 300,
+  "passed": 188,
+  "ci95": [
+    0.5707,
+    0.6795
+  ],
+  "failure_breakdown": {
+    "no_answer_parsed": 66,
+    "wrong_trace": 46
+  },
+  "model": "ornith-1.0-9b",
+  "benchmark": "cruxeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
+  "run_ts": 1785348440,
+  "perf": {
+    "prefill_tps": 839.05,
+    "decode_tps": 103.94,
+    "ttft_ms": 97.84,
+    "mean_prompt_tokens": 80.47,
+    "mean_completion_tokens": 387.95,
+    "total_gen_tokens": 116385,
+    "model_load_s": 4.0,
+    "gguf_mb": 5701.1,
+    "peak_vram_mb": 6004.0
+  }
+}

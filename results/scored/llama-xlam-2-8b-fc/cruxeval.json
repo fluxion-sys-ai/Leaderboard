@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.0867,
+  "n": 300,
+  "passed": 26,
+  "ci95": [
+    0.0598,
+    0.124
+  ],
+  "failure_breakdown": {
+    "wrong_trace": 274
+  },
+  "model": "llama-xlam-2-8b-fc",
+  "benchmark": "cruxeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/llama-xlam-2-8b-fc/Llama-xLAM-2-8B-fc-r-Q4_K_M.gguf",
+  "run_ts": 1785303663,
+  "perf": {
+    "prefill_tps": 1574.11,
+    "decode_tps": 134.76,
+    "ttft_ms": 49.9,
+    "mean_prompt_tokens": 80.67,
+    "mean_completion_tokens": 24.11,
+    "total_gen_tokens": 7233,
+    "model_load_s": 4.0,
+    "gguf_mb": 4920.7,
+    "peak_vram_mb": 7195.0
+  }
+}

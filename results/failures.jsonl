@@ -1,0 +1,1 @@
+{"ts": "2026-07-30T01:46:02", "model": "nanbeige4.2-3b", "benchmark": null, "phase": "model_load", "error_type": "RuntimeError", "error": "llama-server died on startup; see /tmp/llamacpp_nanbeige4.2-3b.log"}

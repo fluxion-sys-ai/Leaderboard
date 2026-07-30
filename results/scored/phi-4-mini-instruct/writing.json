@@ -1,0 +1,11 @@
+{
+  "metric": "writing_judge_1to10",
+  "score": 0.703,
+  "ci95": [
+    0.6473,
+    0.7587
+  ],
+  "n": 100,
+  "judge_model": "deepseek/deepseek-chat-v3.1",
+  "judge_pending": false
+}

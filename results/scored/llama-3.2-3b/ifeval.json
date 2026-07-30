@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.6957,
+  "instruction_accuracy": 0.7825,
+  "n": 447,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 0.5789,
+      "n": 19
+    },
+    "change_case:english_capital": {
+      "acc": 0.7727,
+      "n": 22
+    },
+    "change_case:english_lowercase": {
+      "acc": 0.8529,
+      "n": 34
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.5,
+      "n": 32
+    },
+    "combination:two_responses": {
+      "acc": 0.7,
+      "n": 20
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.6667,
+      "n": 21
+    },
+    "detectable_content:postscript": {
+      "acc": 0.92,
+      "n": 25
+    },
+    "detectable_format:constrained_response": {
+      "acc": 1.0,
+      "n": 4
+    },
+    "detectable_format:json_format": {
+      "acc": 0.7857,
+      "n": 14
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 1.0,
+      "n": 12
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 0.7143,
+      "n": 28
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 0.9143,
+      "n": 35
+    },
+    "detectable_format:title": {
+      "acc": 0.8929,
+      "n": 28
+    },
+    "keywords:existence": {
+      "acc": 0.8667,
+      "n": 30
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.8158,
+      "n": 38
+    },
+    "keywords:frequency": {
+      "acc": 0.8529,
+      "n": 34
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.6452,
+      "n": 31
+    },
+    "language:response_language": {
+      "acc": 0.9474,
+      "n": 19
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 0.7,
+      "n": 10
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.16,
+      "n": 25
+    },
+    "length_constraints:number_sentences": {
+      "acc": 0.6818,
+      "n": 44
+    },
+    "length_constraints:number_words": {
+      "acc": 0.9286,
+      "n": 42
+    },
+    "punctuation:no_comma": {
+      "acc": 0.9231,
+      "n": 52
+    },
+    "startend:end_checker": {
+      "acc": 0.8696,
+      "n": 23
+    },
+    "startend:quotation": {
+      "acc": 0.8529,
+      "n": 34
+    }
+  },
+  "model": "llama-3.2-3b",
+  "benchmark": "ifeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202212,
+  "perf": {
+    "prefill_tps": 2525.25,
+    "decode_tps": 220.77,
+    "ttft_ms": 16.11,
+    "mean_prompt_tokens": 80.67,
+    "mean_completion_tokens": 341.15,
+    "total_gen_tokens": 152493,
+    "model_load_s": 4.0,
+    "gguf_mb": 2019.4,
+    "peak_vram_mb": 4286.0
+  },
+  "ci95": [
+    0.6516,
+    0.7366
+  ]
+}

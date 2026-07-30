@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.88,
+  "n": 300,
+  "passed": 264,
+  "failure_breakdown": {
+    "wrong_answer": 36
+  },
+  "model": "deepseek-r1-distill-qwen-7b",
+  "benchmark": "gsm8k",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/deepseek-r1-distill-qwen-7b/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf",
+  "run_ts": 1785213597,
+  "perf": {
+    "prefill_tps": 1436.88,
+    "decode_tps": 139.79,
+    "ttft_ms": 59.53,
+    "mean_prompt_tokens": 79.04,
+    "mean_completion_tokens": 445.79,
+    "total_gen_tokens": 133738,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5497.0
+  },
+  "ci95": [
+    0.8383,
+    0.912
+  ]
+}

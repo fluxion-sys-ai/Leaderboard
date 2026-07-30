@@ -1,0 +1,41 @@
+{
+  "metric": "accuracy",
+  "score": 0.6585,
+  "n": 164,
+  "passed": 108,
+  "ci95": [
+    0.5831,
+    0.7267
+  ],
+  "failure_breakdown": {
+    "fail": 34,
+    "error:nonzero_exit": 4,
+    "error:TypeError: Value after * must be an iterable, not NoneType": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 43)": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 48)": 1,
+    "error:SyntaxError: invalid syntax": 11,
+    "error:ValueError: invalid literal for int() with base 10: '5 apples and 6 '": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 54)": 1,
+    "error:ValueError: operands could not be broadcast together with shapes (7,) (0,)": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 44)": 1
+  },
+  "model": "ornith-1.0-9b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
+  "run_ts": 1785351003,
+  "perf": {
+    "prefill_tps": 1273.54,
+    "decode_tps": 103.82,
+    "ttft_ms": 120.05,
+    "mean_prompt_tokens": 166.99,
+    "mean_completion_tokens": 651.21,
+    "total_gen_tokens": 106799,
+    "model_load_s": 4.0,
+    "gguf_mb": 5701.1,
+    "peak_vram_mb": 6004.0
+  }
+}

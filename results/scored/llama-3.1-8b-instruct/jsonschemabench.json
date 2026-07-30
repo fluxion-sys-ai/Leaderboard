@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.4367,
+  "n": 300,
+  "passed": 131,
+  "by_category": {
+    "Github_easy": {
+      "score": 0.5,
+      "n": 74
+    },
+    "Github_hard": {
+      "score": 0.2368,
+      "n": 76
+    },
+    "Github_medium": {
+      "score": 0.5658,
+      "n": 76
+    },
+    "Github_trivial": {
+      "score": 0.4459,
+      "n": 74
+    }
+  },
+  "failure_breakdown": {
+    "invalid json": 57,
+    "schema violation": 106,
+    "no json found": 6
+  },
+  "model": "llama-3.1-8b-instruct",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/llama-3.1-8b-instruct/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785203926,
+  "perf": {
+    "prefill_tps": 3772.37,
+    "decode_tps": 127.26,
+    "ttft_ms": 92.35,
+    "mean_prompt_tokens": 906.41,
+    "mean_completion_tokens": 274.19,
+    "total_gen_tokens": 82258,
+    "model_load_s": 4.0,
+    "gguf_mb": 4920.7,
+    "peak_vram_mb": 7132.0
+  },
+  "ci95": [
+    0.3817,
+    0.4932
+  ]
+}

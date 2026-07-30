@@ -1,0 +1,50 @@
+{
+  "metric": "accuracy",
+  "score": 0.4875,
+  "n": 240,
+  "passed": 117,
+  "by_category": {
+    "multiple": {
+      "score": 0.5333,
+      "n": 60
+    },
+    "parallel": {
+      "score": 0.5833,
+      "n": 60
+    },
+    "parallel_multiple": {
+      "score": 0.3833,
+      "n": 60
+    },
+    "simple": {
+      "score": 0.45,
+      "n": 60
+    }
+  },
+  "failure_breakdown": {
+    "wrong_call": 123
+  },
+  "model": "llama-3.1-8b-instruct",
+  "benchmark": "bfcl",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/llama-3.1-8b-instruct/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785206632,
+  "perf": {
+    "prefill_tps": 3653.86,
+    "decode_tps": 129.3,
+    "ttft_ms": 81.95,
+    "mean_prompt_tokens": 377.93,
+    "mean_completion_tokens": 70.03,
+    "total_gen_tokens": 16806,
+    "model_load_s": 4.0,
+    "gguf_mb": 4920.7,
+    "peak_vram_mb": 7231.0
+  },
+  "ci95": [
+    0.425,
+    0.5504
+  ]
+}

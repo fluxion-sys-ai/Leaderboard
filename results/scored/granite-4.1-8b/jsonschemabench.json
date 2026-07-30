@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.7267,
+  "n": 300,
+  "passed": 218,
+  "ci95": [
+    0.6736,
+    0.774
+  ],
+  "by_category": {
+    "Github_easy": {
+      "score": 0.88,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.56,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.8267,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.64,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "schema violation": 57,
+    "invalid json": 20,
+    "no json found": 5
+  },
+  "model": "granite-4.1-8b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/granite-4.1-8b/granite-4.1-8b-Q4_K_M.gguf",
+  "run_ts": 1785387455,
+  "perf": {
+    "prefill_tps": 3768.56,
+    "decode_tps": 104.34,
+    "ttft_ms": 99.77,
+    "mean_prompt_tokens": 874.93,
+    "mean_completion_tokens": 159.38,
+    "total_gen_tokens": 47814,
+    "model_load_s": 4.0,
+    "gguf_mb": 5347.9,
+    "peak_vram_mb": 8316.0
+  }
+}

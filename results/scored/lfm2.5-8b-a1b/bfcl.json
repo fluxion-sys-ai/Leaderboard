@@ -1,0 +1,51 @@
+{
+  "metric": "accuracy",
+  "score": 0.5083,
+  "n": 240,
+  "passed": 122,
+  "ci95": [
+    0.4455,
+    0.571
+  ],
+  "by_category": {
+    "multiple": {
+      "score": 0.45,
+      "n": 60
+    },
+    "parallel": {
+      "score": 0.5167,
+      "n": 60
+    },
+    "parallel_multiple": {
+      "score": 0.25,
+      "n": 60
+    },
+    "simple": {
+      "score": 0.8167,
+      "n": 60
+    }
+  },
+  "failure_breakdown": {
+    "wrong_call": 37,
+    "no_call_parsed": 81
+  },
+  "model": "lfm2.5-8b-a1b",
+  "benchmark": "bfcl",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/lfm2.5-8b-a1b/LFM2.5-8B-A1B-Q4_K_M.gguf",
+  "run_ts": 1785382948,
+  "perf": {
+    "prefill_tps": 6774.87,
+    "decode_tps": 263.48,
+    "ttft_ms": 44.66,
+    "mean_prompt_tokens": 350.3,
+    "mean_completion_tokens": 375.85,
+    "total_gen_tokens": 90205,
+    "model_load_s": 4.0,
+    "gguf_mb": 5155.6,
+    "peak_vram_mb": 5605.0
+  }
+}

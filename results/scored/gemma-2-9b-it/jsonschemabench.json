@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.6167,
+  "n": 300,
+  "passed": 185,
+  "by_category": {
+    "Github_easy": {
+      "score": 0.8378,
+      "n": 74
+    },
+    "Github_hard": {
+      "score": 0.3421,
+      "n": 76
+    },
+    "Github_medium": {
+      "score": 0.6579,
+      "n": 76
+    },
+    "Github_trivial": {
+      "score": 0.6351,
+      "n": 74
+    }
+  },
+  "failure_breakdown": {
+    "invalid json": 25,
+    "schema violation": 82,
+    "no json found": 8
+  },
+  "model": "gemma-2-9b-it",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-2-9b-it/gemma-2-9b-it-Q4_K_M.gguf",
+  "run_ts": 1785206996,
+  "perf": {
+    "prefill_tps": 2753.74,
+    "decode_tps": 88.7,
+    "ttft_ms": 163.46,
+    "mean_prompt_tokens": 1060.85,
+    "mean_completion_tokens": 183.29,
+    "total_gen_tokens": 54988,
+    "model_load_s": 6.0,
+    "gguf_mb": 5761.1,
+    "peak_vram_mb": 11812.0
+  },
+  "ci95": [
+    0.5605,
+    0.6699
+  ]
+}

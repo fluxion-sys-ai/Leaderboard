@@ -1,0 +1,51 @@
+{
+  "metric": "accuracy",
+  "score": 0.2167,
+  "n": 240,
+  "passed": 52,
+  "by_category": {
+    "multiple": {
+      "score": 0.25,
+      "n": 60
+    },
+    "parallel": {
+      "score": 0.2,
+      "n": 60
+    },
+    "parallel_multiple": {
+      "score": 0.1833,
+      "n": 60
+    },
+    "simple": {
+      "score": 0.2333,
+      "n": 60
+    }
+  },
+  "failure_breakdown": {
+    "wrong_call": 120,
+    "no_call_parsed": 68
+  },
+  "model": "llama-3.2-3b",
+  "benchmark": "bfcl",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202335,
+  "perf": {
+    "prefill_tps": 7886.57,
+    "decode_tps": 220.78,
+    "ttft_ms": 33.59,
+    "mean_prompt_tokens": 377.93,
+    "mean_completion_tokens": 67.61,
+    "total_gen_tokens": 16226,
+    "model_load_s": 4.0,
+    "gguf_mb": 2019.4,
+    "peak_vram_mb": 4286.0
+  },
+  "ci95": [
+    0.1692,
+    0.273
+  ]
+}

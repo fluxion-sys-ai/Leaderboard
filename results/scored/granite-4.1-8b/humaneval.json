@@ -1,0 +1,34 @@
+{
+  "metric": "accuracy",
+  "score": 0.7683,
+  "n": 164,
+  "passed": 126,
+  "ci95": [
+    0.698,
+    0.8263
+  ],
+  "failure_breakdown": {
+    "fail": 33,
+    "error:nonzero_exit": 4,
+    "error:TypeError: Value after * must be an iterable, not float": 1
+  },
+  "model": "granite-4.1-8b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/granite-4.1-8b/granite-4.1-8b-Q4_K_M.gguf",
+  "run_ts": 1785387902,
+  "perf": {
+    "prefill_tps": 1816.03,
+    "decode_tps": 103.99,
+    "ttft_ms": 59.09,
+    "mean_prompt_tokens": 154.45,
+    "mean_completion_tokens": 223.01,
+    "total_gen_tokens": 36574,
+    "model_load_s": 4.0,
+    "gguf_mb": 5347.9,
+    "peak_vram_mb": 8316.0
+  }
+}

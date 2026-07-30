@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.35,
+  "n": 300,
+  "passed": 105,
+  "ci95": [
+    0.2982,
+    0.4056
+  ],
+  "by_category": {
+    "Github_easy": {
+      "score": 0.6533,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.0933,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.2267,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.4267,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "no json found": 167,
+    "schema violation": 14,
+    "invalid json": 14
+  },
+  "model": "tess-4-9b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/tess-4-9b/migtissera_Tess-4-9B-Q4_K_M.gguf",
+  "run_ts": 1785367603,
+  "perf": {
+    "prefill_tps": 2752.61,
+    "decode_tps": 101.83,
+    "ttft_ms": 160.23,
+    "mean_prompt_tokens": 1022.36,
+    "mean_completion_tokens": 606.4,
+    "total_gen_tokens": 181920,
+    "model_load_s": 4.1,
+    "gguf_mb": 6047.7,
+    "peak_vram_mb": 6335.0
+  }
+}

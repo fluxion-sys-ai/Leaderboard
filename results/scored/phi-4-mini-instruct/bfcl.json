@@ -1,0 +1,51 @@
+{
+  "metric": "accuracy",
+  "score": 0.7875,
+  "n": 240,
+  "passed": 189,
+  "by_category": {
+    "multiple": {
+      "score": 0.7667,
+      "n": 60
+    },
+    "parallel": {
+      "score": 0.8333,
+      "n": 60
+    },
+    "parallel_multiple": {
+      "score": 0.7333,
+      "n": 60
+    },
+    "simple": {
+      "score": 0.8167,
+      "n": 60
+    }
+  },
+  "failure_breakdown": {
+    "wrong_call": 42,
+    "no_call_parsed": 9
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "bfcl",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785240552,
+  "perf": {
+    "prefill_tps": 7180.06,
+    "decode_tps": 182.62,
+    "ttft_ms": 39.91,
+    "mean_prompt_tokens": 346.29,
+    "mean_completion_tokens": 73.6,
+    "total_gen_tokens": 17665,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5120.0
+  },
+  "ci95": [
+    0.7314,
+    0.8345
+  ]
+}

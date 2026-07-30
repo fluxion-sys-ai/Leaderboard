@@ -1,0 +1,33 @@
+{
+  "metric": "accuracy",
+  "score": 0.3667,
+  "n": 300,
+  "passed": 110,
+  "failure_breakdown": {
+    "wrong_trace": 189,
+    "no_answer_parsed": 1
+  },
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "cruxeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202541,
+  "perf": {
+    "prefill_tps": 1523.07,
+    "decode_tps": 158.44,
+    "ttft_ms": 53.26,
+    "mean_prompt_tokens": 95.32,
+    "mean_completion_tokens": 26.38,
+    "total_gen_tokens": 7914,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5481.0
+  },
+  "ci95": [
+    0.3141,
+    0.4226
+  ]
+}

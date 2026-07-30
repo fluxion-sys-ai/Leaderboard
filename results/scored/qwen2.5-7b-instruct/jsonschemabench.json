@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.7167,
+  "n": 300,
+  "passed": 215,
+  "by_category": {
+    "Github_easy": {
+      "score": 0.8784,
+      "n": 74
+    },
+    "Github_hard": {
+      "score": 0.5658,
+      "n": 76
+    },
+    "Github_medium": {
+      "score": 0.7632,
+      "n": 76
+    },
+    "Github_trivial": {
+      "score": 0.6622,
+      "n": 74
+    }
+  },
+  "failure_breakdown": {
+    "schema violation": 57,
+    "no json found": 8,
+    "invalid json": 20
+  },
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202544,
+  "perf": {
+    "prefill_tps": 3998.1,
+    "decode_tps": 138.79,
+    "ttft_ms": 85.0,
+    "mean_prompt_tokens": 907.87,
+    "mean_completion_tokens": 181.58,
+    "total_gen_tokens": 54473,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5481.0
+  },
+  "ci95": [
+    0.6632,
+    0.7647
+  ]
+}

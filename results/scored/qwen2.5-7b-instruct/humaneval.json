@@ -1,0 +1,36 @@
+{
+  "metric": "accuracy",
+  "score": 0.7683,
+  "n": 164,
+  "passed": 126,
+  "failure_breakdown": {
+    "error:nonzero_exit": 3,
+    "fail": 32,
+    "error:TypeError: Value after * must be an iterable, not float": 1,
+    "error:IndexError: list index out of range": 1,
+    "error:IndexError: string index out of range": 1
+  },
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202602,
+  "perf": {
+    "prefill_tps": 2003.3,
+    "decode_tps": 139.44,
+    "ttft_ms": 55.44,
+    "mean_prompt_tokens": 178.22,
+    "mean_completion_tokens": 234.1,
+    "total_gen_tokens": 38392,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5481.0
+  },
+  "ci95": [
+    0.698,
+    0.8263
+  ]
+}

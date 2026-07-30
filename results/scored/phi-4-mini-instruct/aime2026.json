@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.0667,
+  "n": 30,
+  "passed": 2,
+  "failure_breakdown": {
+    "wrong_answer": 28
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "aime2026",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785239948,
+  "perf": {
+    "prefill_tps": 4364.11,
+    "decode_tps": 178.38,
+    "ttft_ms": 31.31,
+    "mean_prompt_tokens": 139.77,
+    "mean_completion_tokens": 1657.57,
+    "total_gen_tokens": 49727,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5119.0
+  },
+  "ci95": [
+    0.0185,
+    0.2132
+  ]
+}

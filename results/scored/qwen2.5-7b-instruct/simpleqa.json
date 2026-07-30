@@ -1,0 +1,25 @@
+{
+  "metric": "simpleqa_accuracy",
+  "score": null,
+  "judge_pending": true,
+  "n": 300,
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "simpleqa",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785432884,
+  "perf": {
+    "prefill_tps": 853.03,
+    "decode_tps": 140.64,
+    "ttft_ms": 31.51,
+    "mean_prompt_tokens": 52.84,
+    "mean_completion_tokens": 89.25,
+    "total_gen_tokens": 26776,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5554.0
+  }
+}

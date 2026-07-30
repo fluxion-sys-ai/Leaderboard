@@ -1,0 +1,46 @@
+{
+  "metric": "accuracy",
+  "score": 0.0095,
+  "n": 105,
+  "passed": 1,
+  "ci95": [
+    0.0017,
+    0.052
+  ],
+  "by_category": {
+    "easy": {
+      "score": 0.0417,
+      "n": 24
+    },
+    "hard": {
+      "score": 0.0,
+      "n": 57
+    },
+    "medium": {
+      "score": 0.0,
+      "n": 24
+    }
+  },
+  "failure_breakdown": {
+    "wrong_output": 104
+  },
+  "model": "gemma-4-12b",
+  "benchmark": "livecodebench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-12b/gemma-4-12b-it-Q4_K_M.gguf",
+  "run_ts": 1785329591,
+  "perf": {
+    "prefill_tps": 2054.63,
+    "decode_tps": 64.89,
+    "ttft_ms": 297.24,
+    "mean_prompt_tokens": 629.91,
+    "mean_completion_tokens": 1530.64,
+    "total_gen_tokens": 160717,
+    "model_load_s": 4.7,
+    "gguf_mb": 7121.9,
+    "peak_vram_mb": 9595.0
+  }
+}

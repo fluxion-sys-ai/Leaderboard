@@ -1,0 +1,91 @@
+{
+  "metric": "accuracy",
+  "score": 0.3964,
+  "n": 280,
+  "passed": 111,
+  "by_category": {
+    "biology": {
+      "score": 0.7,
+      "n": 20
+    },
+    "business": {
+      "score": 0.35,
+      "n": 20
+    },
+    "chemistry": {
+      "score": 0.4,
+      "n": 20
+    },
+    "computer science": {
+      "score": 0.45,
+      "n": 20
+    },
+    "economics": {
+      "score": 0.2,
+      "n": 20
+    },
+    "engineering": {
+      "score": 0.25,
+      "n": 20
+    },
+    "health": {
+      "score": 0.55,
+      "n": 20
+    },
+    "history": {
+      "score": 0.45,
+      "n": 20
+    },
+    "law": {
+      "score": 0.15,
+      "n": 20
+    },
+    "math": {
+      "score": 0.45,
+      "n": 20
+    },
+    "other": {
+      "score": 0.35,
+      "n": 20
+    },
+    "philosophy": {
+      "score": 0.35,
+      "n": 20
+    },
+    "physics": {
+      "score": 0.3,
+      "n": 20
+    },
+    "psychology": {
+      "score": 0.6,
+      "n": 20
+    }
+  },
+  "failure_breakdown": {
+    "wrong_answer": 162,
+    "no_answer_parsed": 7
+  },
+  "model": "llama-3.2-3b",
+  "benchmark": "mmlu_pro",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785202215,
+  "perf": {
+    "prefill_tps": 6363.44,
+    "decode_tps": 218.91,
+    "ttft_ms": 30.08,
+    "mean_prompt_tokens": 236.18,
+    "mean_completion_tokens": 449.08,
+    "total_gen_tokens": 125742,
+    "model_load_s": 4.0,
+    "gguf_mb": 2019.4,
+    "peak_vram_mb": 4286.0
+  },
+  "ci95": [
+    0.3409,
+    0.4548
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.4033,
+  "n": 300,
+  "passed": 121,
+  "by_category": {
+    "Github_easy": {
+      "score": 0.64,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.12,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.36,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.4933,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "schema violation": 152,
+    "no json found": 3,
+    "invalid json": 24
+  },
+  "model": "deepseek-r1-distill-qwen-7b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/deepseek-r1-distill-qwen-7b/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf",
+  "run_ts": 1785222021,
+  "perf": {
+    "prefill_tps": 4283.06,
+    "decode_tps": 137.59,
+    "ttft_ms": 83.66,
+    "mean_prompt_tokens": 877.17,
+    "mean_completion_tokens": 905.78,
+    "total_gen_tokens": 271733,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5554.0
+  },
+  "ci95": [
+    0.3494,
+    0.4597
+  ]
+}

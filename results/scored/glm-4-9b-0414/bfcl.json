@@ -1,0 +1,51 @@
+{
+  "metric": "accuracy",
+  "score": 0.8708,
+  "n": 240,
+  "passed": 209,
+  "by_category": {
+    "multiple": {
+      "score": 0.8667,
+      "n": 60
+    },
+    "parallel": {
+      "score": 0.8833,
+      "n": 60
+    },
+    "parallel_multiple": {
+      "score": 0.8167,
+      "n": 60
+    },
+    "simple": {
+      "score": 0.9167,
+      "n": 60
+    }
+  },
+  "failure_breakdown": {
+    "wrong_call": 28,
+    "no_call_parsed": 3
+  },
+  "model": "glm-4-9b-0414",
+  "benchmark": "bfcl",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/glm-4-9b-0414/THUDM_GLM-4-9B-0414-Q4_K_M.gguf",
+  "run_ts": 1785264810,
+  "perf": {
+    "prefill_tps": 3165.14,
+    "decode_tps": 95.25,
+    "ttft_ms": 93.17,
+    "mean_prompt_tokens": 348.09,
+    "mean_completion_tokens": 79.38,
+    "total_gen_tokens": 19050,
+    "model_load_s": 4.0,
+    "gguf_mb": 6166.6,
+    "peak_vram_mb": 6578.0
+  },
+  "ci95": [
+    0.8225,
+    0.9075
+  ]
+}

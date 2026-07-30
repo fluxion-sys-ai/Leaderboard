@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.8767,
+  "n": 300,
+  "passed": 263,
+  "failure_breakdown": {
+    "wrong_answer": 37
+  },
+  "model": "mistral-nemo-12b",
+  "benchmark": "gsm8k",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/mistral-nemo-12b/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf",
+  "run_ts": 1785209389,
+  "perf": {
+    "prefill_tps": 1044.68,
+    "decode_tps": 99.35,
+    "ttft_ms": 79.88,
+    "mean_prompt_tokens": 81.03,
+    "mean_completion_tokens": 196.84,
+    "total_gen_tokens": 59052,
+    "model_load_s": 4.0,
+    "gguf_mb": 7477.2,
+    "peak_vram_mb": 10152.0
+  },
+  "ci95": [
+    0.8346,
+    0.9092
+  ]
+}

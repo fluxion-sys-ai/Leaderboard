@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.4268,
+  "n": 164,
+  "passed": 70,
+  "ci95": [
+    0.3537,
+    0.5034
+  ],
+  "failure_breakdown": {
+    "fail": 66,
+    "error:SyntaxError: invalid syntax": 10,
+    "error:SyntaxError: unterminated string literal (detected at line 23)": 1,
+    "error:nonzero_exit": 2,
+    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 40)": 1,
+    "error:TypeError: Value after * must be an iterable, not NoneType": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 50)": 1,
+    "error:ValueError: n must be a positive integer": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 41)": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 39)": 2,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 45)": 3,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 53)": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 52)": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 51)": 1,
+    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 47)": 1
+  },
+  "model": "lfm2.5-8b-a1b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/lfm2.5-8b-a1b/LFM2.5-8B-A1B-Q4_K_M.gguf",
+  "run_ts": 1785380330,
+  "perf": {
+    "prefill_tps": 3796.99,
+    "decode_tps": 260.68,
+    "ttft_ms": 37.9,
+    "mean_prompt_tokens": 157.66,
+    "mean_completion_tokens": 744.85,
+    "total_gen_tokens": 122155,
+    "model_load_s": 4.0,
+    "gguf_mb": 5155.6,
+    "peak_vram_mb": 5605.0
+  }
+}

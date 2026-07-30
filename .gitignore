@@ -1,0 +1,16 @@
+# Downloaded benchmark data (pulled from HF + cached, never vendored)
+data/
+# Model generations + scores are reproducible outputs, not source
+results/raw/
+# HF / llama.cpp model weights live outside the repo
+models/
+# Python
+__pycache__/
+*.pyc
+.venv/
+.openrouter_key
+.hf_token
+
+# internal scratch — not for the public repo
+results/_quarantine/
+results/_archived_first200/

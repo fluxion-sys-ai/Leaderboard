@@ -1,0 +1,40 @@
+{
+  "metric": "accuracy",
+  "score": 0.5671,
+  "n": 164,
+  "passed": 93,
+  "failure_breakdown": {
+    "error:IndexError: list index out of range": 3,
+    "fail": 58,
+    "error:nonzero_exit": 3,
+    "error:TypeError: Value after * must be an iterable, not float": 1,
+    "error:TypeError: int() argument must be a string, a bytes-like object or a real number": 1,
+    "error:AttributeError: 'list' object has no attribute 'split'": 2,
+    "error:SyntaxError: unmatched ']'": 1,
+    "error:ValueError: max() iterable argument is empty": 1,
+    "error:ValueError: operands could not be broadcast together with shapes (7,) (0,)": 1
+  },
+  "model": "gemma-2-9b-it",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-2-9b-it/gemma-2-9b-it-Q4_K_M.gguf",
+  "run_ts": 1785207053,
+  "perf": {
+    "prefill_tps": 1303.17,
+    "decode_tps": 89.5,
+    "ttft_ms": 124.07,
+    "mean_prompt_tokens": 170.98,
+    "mean_completion_tokens": 368.63,
+    "total_gen_tokens": 60456,
+    "model_load_s": 6.0,
+    "gguf_mb": 5761.1,
+    "peak_vram_mb": 11812.0
+  },
+  "ci95": [
+    0.4906,
+    0.6405
+  ]
+}

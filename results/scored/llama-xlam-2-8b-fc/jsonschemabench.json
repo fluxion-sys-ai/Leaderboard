@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.2133,
+  "n": 300,
+  "passed": 64,
+  "ci95": [
+    0.1708,
+    0.2632
+  ],
+  "by_category": {
+    "Github_easy": {
+      "score": 0.2267,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.1067,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.28,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.24,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "invalid json": 95,
+    "schema violation": 123,
+    "no json found": 18
+  },
+  "model": "llama-xlam-2-8b-fc",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/llama-xlam-2-8b-fc/Llama-xLAM-2-8B-fc-r-Q4_K_M.gguf",
+  "run_ts": 1785303998,
+  "perf": {
+    "prefill_tps": 3792.04,
+    "decode_tps": 129.86,
+    "ttft_ms": 95.67,
+    "mean_prompt_tokens": 881.86,
+    "mean_completion_tokens": 100.81,
+    "total_gen_tokens": 30244,
+    "model_load_s": 4.0,
+    "gguf_mb": 4920.7,
+    "peak_vram_mb": 7227.0
+  }
+}

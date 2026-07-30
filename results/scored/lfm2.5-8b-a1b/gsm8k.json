@@ -1,0 +1,33 @@
+{
+  "metric": "accuracy",
+  "score": 0.8467,
+  "n": 300,
+  "passed": 254,
+  "ci95": [
+    0.8015,
+    0.883
+  ],
+  "failure_breakdown": {
+    "wrong_answer": 18,
+    "no_answer_parsed": 28
+  },
+  "model": "lfm2.5-8b-a1b",
+  "benchmark": "gsm8k",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/lfm2.5-8b-a1b/LFM2.5-8B-A1B-Q4_K_M.gguf",
+  "run_ts": 1785377648,
+  "perf": {
+    "prefill_tps": 2259.64,
+    "decode_tps": 261.8,
+    "ttft_ms": 36.12,
+    "mean_prompt_tokens": 84.92,
+    "mean_completion_tokens": 480.21,
+    "total_gen_tokens": 144064,
+    "model_load_s": 4.0,
+    "gguf_mb": 5155.6,
+    "peak_vram_mb": 5392.0
+  }
+}

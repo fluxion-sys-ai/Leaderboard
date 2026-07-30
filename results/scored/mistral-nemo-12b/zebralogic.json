@@ -1,0 +1,135 @@
+{
+  "metric": "accuracy",
+  "score": 0.0933,
+  "n": 150,
+  "passed": 14,
+  "by_category": {
+    "2*2": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "2*3": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "2*4": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "2*5": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "2*6": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "3*2": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "3*3": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "3*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*2": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "4*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*6": {
+      "score": 0.0,
+      "n": 6
+    }
+  },
+  "failure_breakdown": {
+    "wrong_cells": 135,
+    "wrong_shape": 1
+  },
+  "model": "mistral-nemo-12b",
+  "benchmark": "zebralogic",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/mistral-nemo-12b/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf",
+  "run_ts": 1785210298,
+  "perf": {
+    "prefill_tps": 2534.42,
+    "decode_tps": 98.84,
+    "ttft_ms": 122.29,
+    "mean_prompt_tokens": 366.01,
+    "mean_completion_tokens": 128.67,
+    "total_gen_tokens": 19300,
+    "model_load_s": 4.0,
+    "gguf_mb": 7477.2,
+    "peak_vram_mb": 10192.0
+  },
+  "ci95": [
+    0.0564,
+    0.1506
+  ]
+}

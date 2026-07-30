@@ -14,3 +14,7 @@ __pycache__/
 # internal scratch — not for the public repo
 results/_quarantine/
 results/_archived_first200/
+
+# design mockups / generated images — not source
+dashboard_preview.html
+*.png

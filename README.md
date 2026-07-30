@@ -155,20 +155,29 @@ Beyond the headline score:
 configs/
   models.yaml         models under test (+ runner, quant, optional draft model)
   benchmarks.yaml     benchmarks, sample sizes, dataset pins, seed
+  pinchbench_tasks.txt  the pinned PinchBench task suite
 src/
   models/             uniform ModelRunner interface + llama.cpp runner (spec-decode aware)
   benchmarks/         one module per benchmark (load / prompt / score) + registry
   evaluators/         judge-free scorers: IFEval checks, sandboxed code executor
-  report/             assembles results into the HTML leaderboard
+  report/             assembles results into the HTML leaderboard (build_leaderboard.py)
   utils/              config IO, resumable-run cache, random/stratified sampler
   models_fetch.py     resolve + download GGUFs from HuggingFace (confirmed at pull time)
-run_benchmark.py      the single orchestrator
+scripts/
+  pinchbench_run.sh   run PinchBench (multi-turn agent) against one model's endpoint
+  top_models.py       rank models by the dimension-weighted Average
+run_benchmark.py      the single orchestrator (judge-free grid)
 rescore_all.py        re-score all cells offline from cached generations (no GPU)
+score_official.py     official reference scorers where scoring is hard (evalplus/HumanEval)
+judge_writing.py      DeepSeek judge → Writing scores
+judge_simpleqa.py     DeepSeek judge → Factuality scores
+import_pinchbench.py  fold PinchBench agent results into the grid
 results/
-  raw/<model>/<benchmark>.jsonl     model generations (cached — the expensive part)
+  raw/<model>/<benchmark>.jsonl     model generations (cached — the expensive part; gitignored)
   scored/<model>/<benchmark>.json   metrics (cheap, regenerable)
   spec/                             speculative-decode pass results
-leaderboard.html      the output
+leaderboard.html      the interactive output (open in a browser)
+CANDIDATES.md         scouted edge models parked for a future run
 ```
 
 **Design:** every `(model, benchmark)` is its own pair of files, so you can re-run

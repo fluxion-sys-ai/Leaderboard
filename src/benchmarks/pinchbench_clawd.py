@@ -21,12 +21,23 @@ from datasets import load_dataset
 from .base import Benchmark, Task
 
 _TOOLCALL = re.compile(r"<tool_call>\s*(\{.*?\})\s*</tool_call>", re.S)
+# Python-style call: funcname("arg", 'arg', ...). Some models (e.g. GLM-4-0414) emit
+# executable-looking calls instead of JSON. The arg group tolerates one level of nested
+# parens so calls like run_python('''...''') don't truncate.
+_PYCALL = re.compile(r"\b([a-zA-Z_]\w*)\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)", re.S)
+_PYSTR = re.compile(r'"([^"]*)"|\'([^\']*)\'')     # string literals inside the call
+# identifiers that look like calls but aren't tools — don't treat as tool names
+_NOT_TOOLS = {"if", "for", "while", "print", "return", "def", "class", "in", "and",
+              "or", "not", "range", "len", "str", "int", "list", "dict", "open", "f"}
 
 
 def _parse_tool_calls(text: str) -> list[dict]:
-    """Extract ALL tool calls a model emitted — from <tool_call> tags AND bare JSON
-    objects (many models emit `{"name":..,"arguments":..}` with no wrapper). Uses a
-    JSON scanner so nested argument objects (braces) are handled correctly."""
+    """Extract ALL tool calls a model emitted — from <tool_call> tags, bare JSON objects
+    (`{"name":..,"arguments":..}` with no wrapper), AND Python-style calls
+    (`funcname("path", ...)`). Different model families emit different formats; scoring
+    the model's *intent* means recognizing all three. A Python-style call has no arg
+    names, so its string literals are kept positionally under `_positional` and matched
+    on value (see `_key_args_match`)."""
     calls: list[dict] = []
     for raw in _TOOLCALL.findall(text):          # 1) wrapped <tool_call> blocks
         try:
@@ -48,19 +59,39 @@ def _parse_tool_calls(text: str) -> list[dict]:
             i = end
         except json.JSONDecodeError:
             i = c + 1
+    for m in _PYCALL.finditer(text):             # 3) Python-style funcname("arg", ...)
+        name = m.group(1)
+        if name in _NOT_TOOLS:
+            continue
+        pos = [a or b for a, b in _PYSTR.findall(m.group(2))]
+        if pos and not any(c.get("name") == name and c.get("_positional") == pos for c in calls):
+            calls.append({"name": name, "arguments": {}, "_positional": pos})
     return calls
 
 
-def _key_args_match(gold_args: dict, pred_args: dict) -> bool:
+_PATH_KEYS = ("path", "filename", "file", "directory", "dir")
+
+
+def _key_args_match(gold_args: dict, pred_args: dict, pred_positional: list | None = None) -> bool:
     """Do the model's args cover the important keys? (paths/filenames must match; other
-    args must be present, but we don't require exact-value equality for free-text.)"""
+    args must be present, but we don't require exact-value equality for free-text.)
+
+    For Python-style calls the args are positional (no names), so we match the path-like
+    gold VALUES against the positional strings and stay lenient on free-text args — same
+    spirit as the named case (path must match, the rest just has to be there)."""
     if not gold_args:
+        return True
+    if pred_positional is not None:                      # positional (Python-style) call
+        vals = [str(v) for v in pred_positional]
+        for k, gv in gold_args.items():
+            if k in _PATH_KEYS and str(gv) not in vals:  # the path must appear somewhere
+                return False
         return True
     for k, gv in gold_args.items():
         if k not in pred_args:
             return False
         # for path-like args (filenames, dirs) require exact match — that's the whole point
-        if k in ("path", "filename", "file", "directory", "dir") and str(pred_args[k]) != str(gv):
+        if k in _PATH_KEYS and str(pred_args[k]) != str(gv):
             return False
     return True
 
@@ -106,7 +137,8 @@ class PinchBenchClawd(Benchmark):
         # pass if ANY emitted call is the right tool with the right key args (models emit a
         # sequence of calls; "did it take the correct action anywhere" is the signal)
         for c in calls:
-            if c.get("name") == gold_tool and _key_args_match(gold_args, c.get("arguments", {}) or {}):
+            if c.get("name") == gold_tool and _key_args_match(
+                    gold_args, c.get("arguments", {}) or {}, c.get("_positional")):
                 return {"passed": True, "pred_tool": gold_tool, "gold_tool": gold_tool, "fail_reason": None}
         names = [c.get("name") for c in calls]
         return {"passed": False, "pred_tool": names[0], "gold_tool": gold_tool,

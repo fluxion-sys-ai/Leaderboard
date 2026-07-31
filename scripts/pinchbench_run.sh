@@ -37,13 +37,26 @@ print(ensure_gguf(m['name'], m['gguf']))
 # so no rope/yarn degradation); gemma-2-9b-it is 8K-native so cap it there rather
 # than force-extend. --parallel 1 = one sequential slot (PinchBench runs one task
 # at a time) so the FULL context goes to each request instead of being shared.
-CTX=32768
-[ "$MODEL" = "gemma-2-9b-it" ] && CTX=8192
-echo "[pb] model=$MODEL gguf=$GGUF ctx=$CTX"
+# Per-model context. Big multi-turn agent tasks overflow 32K on the models that actually
+# engage (qwen2.5/qwen3/granite lost 34-44 of 116 tasks to overflow). Raise to 64K:
+# granite-4.1 is 128K-native (clean); qwen2.5/qwen3 are 32K-native so extend with YaRN
+# rope-scaling; gemma-2 is 8K-native and can't extend.
+CTX=32768; YARN_ARG=""
+case "$MODEL" in
+  # 128K matches shujun's proven prior PinchBench setup — the overnight run found 64K
+  # OVERFLOWED on csv/log tasks ("64k-overflow, not skill — 128k should lift them"), and
+  # plain -c 131072 worked (Qwen GGUFs carry their YaRN config). granite is 128K-native.
+  granite-4.1-8b|qwen2.5-7b-instruct|qwen3-8b)  CTX=131072 ;;
+  gemma-2-9b-it)                                CTX=8192 ;;
+esac
+# Optional chat-template override (e.g. CHAT_TEMPLATE=chatglm4). Empty = use the GGUF's.
+TPL_ARG=""
+[ -n "${CHAT_TEMPLATE:-}" ] && TPL_ARG="--chat-template ${CHAT_TEMPLATE}"
+echo "[pb] model=$MODEL gguf=$GGUF ctx=$CTX yarn=${YARN_ARG:-no} template=${CHAT_TEMPLATE:-default}"
 
 # start the llama-server
 /home/ubuntu/llama.cpp/llama-b9892/llama-server \
-  -m "$GGUF" -c "$CTX" --parallel 1 -ngl 999 --host 127.0.0.1 --port $PORT --no-webui \
+  -m "$GGUF" -c "$CTX" --parallel 1 -ngl 999 $YARN_ARG $TPL_ARG --host 127.0.0.1 --port $PORT --no-webui \
   >/tmp/pb_llama_${MODEL}.log 2>&1 &
 LP=$!
 trap "kill $LP 2>/dev/null || true" EXIT

@@ -35,8 +35,7 @@ DIMENSIONS = [
     ("ruler",           "RULER",    "Long-context — RULER (retrieval @ 8k)", "Long-context"),
     ("writing",         "Writing",  "Writing — AlpacaEval (LLM-judge 1-10)", "Writing"),
     ("bfcl",            "BFCL",     "Agentic — BFCL (tool-use, single call)","Agentic"),
-    ("pinchbench_clawd","Pinch-C",  "Agentic — PinchBench-Clawd (personal tasks, text)","Agentic"),
-    ("pinchbench",      "PinchBench","Agentic — PinchBench (multi-turn agent; Fluxion's metric)","Agentic"),
+    ("pinchbench",      "PinchBench","Agentic — PinchBench (116-task multi-turn agent; Fluxion's metric, official grader)","Agentic"),
     ("simpleqa",        "SimpleQA", "Factuality — SimpleQA (recall + calibration)","Factuality"),
 ]
 

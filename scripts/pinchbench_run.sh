@@ -46,8 +46,11 @@ case "$MODEL" in
   # 128K matches shujun's proven prior PinchBench setup — the overnight run found 64K
   # OVERFLOWED on csv/log tasks ("64k-overflow, not skill — 128k should lift them"), and
   # plain -c 131072 worked (Qwen GGUFs carry their YaRN config). granite is 128K-native.
-  granite-4.1-8b|qwen2.5-7b-instruct|qwen3-8b)  CTX=131072 ;;
-  gemma-2-9b-it)                                CTX=8192 ;;
+  granite-4.1-8b)                 CTX=131072 ;;   # 128K-native, no scaling needed
+  # Qwen2.5/Qwen3 are 32K-native: llama.cpp CLAMPS n_ctx to 32768 unless YaRN is passed
+  # EXPLICITLY (plain -c 131072 silently caps at 32K -> still overflows). factor 4 = 32K->128K.
+  qwen2.5-7b-instruct|qwen3-8b)   CTX=131072; YARN_ARG="--rope-scaling yarn --rope-scale 4 --yarn-orig-ctx 32768" ;;
+  gemma-2-9b-it)                  CTX=8192 ;;
 esac
 # Optional chat-template override (e.g. CHAT_TEMPLATE=chatglm4). Empty = use the GGUF's.
 TPL_ARG=""

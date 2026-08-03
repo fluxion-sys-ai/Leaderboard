@@ -36,7 +36,10 @@ DIMENSIONS = [
     ("writing",         "Writing",  "Writing — AlpacaEval (LLM-judge 1-10)", "Writing"),
     ("bfcl",            "BFCL",     "Agentic — BFCL (tool-use, single call)","Agentic"),
     ("pinchbench",      "PinchBench","Agentic — PinchBench (116-task multi-turn agent; Fluxion's metric, official grader)","Agentic"),
-    ("simpleqa",        "SimpleQA", "Factuality — SimpleQA (recall + calibration)","Factuality"),
+    # Factuality/SimpleQA EXCLUDED from the Average + table (2026-08-03): edge models
+    # confidently hallucinate on long-tail facts (never abstain) so it's single-digit for
+    # everyone and doesn't differentiate — scores still computed + kept in results/scored/.
+    # ("simpleqa",      "SimpleQA", "Factuality — SimpleQA (recall + calibration)","Factuality"),
 ]
 
 
@@ -179,9 +182,7 @@ EXCLUDED = {
     "gemma-4-12b": "broken run — scored 3x below its own 4B sibling and BELOW RANDOM on "
                    "MMLU-Pro (0.071 < 0.10); likely chat-template / arch mismatch on b9892. "
                    "Raw kept in results/; needs re-run on a newer binary.",
-    "qwen3.5-9b": "deferred — thinking model, under-scores without max_tokens_mult (like "
-                  "ornith); skipped this pass, pending a corrective re-run with the right cap.",
-    "qwen3.5-4b": "deferred — thinking model, same reason as qwen3.5-9b.",
+    # qwen3.5-9b / qwen3.5-4b un-deferred 2026-08-03: now run in no-think mode (see models.yaml)
     "nanbeige4.2-3b": "broken — b9892 can't load it ('unknown model architecture: nanbeige'); "
                       "fail-fasted at load (0 cells). Needs a newer llama.cpp binary.",
 }

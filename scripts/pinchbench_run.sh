@@ -50,7 +50,17 @@ case "$MODEL" in
   # Qwen2.5/Qwen3 are 32K-native: llama.cpp CLAMPS n_ctx to 32768 unless YaRN is passed
   # EXPLICITLY (plain -c 131072 silently caps at 32K -> still overflows). factor 4 = 32K->128K.
   qwen2.5-7b-instruct|qwen3-8b)   CTX=131072; YARN_ARG="--rope-scaling yarn --rope-scale 4 --yarn-orig-ctx 32768" ;;
+  # big models (27B dense / 35B MoE) are large-context native; cap at 64K for VRAM safety on 40GB
+  qwen3.5-35b-a3b|qwen3.6-27b)    CTX=65536 ;;
   gemma-2-9b-it)                  CTX=8192 ;;
+esac
+# no-think for Qwen3.5/3.6 thinking models — else the agent burns its budget in <think>
+# and truncates (empty turns), same as the judge-free grid. Direct-answer mode is fair
+# for these explicitly dual-mode models.
+NOTHINK_ARG=""
+case "$MODEL" in
+  qwen3.5-35b-a3b|qwen3.6-27b|qwen3.5-9b|qwen3.5-4b)
+    NOTHINK_ARG='--chat-template-kwargs {"enable_thinking":false}' ;;
 esac
 # Optional chat-template override (e.g. CHAT_TEMPLATE=chatglm4). Empty = use the GGUF's.
 TPL_ARG=""
@@ -59,7 +69,7 @@ echo "[pb] model=$MODEL gguf=$GGUF ctx=$CTX yarn=${YARN_ARG:-no} template=${CHAT
 
 # start the llama-server
 /home/ubuntu/llama.cpp/llama-b9892/llama-server \
-  -m "$GGUF" -c "$CTX" --parallel 1 -ngl 999 $YARN_ARG $TPL_ARG --host 127.0.0.1 --port $PORT --no-webui \
+  -m "$GGUF" -c "$CTX" --parallel 1 -ngl 999 $YARN_ARG $NOTHINK_ARG $TPL_ARG --host 127.0.0.1 --port $PORT --no-webui \
   >/tmp/pb_llama_${MODEL}.log 2>&1 &
 LP=$!
 trap "kill $LP 2>/dev/null || true" EXIT

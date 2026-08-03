@@ -120,7 +120,25 @@ models:
   - name: qwen3.5-9b
     role: Qwen3.5-9B base — anchor for the Ornith/Tess Qwen3.5-9B finetunes
     gguf: { repo: lmstudio-community/Qwen3.5-9B-GGUF, file: "*Q4_K_M.gguf" }
+    no_think: true            # Qwen3.5 thinking model — run direct-answer (un-deferred 2026-08-03)
+    max_tokens_mult: 2
 
   - name: qwen3.5-4b
     role: Qwen3.5-4B base — floor tier (un-deferred; this GGUF is Q4_K_M, local was Q4_K_S)
     gguf: { repo: unsloth/Qwen3.5-4B-GGUF, file: "*Q4_K_M.gguf" }
+    no_think: true            # Qwen3.5 thinking model — run direct-answer (un-deferred 2026-08-03)
+    max_tokens_mult: 2
+
+  # Larger Qwen models added 2026-08-03 (stakeholder request). Bigger than the edge tier
+  # but requested for the leaderboard. Q4_K_M verified on HF at add time.
+  - name: qwen3.5-35b-a3b
+    role: Qwen3.5-35B-A3B — 35B MoE (~3B active), well-supported llama.cpp arch
+    gguf: { repo: bartowski/Qwen_Qwen3.5-35B-A3B-GGUF, file: "*Q4_K_M.gguf" }
+    no_think: true            # too verbose — thinking truncates (~30% empty even at 6x); run direct-answer
+    max_tokens_mult: 2        # direct answers are short; small buffer only
+
+  - name: qwen3.6-27b
+    role: Qwen3.6-27B — 27B dense (May 2026). NOVEL arch (Gated DeltaNet) — load-test on b9892 first
+    gguf: { repo: unsloth/Qwen3.6-27B-GGUF, file: "*Q4_K_M.gguf" }
+    no_think: true            # dual-mode — run direct-answer to avoid thinking-truncation
+    max_tokens_mult: 2

@@ -36,7 +36,13 @@ from src.models_fetch import ensure_gguf   # resolves/downloads the GGUF for a m
 # Multiple-choice benchmarks and their random-guess floor. A WORKING model cannot
 # score below chance here (worst case it guesses); a below-floor score means the
 # output is degenerate/unparseable -> the model is broken and gets aborted early.
-BROKEN_FLOORS = {"mmlu_pro": 0.10, "gpqa_diamond": 0.25}   # 10-way and 4-way MCQ
+# Broken-model floor: ONLY mmlu_pro (broad 10-way MCQ). A truly broken model (bad
+# chat-template/arch -> garbage) scores near-zero here. GPQA was REMOVED as a floor:
+# it's graduate-level science and verbose/thinking models legitimately score near-random
+# (they get truncated mid-reasoning before emitting a letter) — that's not "broken", and
+# using it as a floor wrongly excluded 6 valid models (2026-08-03). A single hard
+# benchmark must never delete a whole model.
+BROKEN_FLOORS = {"mmlu_pro": 0.10}
 
 
 def log(msg: str) -> None:

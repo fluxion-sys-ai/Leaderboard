@@ -3,7 +3,7 @@ data/
 # Model generations + scores are reproducible outputs, not source
 results/raw/
 # HF / llama.cpp model weights live outside the repo
-models/
+/models/
 # Python
 __pycache__/
 *.pyc

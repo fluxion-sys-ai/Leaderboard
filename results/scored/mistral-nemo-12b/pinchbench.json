@@ -1,0 +1,44 @@
+{
+  "metric": "pinchbench_pct",
+  "score": 0.0736,
+  "n": null,
+  "by_category": {
+    "PRODUCTIVITY": {
+      "score": 0.0,
+      "n": null
+    },
+    "RESEARCH": {
+      "score": 0.05,
+      "n": null
+    },
+    "WRITING": {
+      "score": 0.1125,
+      "n": null
+    },
+    "CODING": {
+      "score": 0.12,
+      "n": null
+    },
+    "ANALYSIS": {
+      "score": 0.0494,
+      "n": null
+    },
+    "CSV_ANALYSIS": {
+      "score": 0.063,
+      "n": null
+    },
+    "LOG_ANALYSIS": {
+      "score": 0.1062,
+      "n": null
+    },
+    "MEETING_ANALYSIS": {
+      "score": 0.0661,
+      "n": null
+    },
+    "MEMORY": {
+      "score": 0.0,
+      "n": null
+    }
+  },
+  "scorer": "pinchbench-harness (official)"
+}

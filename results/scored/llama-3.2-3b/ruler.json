@@ -1,0 +1,86 @@
+{
+  "metric": "accuracy",
+  "score": 0.7333,
+  "n": 150,
+  "passed": 110,
+  "ci95": [
+    0.6574,
+    0.7976
+  ],
+  "by_category": {
+    "cwe": {
+      "score": 0.0,
+      "n": 11
+    },
+    "fwe": {
+      "score": 0.4167,
+      "n": 12
+    },
+    "niah_multikey_1": {
+      "score": 0.8182,
+      "n": 11
+    },
+    "niah_multikey_2": {
+      "score": 1.0,
+      "n": 11
+    },
+    "niah_multikey_3": {
+      "score": 0.8333,
+      "n": 12
+    },
+    "niah_multiquery": {
+      "score": 0.9091,
+      "n": 11
+    },
+    "niah_multivalue": {
+      "score": 0.9167,
+      "n": 12
+    },
+    "niah_single_1": {
+      "score": 1.0,
+      "n": 12
+    },
+    "niah_single_2": {
+      "score": 1.0,
+      "n": 11
+    },
+    "niah_single_3": {
+      "score": 1.0,
+      "n": 14
+    },
+    "qa_1": {
+      "score": 0.4545,
+      "n": 11
+    },
+    "qa_2": {
+      "score": 0.4545,
+      "n": 11
+    },
+    "vt": {
+      "score": 0.6364,
+      "n": 11
+    }
+  },
+  "failure_breakdown": {
+    "missing_needle": 40
+  },
+  "model": "llama-3.2-3b",
+  "benchmark": "ruler",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785537321,
+  "perf": {
+    "prefill_tps": 10225.27,
+    "decode_tps": 181.36,
+    "ttft_ms": 733.06,
+    "mean_prompt_tokens": 7681.15,
+    "mean_completion_tokens": 36.23,
+    "total_gen_tokens": 5435,
+    "model_load_s": 4.0,
+    "gguf_mb": 2019.4,
+    "peak_vram_mb": 4286.0
+  }
+}

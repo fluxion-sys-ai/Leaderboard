@@ -1,11 +1,11 @@
 {
   "metric": "ifeval_strict_accuracy",
-  "score": 0.6433,
+  "score": 0.6467,
   "ci95": [
-    0.5876,
-    0.6954
+    0.591,
+    0.6986
   ],
-  "instruction_accuracy": 0.69,
+  "instruction_accuracy": 0.6921,
   "n": 300,
   "coverage": 1.0,
   "by_instruction_type": {
@@ -78,7 +78,7 @@
       "n": 17
     },
     "language:response_language": {
-      "acc": 0.4118,
+      "acc": 0.4706,
       "n": 17
     },
     "length_constraints:nth_paragraph_first_word": {

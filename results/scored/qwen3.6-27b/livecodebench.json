@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.5048,
+  "n": 105,
+  "passed": 53,
+  "ci95": [
+    0.4107,
+    0.5985
+  ],
+  "by_category": {
+    "easy": {
+      "score": 0.9583,
+      "n": 24
+    },
+    "hard": {
+      "score": 0.193,
+      "n": 57
+    },
+    "medium": {
+      "score": 0.7917,
+      "n": 24
+    }
+  },
+  "failure_breakdown": {
+    "wrong_output": 15,
+    "runtime_error": 37
+  },
+  "model": "qwen3.6-27b",
+  "benchmark": "livecodebench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.6-27b/Qwen3.6-27B-Q4_K_M.gguf",
+  "run_ts": 1785831796,
+  "perf": {
+    "prefill_tps": 997.19,
+    "decode_tps": 43.18,
+    "ttft_ms": 634.23,
+    "mean_prompt_tokens": 617.42,
+    "mean_completion_tokens": 1694.76,
+    "total_gen_tokens": 177950,
+    "model_load_s": 9.2,
+    "gguf_mb": 16817.2,
+    "peak_vram_mb": 17545.0
+  }
+}

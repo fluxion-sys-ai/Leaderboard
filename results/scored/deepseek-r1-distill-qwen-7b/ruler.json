@@ -1,0 +1,86 @@
+{
+  "metric": "accuracy",
+  "score": 0.24,
+  "n": 150,
+  "passed": 36,
+  "ci95": [
+    0.1787,
+    0.3143
+  ],
+  "by_category": {
+    "cwe": {
+      "score": 0.0,
+      "n": 11
+    },
+    "fwe": {
+      "score": 0.4167,
+      "n": 12
+    },
+    "niah_multikey_1": {
+      "score": 0.2727,
+      "n": 11
+    },
+    "niah_multikey_2": {
+      "score": 0.0909,
+      "n": 11
+    },
+    "niah_multikey_3": {
+      "score": 0.0,
+      "n": 12
+    },
+    "niah_multiquery": {
+      "score": 0.1818,
+      "n": 11
+    },
+    "niah_multivalue": {
+      "score": 0.1667,
+      "n": 12
+    },
+    "niah_single_1": {
+      "score": 0.5833,
+      "n": 12
+    },
+    "niah_single_2": {
+      "score": 0.8182,
+      "n": 11
+    },
+    "niah_single_3": {
+      "score": 0.2857,
+      "n": 14
+    },
+    "qa_1": {
+      "score": 0.0909,
+      "n": 11
+    },
+    "qa_2": {
+      "score": 0.1818,
+      "n": 11
+    },
+    "vt": {
+      "score": 0.0,
+      "n": 11
+    }
+  },
+  "failure_breakdown": {
+    "missing_needle": 114
+  },
+  "model": "deepseek-r1-distill-qwen-7b",
+  "benchmark": "ruler",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/deepseek-r1-distill-qwen-7b/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf",
+  "run_ts": 1785492009,
+  "perf": {
+    "prefill_tps": 5248.91,
+    "decode_tps": 126.5,
+    "ttft_ms": 1476.22,
+    "mean_prompt_tokens": 8246.94,
+    "mean_completion_tokens": 430.89,
+    "total_gen_tokens": 64633,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5582.0
+  }
+}

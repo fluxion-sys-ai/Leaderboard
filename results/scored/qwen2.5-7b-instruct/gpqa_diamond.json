@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.3586,
+  "n": 198,
+  "passed": 71,
+  "ci95": [
+    0.2951,
+    0.4275
+  ],
+  "by_category": {
+    "Biology": {
+      "score": 0.5789,
+      "n": 19
+    },
+    "Chemistry": {
+      "score": 0.2581,
+      "n": 93
+    },
+    "Physics": {
+      "score": 0.4186,
+      "n": 86
+    }
+  },
+  "failure_breakdown": {
+    "wrong_answer": 124,
+    "no_answer_parsed": 3
+  },
+  "model": "qwen2.5-7b-instruct",
+  "benchmark": "gpqa_diamond",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/models/gguf/Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+  "run_ts": 1785537330,
+  "perf": {
+    "prefill_tps": 2475.51,
+    "decode_tps": 138.14,
+    "ttft_ms": 76.57,
+    "mean_prompt_tokens": 258.47,
+    "mean_completion_tokens": 718.57,
+    "total_gen_tokens": 142276,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5481.0
+  }
+}

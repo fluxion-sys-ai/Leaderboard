@@ -1,9 +1,9 @@
 {
   "metric": "writing_judge_1to10",
-  "score": 0.695,
+  "score": 0.691,
   "ci95": [
-    0.6344,
-    0.7556
+    0.6323,
+    0.7497
   ],
   "n": 100,
   "judge_model": "deepseek/deepseek-chat-v3.1",

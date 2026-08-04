@@ -1,0 +1,86 @@
+{
+  "metric": "accuracy",
+  "score": 0.7,
+  "n": 150,
+  "passed": 105,
+  "ci95": [
+    0.6224,
+    0.7676
+  ],
+  "by_category": {
+    "cwe": {
+      "score": 0.0,
+      "n": 11
+    },
+    "fwe": {
+      "score": 0.0833,
+      "n": 12
+    },
+    "niah_multikey_1": {
+      "score": 0.9091,
+      "n": 11
+    },
+    "niah_multikey_2": {
+      "score": 0.9091,
+      "n": 11
+    },
+    "niah_multikey_3": {
+      "score": 0.8333,
+      "n": 12
+    },
+    "niah_multiquery": {
+      "score": 0.9091,
+      "n": 11
+    },
+    "niah_multivalue": {
+      "score": 0.4167,
+      "n": 12
+    },
+    "niah_single_1": {
+      "score": 1.0,
+      "n": 12
+    },
+    "niah_single_2": {
+      "score": 1.0,
+      "n": 11
+    },
+    "niah_single_3": {
+      "score": 1.0,
+      "n": 14
+    },
+    "qa_1": {
+      "score": 0.4545,
+      "n": 11
+    },
+    "qa_2": {
+      "score": 0.5455,
+      "n": 11
+    },
+    "vt": {
+      "score": 1.0,
+      "n": 11
+    }
+  },
+  "failure_breakdown": {
+    "missing_needle": 45
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "ruler",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785537358,
+  "perf": {
+    "prefill_tps": 9039.98,
+    "decode_tps": 156.57,
+    "ttft_ms": 821.39,
+    "mean_prompt_tokens": 7543.97,
+    "mean_completion_tokens": 20.57,
+    "total_gen_tokens": 3086,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5057.0
+  }
+}

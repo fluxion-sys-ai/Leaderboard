@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.197,
+  "n": 198,
+  "passed": 39,
+  "ci95": [
+    0.1476,
+    0.2579
+  ],
+  "by_category": {
+    "Biology": {
+      "score": 0.2632,
+      "n": 19
+    },
+    "Chemistry": {
+      "score": 0.1075,
+      "n": 93
+    },
+    "Physics": {
+      "score": 0.2791,
+      "n": 86
+    }
+  },
+  "failure_breakdown": {
+    "no_answer_parsed": 123,
+    "wrong_answer": 36
+  },
+  "model": "deepseek-r1-distill-qwen-7b",
+  "benchmark": "gpqa_diamond",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/deepseek-r1-distill-qwen-7b/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf",
+  "run_ts": 1785502562,
+  "perf": {
+    "prefill_tps": 2422.85,
+    "decode_tps": 132.4,
+    "ttft_ms": 80.38,
+    "mean_prompt_tokens": 232.47,
+    "mean_completion_tokens": 5938.14,
+    "total_gen_tokens": 1175751,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5582.0
+  }
+}

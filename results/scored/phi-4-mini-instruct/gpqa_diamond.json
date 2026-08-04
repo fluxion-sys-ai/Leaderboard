@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.3384,
+  "n": 198,
+  "passed": 67,
+  "ci95": [
+    0.2761,
+    0.4068
+  ],
+  "by_category": {
+    "Biology": {
+      "score": 0.4211,
+      "n": 19
+    },
+    "Chemistry": {
+      "score": 0.2903,
+      "n": 93
+    },
+    "Physics": {
+      "score": 0.3721,
+      "n": 86
+    }
+  },
+  "failure_breakdown": {
+    "no_answer_parsed": 10,
+    "wrong_answer": 121
+  },
+  "model": "phi-4-mini-instruct",
+  "benchmark": "gpqa_diamond",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/phi-4-mini-instruct/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+  "run_ts": 1785537359,
+  "perf": {
+    "prefill_tps": 5914.21,
+    "decode_tps": 180.36,
+    "ttft_ms": 32.62,
+    "mean_prompt_tokens": 226.29,
+    "mean_completion_tokens": 794.14,
+    "total_gen_tokens": 157240,
+    "model_load_s": 4.0,
+    "gguf_mb": 2491.9,
+    "peak_vram_mb": 5057.0
+  }
+}

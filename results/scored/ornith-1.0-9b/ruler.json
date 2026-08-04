@@ -1,0 +1,86 @@
+{
+  "metric": "accuracy",
+  "score": 0.0,
+  "n": 150,
+  "passed": 0,
+  "ci95": [
+    0.0,
+    0.025
+  ],
+  "by_category": {
+    "cwe": {
+      "score": 0.0,
+      "n": 11
+    },
+    "fwe": {
+      "score": 0.0,
+      "n": 12
+    },
+    "niah_multikey_1": {
+      "score": 0.0,
+      "n": 11
+    },
+    "niah_multikey_2": {
+      "score": 0.0,
+      "n": 11
+    },
+    "niah_multikey_3": {
+      "score": 0.0,
+      "n": 12
+    },
+    "niah_multiquery": {
+      "score": 0.0,
+      "n": 11
+    },
+    "niah_multivalue": {
+      "score": 0.0,
+      "n": 12
+    },
+    "niah_single_1": {
+      "score": 0.0,
+      "n": 12
+    },
+    "niah_single_2": {
+      "score": 0.0,
+      "n": 11
+    },
+    "niah_single_3": {
+      "score": 0.0,
+      "n": 14
+    },
+    "qa_1": {
+      "score": 0.0,
+      "n": 11
+    },
+    "qa_2": {
+      "score": 0.0,
+      "n": 11
+    },
+    "vt": {
+      "score": 0.0,
+      "n": 11
+    }
+  },
+  "failure_breakdown": {
+    "missing_needle": 150
+  },
+  "model": "ornith-1.0-9b",
+  "benchmark": "ruler",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
+  "run_ts": 1785542374,
+  "perf": {
+    "prefill_tps": 4211.08,
+    "decode_tps": 99.11,
+    "ttft_ms": 1917.71,
+    "mean_prompt_tokens": 8340.89,
+    "mean_completion_tokens": 128.0,
+    "total_gen_tokens": 19200,
+    "model_load_s": 4.0,
+    "gguf_mb": 5701.1,
+    "peak_vram_mb": 6012.0
+  }
+}

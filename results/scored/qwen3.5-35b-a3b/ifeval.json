@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.8333,
+  "ci95": [
+    0.787,
+    0.8712
+  ],
+  "instruction_accuracy": 0.8821,
+  "n": 300,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 0.7143,
+      "n": 14
+    },
+    "change_case:english_capital": {
+      "acc": 0.875,
+      "n": 16
+    },
+    "change_case:english_lowercase": {
+      "acc": 1.0,
+      "n": 21
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.8571,
+      "n": 21
+    },
+    "combination:two_responses": {
+      "acc": 1.0,
+      "n": 14
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.9167,
+      "n": 12
+    },
+    "detectable_content:postscript": {
+      "acc": 0.9,
+      "n": 10
+    },
+    "detectable_format:constrained_response": {
+      "acc": 0.5714,
+      "n": 7
+    },
+    "detectable_format:json_format": {
+      "acc": 1.0,
+      "n": 12
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 0.8571,
+      "n": 7
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 0.9286,
+      "n": 14
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 0.96,
+      "n": 25
+    },
+    "detectable_format:title": {
+      "acc": 0.95,
+      "n": 20
+    },
+    "keywords:existence": {
+      "acc": 1.0,
+      "n": 23
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.8889,
+      "n": 27
+    },
+    "keywords:frequency": {
+      "acc": 0.8846,
+      "n": 26
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.7059,
+      "n": 17
+    },
+    "language:response_language": {
+      "acc": 1.0,
+      "n": 17
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 1.0,
+      "n": 7
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.0,
+      "n": 13
+    },
+    "length_constraints:number_sentences": {
+      "acc": 0.8667,
+      "n": 30
+    },
+    "length_constraints:number_words": {
+      "acc": 0.9231,
+      "n": 26
+    },
+    "punctuation:no_comma": {
+      "acc": 0.8974,
+      "n": 39
+    },
+    "startend:end_checker": {
+      "acc": 0.8824,
+      "n": 17
+    },
+    "startend:quotation": {
+      "acc": 1.0,
+      "n": 23
+    }
+  },
+  "model": "qwen3.5-35b-a3b",
+  "benchmark": "ifeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-35b-a3b/Qwen_Qwen3.5-35B-A3B-Q4_K_M.gguf",
+  "run_ts": 1785783322,
+  "perf": {
+    "prefill_tps": 487.84,
+    "decode_tps": 109.44,
+    "ttft_ms": 109.94,
+    "mean_prompt_tokens": 57.88,
+    "mean_completion_tokens": 394.67,
+    "total_gen_tokens": 118402,
+    "model_load_s": 9.7,
+    "gguf_mb": 22285.1,
+    "peak_vram_mb": 21933.0
+  }
+}

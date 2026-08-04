@@ -1,7 +1,7 @@
 {
   "metric": "ifeval_strict_accuracy",
-  "score": 0.7867,
-  "instruction_accuracy": 0.8515,
+  "score": 0.7833,
+  "instruction_accuracy": 0.8493,
   "n": 300,
   "coverage": 1.0,
   "by_instruction_type": {
@@ -74,7 +74,7 @@
       "n": 17
     },
     "language:response_language": {
-      "acc": 0.8824,
+      "acc": 0.8235,
       "n": 17
     },
     "length_constraints:nth_paragraph_first_word": {
@@ -126,7 +126,7 @@
     "peak_vram_mb": 4343.0
   },
   "ci95": [
-    0.7368,
-    0.8292
+    0.7333,
+    0.8262
   ]
 }

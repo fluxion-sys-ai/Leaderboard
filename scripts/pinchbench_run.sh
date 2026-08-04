@@ -50,8 +50,10 @@ case "$MODEL" in
   # Qwen2.5/Qwen3 are 32K-native: llama.cpp CLAMPS n_ctx to 32768 unless YaRN is passed
   # EXPLICITLY (plain -c 131072 silently caps at 32K -> still overflows). factor 4 = 32K->128K.
   qwen2.5-7b-instruct|qwen3-8b)   CTX=131072; YARN_ARG="--rope-scaling yarn --rope-scale 4 --yarn-orig-ctx 32768" ;;
-  # big models (27B dense / 35B MoE) are large-context native; cap at 64K for VRAM safety on 40GB
-  qwen3.5-35b-a3b|qwen3.6-27b)    CTX=65536 ;;
+  # 27B dense / 35B MoE report context_length=262144 (256K native) in GGUF metadata, so plain
+  # -c 131072 needs NO YaRN. 64K was found to OVERFLOW csv/log tasks (compaction thrash -> 0.0s);
+  # 128K fits 40GB VRAM comfortably (27B measured ~20GB at 64K, ~28GB projected at 128K). [shujun: 128K]
+  qwen3.5-35b-a3b|qwen3.6-27b)    CTX=131072 ;;
   gemma-2-9b-it)                  CTX=8192 ;;
 esac
 # no-think for Qwen3.5/3.6 thinking models — else the agent burns its budget in <think>

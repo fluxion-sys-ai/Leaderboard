@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.1414,
+  "n": 198,
+  "passed": 28,
+  "ci95": [
+    0.0997,
+    0.1968
+  ],
+  "by_category": {
+    "Biology": {
+      "score": 0.1053,
+      "n": 19
+    },
+    "Chemistry": {
+      "score": 0.1505,
+      "n": 93
+    },
+    "Physics": {
+      "score": 0.1395,
+      "n": 86
+    }
+  },
+  "failure_breakdown": {
+    "wrong_answer": 66,
+    "no_answer_parsed": 104
+  },
+  "model": "llama-xlam-2-8b-fc",
+  "benchmark": "gpqa_diamond",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/llama-xlam-2-8b-fc/Llama-xLAM-2-8B-fc-r-Q4_K_M.gguf",
+  "run_ts": 1785541813,
+  "perf": {
+    "prefill_tps": 2173.34,
+    "decode_tps": 129.22,
+    "ttft_ms": 93.06,
+    "mean_prompt_tokens": 240.37,
+    "mean_completion_tokens": 207.57,
+    "total_gen_tokens": 41098,
+    "model_load_s": 4.0,
+    "gguf_mb": 4920.7,
+    "peak_vram_mb": 7223.0
+  }
+}

@@ -24,9 +24,9 @@ for M in qwen2.5-7b-instruct qwen3-8b qwen3.5-9b; do   # glm-4-9b skipped (tool-
   if [ "$M" = "qwen3.5-9b" ]; then
     say "qwen3.5-9b grid fill (8 missing): aime2026 zebralogic gpqa_diamond babilong ruler writing bfcl simpleqa"
     python3 run_benchmark.py --models qwen3.5-9b --benchmarks aime2026 zebralogic gpqa_diamond babilong ruler writing bfcl simpleqa >> "$L" 2>&1 || say "qwen3.5-9b grid errored"
-    python3 judge_writing.py  >> "$L" 2>&1
-    python3 judge_simpleqa.py >> "$L" 2>&1
-    python3 rescore_all.py    >> "$L" 2>&1
+    # [daemon-handles] python3 judge_writing.py  >> "$L" 2>&1
+    # [daemon-handles] python3 judge_simpleqa.py >> "$L" 2>&1
+    # [daemon-handles] python3 rescore_all.py    >> "$L" 2>&1
     pkill -f 'llama-server' 2>/dev/null; sleep 8   # free port 8081 for the pinch server (solo-GPU)
     say "qwen3.5-9b grid fill done -> proceeding to PinchBench"
   fi
@@ -50,7 +50,7 @@ for M in qwen2.5-7b-instruct qwen3-8b qwen3.5-9b; do   # glm-4-9b skipped (tool-
   wait "$PBPID"
   pkill -f 'llama-server' 2>/dev/null; sleep 8
   python3 import_pinchbench.py >> "$L" 2>&1
-  python3 -m src.report.build_leaderboard >> "$L" 2>&1
+  # [daemon-handles] python3 -m src.report.build_leaderboard >> "$L" 2>&1
   rm -rf "models/$M" 2>/dev/null   # free disk for the next
 done
 # exaone-4.5-33b PinchBench — was gate-SKIPPED on a PARTIAL avg (54.3, writing unjudged); it's now
@@ -61,7 +61,7 @@ say "exaone-4.5-33b PinchBench @128K (FORCE — shujun wants it; no_think auto)"
 FORCE_PINCH=1 bash scripts/pinchbench_run.sh exaone-4.5-33b >> "$L" 2>&1 || say "exaone pinch skipped/errored"
 pkill -f 'llama-server' 2>/dev/null; sleep 8
 python3 import_pinchbench.py >> "$L" 2>&1
-python3 -m src.report.build_leaderboard >> "$L" 2>&1
+# [daemon-handles] python3 -m src.report.build_leaderboard >> "$L" 2>&1
 cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
 rm -rf models/exaone-4.5-33b 2>/dev/null
 

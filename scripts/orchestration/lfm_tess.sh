@@ -58,9 +58,9 @@ PY
   rm -rf models/$M 2>/dev/null
 done
 
-python3 judge_writing.py  >> "$L" 2>&1
-python3 judge_simpleqa.py >> "$L" 2>&1
-python3 rescore_all.py    >> "$L" 2>&1
-python3 -m src.report.build_leaderboard >> "$L" 2>&1
+# [daemon-handles] python3 judge_writing.py  >> "$L" 2>&1
+# [daemon-handles] python3 judge_simpleqa.py >> "$L" 2>&1
+# [daemon-handles] python3 rescore_all.py    >> "$L" 2>&1
+# [daemon-handles] python3 -m src.report.build_leaderboard >> "$L" 2>&1
 cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
 say "TAIL RERUNS DONE — everything complete"

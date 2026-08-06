@@ -161,7 +161,7 @@ models:
   - name: gpt-oss-20b
     role: gpt-oss-20b (Aug 2025) — OpenAI open MoE (~3.6B active), harmony reasoning fmt; SMOKE-TEST harmony + reasoning-effort before trusting a full run
     gguf: { repo: unsloth/gpt-oss-20b-GGUF, file: "*Q4_K_M.gguf" }
-    template_kwargs: { reasoning_effort: low }   # gpt-oss uses harmony reasoning_effort, NOT enable_thinking (no_think was a no-op for it)
+    template_kwargs: { reasoning_effort: medium }   # gpt-oss uses harmony reasoning_effort, NOT enable_thinking (no_think was a no-op for it)
     max_tokens_mult: 2
 
 # gemma-4-31b (bonus) MOVED TO VERY END (2026-08-05) — pulled from config so the running stage2

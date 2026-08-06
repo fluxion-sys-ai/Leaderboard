@@ -29,13 +29,11 @@ rm -rf results/scored/gemma-4-e4b results/raw/gemma-4-e4b   # clear the contamin
 say "grid (no_think on)"
 python3 run_benchmark.py --models gemma-4-e4b --benchmarks $BENCH >> "$L" 2>&1 || say "gemma-4-e4b grid errored"
 if ls results/scored/gemma-4-e4b/*.json >/dev/null 2>&1; then
-  python3 judge_writing.py  >> "$L" 2>&1
-  python3 judge_simpleqa.py >> "$L" 2>&1
-  python3 rescore_all.py    >> "$L" 2>&1
+  :   # judging/rescoring/rebuild handled concurrently by the judge daemon
 else
   say "!! gemma-4-e4b produced NO grid scores — flag."
 fi
-python3 -m src.report.build_leaderboard >> "$L" 2>&1
+# [daemon-handles] python3 -m src.report.build_leaderboard >> "$L" 2>&1
 cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
 rm -rf models/gemma-4-e4b 2>/dev/null
 say "GEMMA-4-E4B RERUN DONE — everything complete"

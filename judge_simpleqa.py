@@ -69,6 +69,26 @@ def main():
     if not models:
         print("no simpleqa responses to judge yet"); return
 
+    # Only judge NEW + COMPLETE models (skip already-judged → no LLM-judge drift; skip partial
+    # generations). Lets a continuous concurrent daemon call this safely without re-grading.
+    counts = {m: sum(1 for r in read_jsonl(raw_path(m, "simpleqa")) if r.get("task_id") in tasks)
+              for m in models}
+    expected = max(counts.values()) if counts else 0
+    def _needs(model):
+        sp = scored_path(model, "simpleqa")
+        if os.path.exists(sp):
+            try:
+                d = json.load(open(sp))
+                if d.get("score") is not None and not d.get("judge_pending"):
+                    return False
+            except Exception:
+                pass
+        return counts[model] >= expected
+    models = [m for m in models if _needs(m)]
+    if not models:
+        print("no NEW complete simpleqa responses to judge"); return
+    print(f"judging (new + complete only): {models}", flush=True)
+
     for model in models:
         rows = [r for r in read_jsonl(raw_path(model, "simpleqa")) if r["task_id"] in tasks]
         with ThreadPoolExecutor(max_workers=12) as ex:

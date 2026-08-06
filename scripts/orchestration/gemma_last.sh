@@ -37,9 +37,9 @@ else
   say "!! gemma produced NO grid scores — flag."
 fi
 # judge gemma's writing/simpleqa + final rebuild
-python3 judge_writing.py  >> "$L" 2>&1
-python3 judge_simpleqa.py >> "$L" 2>&1
-python3 rescore_all.py    >> "$L" 2>&1
-python3 -m src.report.build_leaderboard >> "$L" 2>&1
+# [daemon-handles] python3 judge_writing.py  >> "$L" 2>&1
+# [daemon-handles] python3 judge_simpleqa.py >> "$L" 2>&1
+# [daemon-handles] python3 rescore_all.py    >> "$L" 2>&1
+# [daemon-handles] python3 -m src.report.build_leaderboard >> "$L" 2>&1
 cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
 say "GEMMA-LAST DONE — everything complete"

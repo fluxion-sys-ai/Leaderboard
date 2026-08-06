@@ -1,7 +1,7 @@
 {
   "metric": "ifeval_strict_accuracy",
   "score": 0.68,
-  "instruction_accuracy": 0.7816,
+  "instruction_accuracy": 0.7837,
   "n": 300,
   "coverage": 1.0,
   "by_instruction_type": {
@@ -74,7 +74,7 @@
       "n": 19
     },
     "language:response_language": {
-      "acc": 0.7778,
+      "acc": 0.8889,
       "n": 9
     },
     "length_constraints:nth_paragraph_first_word": {

@@ -1,8 +1,8 @@
 {
   "metric": "simpleqa_accuracy",
-  "score": 0.1038,
-  "n": 289,
-  "correct": 30,
+  "score": 0.1069,
+  "n": 290,
+  "correct": 31,
   "incorrect": 259,
   "not_attempted": 0,
   "not_attempted_rate": 0.0,

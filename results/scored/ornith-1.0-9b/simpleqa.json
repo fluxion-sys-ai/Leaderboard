@@ -1,25 +1,11 @@
 {
   "metric": "simpleqa_accuracy",
-  "score": null,
-  "judge_pending": true,
+  "score": 0.07,
   "n": 300,
-  "model": "ornith-1.0-9b",
-  "benchmark": "simpleqa",
-  "quant": "Q4_K_M",
-  "runner": "llamacpp",
-  "n_ctx": 20480,
-  "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1786038353,
-  "perf": {
-    "prefill_tps": 455.81,
-    "decode_tps": 103.93,
-    "ttft_ms": 76.19,
-    "mean_prompt_tokens": 35.61,
-    "mean_completion_tokens": 180.91,
-    "total_gen_tokens": 54272,
-    "model_load_s": 8.0,
-    "gguf_mb": 5701.1,
-    "peak_vram_mb": 6004.0
-  }
+  "correct": 21,
+  "incorrect": 279,
+  "not_attempted": 0,
+  "not_attempted_rate": 0.0,
+  "judge_model": "deepseek/deepseek-chat-v3.1",
+  "judge_pending": false
 }

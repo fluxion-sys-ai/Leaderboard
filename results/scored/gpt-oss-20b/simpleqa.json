@@ -1,25 +1,11 @@
 {
   "metric": "simpleqa_accuracy",
-  "score": null,
-  "judge_pending": true,
-  "n": 300,
-  "model": "gpt-oss-20b",
-  "benchmark": "simpleqa",
-  "quant": "Q4_K_M",
-  "runner": "llamacpp",
-  "n_ctx": 20480,
-  "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gpt-oss-20b/gpt-oss-20b-Q4_K_M.gguf",
-  "run_ts": 1786012579,
-  "perf": {
-    "prefill_tps": 386.01,
-    "decode_tps": 179.61,
-    "ttft_ms": 73.19,
-    "mean_prompt_tokens": 89.51,
-    "mean_completion_tokens": 140.79,
-    "total_gen_tokens": 42237,
-    "model_load_s": 6.9,
-    "gguf_mb": 11624.8,
-    "peak_vram_mb": 11757.0
-  }
+  "score": 0.0524,
+  "n": 286,
+  "correct": 15,
+  "incorrect": 271,
+  "not_attempted": 0,
+  "not_attempted_rate": 0.0,
+  "judge_model": "deepseek/deepseek-chat-v3.1",
+  "judge_pending": false
 }

@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.5253,
+  "n": 198,
+  "passed": 104,
+  "ci95": [
+    0.4559,
+    0.5937
+  ],
+  "by_category": {
+    "Biology": {
+      "score": 0.6842,
+      "n": 19
+    },
+    "Chemistry": {
+      "score": 0.4624,
+      "n": 93
+    },
+    "Physics": {
+      "score": 0.5581,
+      "n": 86
+    }
+  },
+  "failure_breakdown": {
+    "wrong_answer": 90,
+    "no_answer_parsed": 4
+  },
+  "model": "mistral-small-3.2-24b",
+  "benchmark": "gpqa_diamond",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/mistral-small-3.2-24b/Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf",
+  "run_ts": 1785921030,
+  "perf": {
+    "prefill_tps": 1216.79,
+    "decode_tps": 60.25,
+    "ttft_ms": 152.82,
+    "mean_prompt_tokens": 777.72,
+    "mean_completion_tokens": 712.65,
+    "total_gen_tokens": 141105,
+    "model_load_s": 10.6,
+    "gguf_mb": 14333.9,
+    "peak_vram_mb": 22837.0
+  }
+}

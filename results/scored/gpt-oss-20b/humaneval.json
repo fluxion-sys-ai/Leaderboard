@@ -1,0 +1,37 @@
+{
+  "metric": "accuracy",
+  "score": 0.8659,
+  "n": 164,
+  "passed": 142,
+  "ci95": [
+    0.8052,
+    0.9097
+  ],
+  "failure_breakdown": {
+    "fail": 15,
+    "error:nonzero_exit": 3,
+    "error:TypeError: Value after * must be an iterable, not float": 1,
+    "error:ValueError: n must be positive": 1,
+    "error:SyntaxError: unmatched ')'": 1,
+    "error:IndexError: list index out of range": 1
+  },
+  "model": "gpt-oss-20b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gpt-oss-20b/gpt-oss-20b-Q4_K_M.gguf",
+  "run_ts": 1786007614,
+  "perf": {
+    "prefill_tps": 1497.07,
+    "decode_tps": 178.49,
+    "ttft_ms": 97.74,
+    "mean_prompt_tokens": 213.46,
+    "mean_completion_tokens": 282.04,
+    "total_gen_tokens": 46254,
+    "model_load_s": 6.9,
+    "gguf_mb": 11624.8,
+    "peak_vram_mb": 11757.0
+  }
+}

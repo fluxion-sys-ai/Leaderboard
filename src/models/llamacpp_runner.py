@@ -52,6 +52,12 @@ class LlamaCppRunner(ModelRunner):
         # is a legitimate, reported config for these explicitly dual-mode models.
         if self.cfg.get("no_think"):
             cmd += ["--chat-template-kwargs", '{"enable_thinking": false}']
+        elif self.cfg.get("template_kwargs"):
+            # custom chat-template-kwargs for models that DON'T use enable_thinking —
+            # e.g. gpt-oss (harmony format) wants {"reasoning_effort": "low"} to keep
+            # reasoning short so it reaches the final channel before the token cap.
+            import json as _json
+            cmd += ["--chat-template-kwargs", _json.dumps(self.cfg["template_kwargs"])]
         # Speculative-decoding mode: attach a draft model → llama-server logs
         # per-position acceptance we parse back out. Only when cfg['draft'] is set.
         self._spec = bool(self.cfg.get("draft"))

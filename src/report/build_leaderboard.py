@@ -1,23 +1,61 @@
 """Leaderboard builder — renders results/scored/ into one self-contained HTML page.
 
-Mirrors the Fluxion Edge Leaderboard columns (Score, Agent score, Prefill,
-Decode, Battery, Hardware) and layers on our richer data: every capability
-dimension, click-to-expand category splits + failure reasons, and per-position
-speculative-decode acceptance.
+Three interactive views (tabs), light/dark, click-to-sort, size-ordered big→small:
+  1. Benchmarks   — every individual score, per model.
+  2. Dimensions   — individual scores grouped by dimension + per-dimension average.
+  3. Averages     — flat average and dimension-weighted average.
 
-Battery + Hardware are device-specific (Fluxion's hardware axis) — we run on one
-A100, so they show "—" as placeholders to keep the leaderboard shape aligned.
-
-Reads only results/scored/*/*.json (+ results/spec/ for acceptance). Safe on
-partial grids. Output: leaderboard.html at the repo root.
+See docs/leaderboard_design.md. Reads only results/scored/*/*.json (+ scored_official
+overrides). Safe on partial grids. Output: leaderboard.html at the repo root.
 """
 from __future__ import annotations
 import glob
 import html
 import json
+import re
 import statistics
+from itertools import groupby
 
 from ..utils.helpers import RESULTS, REPO_ROOT
+
+# Per-run specs: a universal block (shown up top) + per-(model,benchmark) overrides for scores
+# produced under non-default settings (e.g. gpt-oss reruns at reasoning_effort=medium). Written by
+# the run scripts (configs/score_specs.json); absent/empty is fine.
+try:
+    _SPECS = json.load(open(REPO_ROOT / "configs" / "score_specs.json"))
+except Exception:
+    _SPECS = {"universal": {}, "overrides": {}}
+SPEC_UNIVERSAL = _SPECS.get("universal", {})
+SPEC_OVERRIDES = _SPECS.get("overrides", {})   # {model: {benchmark: note}} — per-BENCH deviations
+
+# Per-model non-universal toggles, from models.yaml — applied uniformly across a model's benches
+# (one server per model). Shown on hover of ANY of that model's scores.
+try:
+    import yaml as _yaml
+    _MODELS = {m["name"]: m for m in _yaml.safe_load(open(REPO_ROOT / "configs" / "models.yaml"))["models"]}
+except Exception:
+    _MODELS = {}
+
+def _model_settings(model, key=None):
+    m = _MODELS.get(model or "", {})
+    tk = m.get("template_kwargs") or {}
+    bits = []
+    if m.get("no_think"):
+        bits.append("no_think=true")
+    if tk.get("reasoning_effort"):
+        bits.append(f"reasoning_effort={tk['reasoning_effort']}")
+    if m.get("max_tokens_mult"):
+        bits.append(f"max_tokens_mult={m['max_tokens_mult']}")
+    return " · ".join(bits) if bits else "model defaults (no toggles)"
+
+def _has_override(model, key):
+    return bool((SPEC_OVERRIDES.get(model or "", {}) or {}).get(key or ""))
+
+def cell_title(model, key):
+    """Full per-score settings for the hover/click: per-model toggles + any per-bench override."""
+    base = _model_settings(model, key)
+    override = (SPEC_OVERRIDES.get(model or "", {}) or {}).get(key or "")
+    return f"{base} — {override}" if override else base
 
 # (key, short header, full label, TYPE) — grouped by capability type, in display order.
 DIMENSIONS = [
@@ -35,23 +73,25 @@ DIMENSIONS = [
     ("ruler",           "RULER",    "Long-context — RULER (retrieval @ 8k)", "Long-context"),
     ("writing",         "Writing",  "Writing — AlpacaEval (LLM-judge 1-10)", "Writing"),
     ("bfcl",            "BFCL",     "Agentic — BFCL (tool-use, single call)","Agentic"),
-    ("pinchbench",      "PinchBench","Agentic — PinchBench (116-task multi-turn agent; Fluxion's metric, official grader)","Agentic"),
-    # Factuality/SimpleQA EXCLUDED from the Average + table (2026-08-03): edge models
-    # confidently hallucinate on long-tail facts (never abstain) so it's single-digit for
-    # everyone and doesn't differentiate — scores still computed + kept in results/scored/.
-    # ("simpleqa",      "SimpleQA", "Factuality — SimpleQA (recall + calibration)","Factuality"),
+    ("pinchbench",      "PinchBench","Agentic — PinchBench (116-task multi-turn agent)","Agentic"),
+    # Factuality/SimpleQA excluded from averages (2026-08-03) — everyone single-digit, no signal.
+    # ("simpleqa",      "SimpleQA", "Factuality — SimpleQA","Factuality"),
 ]
+DIM_TYPES = [t for t, _ in groupby(DIMENSIONS, key=lambda d: d[3])]   # ordered unique types
+OFFICIAL_SCORERS = {"humaneval": "evalplus"}
+
+# Param count (billions) for size ordering. Parsed from the name; overrides for odd ones.
+SIZE_OVERRIDE = {"phi-4-mini-instruct": 3.8, "gemma-4-e4b": 4.0}
 
 
-# Benchmarks scored by the OFFICIAL reference package (not our in-repo scorer),
-# because their scoring is too complex to reimplement comparably (code execution,
-# AST match, nuanced constraint checks). Their score comes from results/scored_official/.
-# The rest use our in-repo scorers (fine for easy extract-and-match scoring).
-OFFICIAL_SCORERS = {"humaneval": "evalplus"}   # + ifeval, bfcl as they're wired
+def model_size(name: str) -> float:
+    if name in SIZE_OVERRIDE:
+        return SIZE_OVERRIDE[name]
+    m = re.findall(r"(\d+(?:\.\d+)?)b", name.lower())   # first "<n>b" token = total params
+    return float(m[0]) if m else 0.0
 
 
 def load_cells() -> dict:
-    """model -> {benchmark -> scored dict, plus '_spec' with acceptance if present}."""
     cells: dict = {}
     for f in glob.glob(str(RESULTS / "scored" / "*" / "*.json")):
         model, bench = f.split("/")[-2], f.split("/")[-1][:-5]
@@ -59,8 +99,6 @@ def load_cells() -> dict:
             cells.setdefault(model, {})[bench] = json.load(open(f))
         except (json.JSONDecodeError, OSError):
             pass
-    # Override with official scores where we have them (keep in-repo perf/splits,
-    # but the headline `score` and the ranking come from the reference package).
     for f in glob.glob(str(RESULTS / "scored_official" / "*" / "*.json")):
         model, bench = f.split("/")[-2], f.split("/")[-1][:-5]
         if bench not in OFFICIAL_SCORERS or model not in cells or bench not in cells[model]:
@@ -71,51 +109,36 @@ def load_cells() -> dict:
             cells[model][bench]["scorer"] = f"{OFFICIAL_SCORERS[bench]} (official)"
         except (json.JSONDecodeError, OSError, KeyError):
             pass
-    for f in glob.glob(str(RESULTS / "spec" / "scored" / "*" / "*.json")):
-        model = f.split("/")[-2]
-        try:
-            spec = json.load(open(f)).get("perf", {}).get("spec")
-            if spec:
-                cells.setdefault(model, {}).setdefault("_spec", spec)
-        except (json.JSONDecodeError, OSError):
-            pass
     return cells
 
 
-def agent_score(row: dict) -> float | None:
-    """Average = each of the 6 capability DIMENSIONS weighted EQUALLY, 0-100.
-
-    Benchmarks are averaged WITHIN a dimension first, then the dimensions are
-    averaged. So 4 Reasoning benchmarks don't out-vote the 1 Long-context one —
-    every capability gets an equal say, and the weighting isn't an accident of how
-    many benchmarks a dimension happens to have. (DIMENSIONS is ordered by type, so
-    groupby yields one group per dimension.)
-    """
-    from itertools import groupby
-    dim_means = []
-    for _typ, group in groupby(DIMENSIONS, key=lambda d: d[3]):
-        xs = [row[k]["score"] for k, *_ in group if k in row and row[k].get("score") is not None]
-        if xs:
-            dim_means.append(statistics.mean(xs))
-    return round(100 * statistics.mean(dim_means), 1) if dim_means else None
+def score_of(row: dict, key: str):
+    c = row.get(key)
+    return c.get("score") if c and c.get("score") is not None else None
 
 
-def perf_of(row: dict) -> dict:
-    """Median speed/memory across a model's cells."""
-    perfs = [c["perf"] for b, c in row.items() if isinstance(c, dict) and "perf" in c]
-    if not perfs:
-        return {}
-    med = lambda k: round(statistics.median([p[k] for p in perfs if p.get(k)]), 1) \
-        if any(p.get(k) for p in perfs) else None
-    return {"decode_tps": med("decode_tps"), "prefill_tps": med("prefill_tps"),
-            "ttft_ms": med("ttft_ms"), "peak_vram_mb": med("peak_vram_mb"),
-            "gguf_mb": perfs[0].get("gguf_mb")}
+def dim_avg(row: dict, typ: str):
+    xs = [score_of(row, k) for k, _s, _l, t in DIMENSIONS if t == typ and score_of(row, k) is not None]
+    return round(100 * statistics.mean(xs), 1) if xs else None
 
 
-def heat(v: float | None) -> str:
+def flat_avg(row: dict):
+    xs = [score_of(row, k) for k, *_ in DIMENSIONS if score_of(row, k) is not None]
+    return round(100 * statistics.mean(xs), 1) if xs else None
+
+
+def weighted_avg(row: dict):
+    """Each dimension weighted equally: mean of per-dimension means ×100."""
+    ds = [dim_avg(row, t) for t in DIM_TYPES]
+    ds = [d for d in ds if d is not None]
+    return round(statistics.mean(ds), 1) if ds else None
+
+
+def heat(v):
     if v is None:
-        return "background:transparent;color:var(--mut)"
-    stops = [(0.0, (198, 74, 74)), (0.5, (214, 161, 74)), (1.0, (42, 158, 122))]
+        return "background:transparent"
+    # Fluxion palette: warm red → amber (#D9A45E) → green (#4EC98F)
+    stops = [(0.0, (194, 94, 94)), (0.5, (217, 164, 94)), (1.0, (78, 201, 143))]
     for (a, ca), (b, cb) in zip(stops, stops[1:]):
         if v <= b:
             t = (v - a) / (b - a) if b > a else 0
@@ -123,179 +146,393 @@ def heat(v: float | None) -> str:
             break
     else:
         rgb = stops[-1][1]
-    return f"background:rgba({rgb[0]},{rgb[1]},{rgb[2]},0.85);color:#0b0e13;font-weight:600"
+    return f"background:rgba({rgb[0]},{rgb[1]},{rgb[2]},.88);color:#0b0e13;font-weight:600"
 
 
-def _cell(v):
-    return f'<td class="sc" style="{heat(v)}">{v:.3f}</td>' if v is not None else \
-           '<td class="sc na">·</td>'
-
-
-def _num(v, suffix=""):
-    return f'<td class="pf">{v}{suffix}</td>' if v is not None else '<td class="pf na">·</td>'
-
-
-def _detail_panel(row: dict) -> str:
-    parts = []
-    for key, _sh, label, _typ in DIMENSIONS:
-        c = row.get(key)
-        if not c:
-            continue
-        sc = c.get("score")
-        sc_str = f"{sc:.3f}" if sc is not None else "pending judge"
-        ci = c.get("ci95")
-        ci_str = ""
-        if ci and sc is not None and len(ci) == 2:
-            ci_str = f' <span class="mut">±{(ci[1] - ci[0]) / 2:.3f} (95%)</span>'
-        scorer = c.get("scorer", "in-repo scorer")
-        bits = [f'<div class="dh">{html.escape(label)} — <b>{sc_str}</b>{ci_str} '
-                f'<span class="mut">(n={c.get("n","?")}, {html.escape(scorer)})</span></div>']
-        cats = c.get("by_category") or c.get("by_instruction_type")
-        if cats:
-            def _sv(d):
-                return d.get("score", d.get("acc", 0.0))
-            items = sorted(cats.items(), key=lambda x: _sv(x[1]))
-            chips = "".join(
-                f'<span class="chip" style="{heat(_sv(d))}">{html.escape(str(cat))} {_sv(d):.2f}</span>'
-                for cat, d in items)
-            bits.append(f'<div class="chips">{chips}</div>')
-        if c.get("failure_breakdown"):
-            fb = " · ".join(f"{k}: {v}" for k, v in c["failure_breakdown"].items())
-            bits.append(f'<div class="fail">✗ {html.escape(fb)}</div>')
-        parts.append(f'<div class="dblock">{"".join(bits)}</div>')
-    spec = row.get("_spec")
-    if spec and spec.get("per_pos_acceptance"):
-        pp = ", ".join(f"{x:.2f}" for x in spec["per_pos_acceptance"])
-        parts.append(f'<div class="dblock"><div class="dh">Speculative decoding — '
-                     f'&tau;={spec.get("tau")}, accept-rate={spec.get("accept_rate")}</div>'
-                     f'<div class="pp">acc per pos = ({pp})</div></div>')
-    else:
-        parts.append('<div class="dblock"><div class="dh">Speculative decoding</div>'
-                     '<div class="mut">per-position acceptance pending the spec-decode pass '
-                     '(<code>run_benchmark.py --spec</code>)</div></div>')
-    return f'<tr class="detail" hidden><td colspan="99"><div class="dwrap">{"".join(parts)}</div></td></tr>'
-
-
-# Models whose runs are known-bad and must NOT pollute the board. Raw data is kept
-# on disk for investigation; they're just hidden from ranking. Reason is documented.
 EXCLUDED = {
-    "gemma-4-12b": "broken run — scored 3x below its own 4B sibling and BELOW RANDOM on "
-                   "MMLU-Pro (0.071 < 0.10); likely chat-template / arch mismatch on b9892. "
-                   "Raw kept in results/; needs re-run on a newer binary.",
-    # qwen3.5-9b / qwen3.5-4b un-deferred 2026-08-03: now run in no-think mode (see models.yaml)
-    "nanbeige4.2-3b": "broken — b9892 can't load it ('unknown model architecture: nanbeige'); "
-                      "fail-fasted at load (0 cells). Needs a newer llama.cpp binary.",
+    "nanbeige4.2-3b": "broken — b9892 can't load arch 'nanbeige'.",
 }
-# models the runner auto-aborted as broken (below-random on an MCQ cell) land here
+# Temporarily hidden from ALL tables/charts — contaminated grids pending a clean rerun, or scores
+# that are misleading and not readily fixable. File-driven so a rerun script un-hides a model the
+# instant its grid comes back clean (see configs/hidden_models.json).
+try:
+    HIDDEN = json.load(open(REPO_ROOT / "configs" / "hidden_models.json"))
+except Exception:
+    HIDDEN = {}
 _auto = RESULTS / "excluded.txt"
 if _auto.exists():
     for name in _auto.read_text().split():
-        EXCLUDED.setdefault(name.strip(), "auto-excluded: aborted as broken (below-random on a multiple-choice cell)")
+        EXCLUDED.setdefault(name.strip(), "auto-excluded: aborted as broken (below-random MCQ cell).")
+
+# Universal run parameters — same for EVERY model, shown once at the top.
+PARAMS = ("NVIDIA A100-SXM4-40GB · Q4_K_M GGUF · llama.cpp b9892 · greedy (temp 0) · grid n_ctx 20K "
+          "(fits RULER 8K + BaBILong 16K) · PinchBench n_ctx 128K · judge DeepSeek-v3.1 · "
+          "reasoning models no_think (direct) · gpt-oss reasoning_effort=low (default)")
+
+def _universal_html():
+    """Universal run settings as a readable grid of labelled cards (not a run-on string)."""
+    cards = "".join(
+        f'<div class="uv"><span class="uvk">{html.escape(k)}</span><span class="uvv">{html.escape(str(v))}</span></div>'
+        for k, v in SPEC_UNIVERSAL.items())
+    return (f'<div class="specgrid"><span class="pk">universal · same for every model unless a ◆ score says otherwise</span>'
+            f'<div class="uvlist">{cards}</div></div>')
+
+
+def _deviations_html():
+    """A footnote listing every score produced under a NON-default spec (marked ◆ in the tables)."""
+    items = [f'<li><code>{html.escape(m)}</code> · <b>{html.escape(b)}</b> — {html.escape(note)}</li>'
+             for m, benches in SPEC_OVERRIDES.items() for b, note in (benches or {}).items()]
+    if not items:
+        return ""
+    return (f'<div class="devs"><span class="pk">spec deviations ◆</span>'
+            f'<ul>{"".join(items)}</ul></div>')
+
+# Model-specific caveats — a ⚑ flag on the model name + a footnote. A score being
+# "understated" means the true capability is higher; the low number is a known artifact.
+NOTES = {
+    "gemma-2-9b-it": "8K-native context: BaBILong-16k and PinchBench overflow it → those two are context-capped, not capability.",
+    "mistral-nemo-12b": "PinchBench near-zero is a tool-call PARSE failure (harness doesn't execute its tool format), not incapability — agentic score understated.",
+    "glm-4-9b-0414": "PinchBench near-zero is a tool-call PARSE failure (glm-toolfix pending), not incapability — agentic score understated.",
+    "qwen3-8b": "BaBILong ~0 is an empty-output extraction bug (reasoning tokens stripped, no answer parsed) — long-context understated.",
+    "deepseek-r1-distill-qwen-7b": "BaBILong ~0 is an empty-output extraction bug on this reasoning model — long-context understated.",
+    "exaone-4.5-33b": "Long-context is a genuine weakness (RULER 0.02, BaBILong 0.41): output degenerates into repetition on long retrieval (verified NOT empty — not a harness/no_think bug). Short-context is strong (IFEval 0.84, GSM8K 0.97).",
+}
+
+
+# ── cell renderers (data-v drives client-side sort; -1 sinks blanks) ──
+def sc(v, model=None, key=None):   # 0..1 benchmark score — click shows this score's config
+    if v is None:
+        return '<td class="sc na" data-v="-1">·</td>'
+    spec = cell_title(model, key) if (model and key) else ""
+    over = ' ◆ non-default' if (model and key and _has_override(model, key)) else ""
+    attrs = (f' title="{html.escape(spec)}" data-spec="{html.escape(spec + over)}"'
+             f' data-mk="{html.escape((model or "") + " · " + (key or ""))}" onclick="showSpec(this,event)"') if spec else ""
+    badge = ' <sup class="specflag">◆</sup>' if over else ""
+    return f'<td class="sc" data-v="{v:.4f}" style="{heat(v)}"{attrs}>{v:.3f}{badge}</td>'
+
+def av(v, cls="av"):   # 0..100 average
+    return f'<td class="{cls}" data-v="{v:.2f}" style="{heat(v/100)}">{v:.1f}</td>' if v is not None \
+        else f'<td class="{cls} na" data-v="-1">·</td>'
+
+def mlcell(name):
+    flag = (f' <span class="flag" title="{html.escape(NOTES[name])}">⚑</span>'
+            if name in NOTES else "")
+    return f'<td class="ml" data-v="{html.escape(name)}">{html.escape(name)}{flag}</td>'
+
+def szcell(s):
+    return f'<td class="sz" data-v="{s:.1f}">{s:g}B</td>'
+
+
+def th_sort(short, label, cls="sc"):
+    return f'<th class="{cls} so" onclick="sortT(this)" title="{html.escape(label)} — click to sort">{short}</th>'
+
+
+def _rk(i):
+    return f'<td class="rk">{i}</td>'
+
+def _bench_table(rows):
+    grp = "".join(f'<th colspan="{len(list(g))}">{t}</th>' for t, g in groupby(DIMENSIONS, key=lambda d: d[3]))
+    sub = "".join(th_sort(sh, lbl) for _k, sh, lbl, _t in DIMENSIONS)
+    body = []
+    for name, row, size in rows:   # by-size browse table — NOT ranked, so no # column
+        body.append("<tr>" + mlcell(name) + szcell(size)
+                    + "".join(sc(score_of(row, k), name, k) for k, *_ in DIMENSIONS) + "</tr>")
+    return f"""<table id="t1"><thead>
+<tr class="grp"><th></th><th></th>{grp}</tr>
+<tr><th class="ml so" onclick="sortT(this)">Model</th>
+<th class="sz so" onclick="sortT(this)" title="params (B) — click to sort">Size</th>{sub}</tr>
+</thead><tbody>{"".join(body)}</tbody></table>"""
+
+
+def _single_bench_table(rows, key, short, label, tid):
+    """A standalone mini-leaderboard for ONE benchmark — only models that have it, ranked."""
+    have = [(n, r, s) for n, r, s in rows if score_of(r, key) is not None]
+    have.sort(key=lambda x: -score_of(x[1], key))
+    body = "".join("<tr>" + _rk(i) + mlcell(n) + szcell(s) + sc(score_of(r, key), n, key) + "</tr>"
+                   for i, (n, r, s) in enumerate(have, 1))
+    return (len(have), f'<table id="{tid}"><thead><tr><th class="rk">#</th>'
+            f'<th class="ml so" onclick="sortT(this)">Model</th>'
+            f'<th class="sz so" onclick="sortT(this)">Size</th>{th_sort(short, label)}'
+            f'</tr></thead><tbody>{body}</tbody></table>')
+
+
+def _dim_tables(rows):
+    """One SEPARATE table per dimension — its member benchmarks + the dimension avg,
+    each defaulting to that dimension's ranking (Avg desc)."""
+    out = []
+    for i, t in enumerate(DIM_TYPES):
+        members = [d for d in DIMENSIONS if d[3] == t]
+        # Agentic: BFCL + PinchBench as SEPARATE side-by-side tables (PinchBench not on all models)
+        if t == "Agentic":
+            nb, bt = _single_bench_table(rows, "bfcl", "BFCL", "BFCL — tool-use, single call", "dAb")
+            npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp")
+            out.append(
+                f'<h3 class="dimh">Agentic<span class="mut"> · BFCL &amp; PinchBench shown separately — PinchBench isn\'t run on every model</span></h3>'
+                f'<div class="sbs">'
+                f'<div class="sbs-col"><div class="sbs-h">BFCL<span class="mut"> · {nb} models</span></div><div class="scroll">{bt}</div></div>'
+                f'<div class="sbs-col"><div class="sbs-h">PinchBench<span class="mut"> · {npb} models</span></div><div class="scroll">{pt}</div></div>'
+                f'</div>')
+            continue
+        head = "".join(th_sort(sh, lbl) for _k, sh, lbl, _tt in members)
+        ranked = sorted(rows, key=lambda r: (dim_avg(r[1], t) is not None, dim_avg(r[1], t) or -1), reverse=True)
+        body = []
+        for j, (name, row, size) in enumerate(ranked, 1):
+            body.append("<tr>" + _rk(j) + mlcell(name) + szcell(size)
+                        + "".join(sc(score_of(row, k), name, k) for k, *_ in members)
+                        + av(dim_avg(row, t), "av big") + "</tr>")
+        plural = "s" if len(members) > 1 else ""
+        out.append(
+            f'<h3 class="dimh">{t}<span class="mut"> · {len(members)} benchmark{plural} · ranked by avg</span></h3>'
+            f'<div class="scroll"><table id="d{i}"><thead><tr><th class="rk">#</th>'
+            f'<th class="ml so" onclick="sortT(this)">Model</th>'
+            f'<th class="sz so" onclick="sortT(this)">Size</th>{head}'
+            f'<th class="av so" onclick="sortT(this)" title="{t} average — click to sort">Avg</th>'
+            f'</tr></thead><tbody>{"".join(body)}</tbody></table></div>')
+    return "".join(out)
+
+
+def _avg_table(rows):
+    # ranked table (by dimension-weighted avg desc) → # numbering IS meaningful here
+    ranked = sorted(rows, key=lambda r: (weighted_avg(r[1]) is not None, weighted_avg(r[1]) or -1), reverse=True)
+    body = []
+    for i, (name, row, size) in enumerate(ranked, 1):
+        body.append("<tr>" + _rk(i) + mlcell(name) + szcell(size)
+                    + av(flat_avg(row), "av big") + av(weighted_avg(row), "av big") + "</tr>")
+    return f"""<table id="t3"><thead><tr><th class="rk">#</th>
+<th class="ml so" onclick="sortT(this)">Model</th>
+<th class="sz so" onclick="sortT(this)">Size</th>
+<th class="av so" onclick="sortT(this)" title="flat mean of all benchmarks — click to sort">Flat avg</th>
+<th class="av so" onclick="sortT(this)" title="mean of the 7 dimension averages (each dimension equal) — click to sort">Dim-weighted</th>
+</tr></thead><tbody>{"".join(body)}</tbody></table>"""
+
+
+def _pareto_svg(rows):
+    """Scatter: model size (x) vs weighted-avg (y); Pareto frontier (max score, min size) drawn."""
+    pts = [(model_size(n), weighted_avg(rw), n) for n, rw, _s in rows if weighted_avg(rw) is not None]
+    if not pts:
+        return "<div class='mut'>no data yet</div>"
+    W, H, pl, pr, pt, pb = 740, 430, 52, 104, 16, 46
+    xs = [p[0] for p in pts]; ys = [p[1] for p in pts]
+    xmin, xmax = 0, max(xs) + 4
+    ymin, ymax = max(0, min(ys) - 6), max(ys) + 6
+    X = lambda v: pl + (v - xmin) / (xmax - xmin) * (W - pl - pr)
+    Y = lambda v: H - pb - (v - ymin) / (ymax - ymin) * (H - pt - pb)
+    # Pareto-optimal: no other model is both <= size and >= score
+    front = [p for p in pts if not any(q != p and q[0] <= p[0] and q[1] >= p[1]
+                                       and (q[0] < p[0] or q[1] > p[1]) for q in pts)]
+    front.sort()
+    fset = set(front)
+    P = []
+    for v in range(int(ymin // 10 * 10), int(ymax) + 10, 10):
+        if v < ymin or v > ymax: continue
+        y = Y(v)
+        P.append(f'<line x1="{pl}" y1="{y:.0f}" x2="{W-pr}" y2="{y:.0f}" stroke="var(--bd)" stroke-width="1"/>')
+        P.append(f'<text x="{pl-8}" y="{y+3:.0f}" text-anchor="end" fill="var(--mut)" font-size="10">{v}</text>')
+    for v in range(4, int(xmax), 4):
+        P.append(f'<text x="{X(v):.0f}" y="{H-pb+15:.0f}" text-anchor="middle" fill="var(--mut)" font-size="10">{v}B</text>')
+    # NO connecting line — a rising line reads as "bigger is better", the opposite of the edge story.
+    # Orientation cue instead: up-and-left (smaller + more capable) is the goal.
+    P.append(f'<text x="{pl+6}" y="{pt+14}" fill="var(--acc2)" font-size="10.5" font-weight="600">'
+             f'↖ smaller + more capable = better</text>')
+    for s, y_, n in pts:
+        cx, cy = X(s), Y(y_)
+        if (s, y_, n) in fset:
+            P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="6" fill="var(--acc2)">'
+                     f'<title>{html.escape(n)} — {y_:.1f} @ {s:g}B (frontier)</title></circle>')
+        else:
+            P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="5" fill="var(--acc)" opacity="0.6">'
+                     f'<title>{html.escape(n)} — {y_:.1f} @ {s:g}B</title></circle>')
+    # frontier labels with vertical anti-collision (push down if within 12px; leader line if nudged)
+    last_y = -99.0
+    for s, y_, n in sorted(front, key=lambda t: Y(t[1])):
+        cx, cy = X(s), Y(y_)
+        ly = max(cy + 3, last_y + 12); last_y = ly
+        if ly - (cy + 3) > 6:
+            P.append(f'<line x1="{cx+6:.0f}" y1="{cy:.0f}" x2="{cx+9:.0f}" y2="{ly-3:.0f}" stroke="var(--mut)" stroke-width="0.6"/>')
+        P.append(f'<text x="{cx+10:.0f}" y="{ly:.0f}" fill="var(--tx)" font-size="10" font-weight="600">{html.escape(n)}</text>')
+    midx = (pl + W - pr) / 2; midy = (pt + H - pb) / 2
+    P.append(f'<text x="{midx:.0f}" y="{H-5}" text-anchor="middle" fill="var(--mut)" font-size="11">model size (B params) →</text>')
+    P.append(f'<text x="13" y="{midy:.0f}" text-anchor="middle" fill="var(--mut)" font-size="11" transform="rotate(-90 13 {midy:.0f})">capability (weighted avg) →</text>')
+    return f'<svg viewBox="0 0 {W} {H}" class="chart" preserveAspectRatio="xMidYMid meet">{"".join(P)}</svg>'
+
+
+def _bars_html(rows):
+    """Horizontal ranked bars of the dimension-weighted average."""
+    data = sorted([(n, weighted_avg(rw)) for n, rw, _s in rows if weighted_avg(rw) is not None],
+                  key=lambda x: -x[1])
+    out = []
+    for i, (n, v) in enumerate(data, 1):
+        out.append(f'<div class="bar-row" title="{html.escape(n)} — {v}"><span class="bar-rk">{i}</span>'
+                   f'<span class="bar-lab">{html.escape(n)}</span>'
+                   f'<div class="bar-track"><div class="bar-fill" style="width:{v:.0f}%;{heat(v/100)}"></div></div>'
+                   f'<span class="bar-val">{v:.1f}</span></div>')
+    return f'<div class="bars">{"".join(out)}</div>'
+
+
+# PinchBench scores that ran below 128K (context-broken) — hidden from the board until redone
+# at 128K. Removing the cell drops them from the PinchBench table AND the Agentic average
+# (which then falls back to BFCL only), so a stale 32K score never counts.
+STALE_PINCHBENCH = {"gemma-2-9b-it", "glm-4-9b-0414", "mistral-nemo-12b",
+                    "qwen2.5-7b-instruct", "qwen3-8b"}
 
 
 def build() -> str:
-    cells = {m: r for m, r in load_cells().items() if m not in EXCLUDED}
-    # sort by Agent (capability composite). No blended Score — Fluxion's own blend
-    # weights aren't published and 2 of its inputs (price/battery) are device-specific.
-    rows = [(m, r, agent_score(r), perf_of(r)) for m, r in cells.items()]
-    rows.sort(key=lambda x: x[2] if x[2] is not None else -1, reverse=True)
-
-    from itertools import groupby
-    dim_head = "".join(f'<th class="sc" title="{html.escape(lbl)}">{sh}</th>'
-                       for _, sh, lbl, _t in DIMENSIONS)
-    # capability columns grouped by TYPE (Instruction / Reasoning / Coding / …)
-    cap_groups = "".join(f'<th colspan="{len(list(g))}">{t}</th>'
-                         for t, g in groupby(DIMENSIONS, key=lambda d: d[3]))
-    body = []
-    for rank, (model, row, agent, p) in enumerate(rows, 1):
-        spec = row.get("_spec") or {}
-        body.append(
-            f'<tr class="row" onclick="tog(this)">'
-            f'<td class="rk">{rank}</td>'
-            f'<td class="ml">{html.escape(model)}</td>'
-            f'<td class="agent">{agent if agent is not None else "·"}</td>'
-            + "".join(_cell(row[k]["score"] if k in row else None) for k, *_ in DIMENSIONS)
-            + _num(p.get("prefill_tps")) + _num(p.get("decode_tps")) + _num(p.get("ttft_ms"), " ms")
-            + _num(p.get("peak_vram_mb")) + _num(p.get("gguf_mb"))
-            + '<td class="pf na" title="device-specific — Fluxion hardware axis">—</td>'   # Battery
-            + '<td class="pf na" title="device-specific — Fluxion hardware axis">—</td>'   # Hardware
-            + _num(spec.get("tau"))                                                        # τ (spec)
-            + '<td class="exp">▾</td></tr>'
-            + _detail_panel(row))
-
+    cells = {m: r for m, r in load_cells().items() if m not in EXCLUDED and m not in HIDDEN}
+    for m in STALE_PINCHBENCH:
+        if m in cells:
+            cells[m].pop("pinchbench", None)
+    # default order: size DESC (big → small)
+    rows = sorted(((m, r, model_size(m)) for m, r in cells.items()), key=lambda x: -x[2])
     n_cells = sum(len([b for b in r if not b.startswith("_")]) for _, r in cells.items())
-    return f"""<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+    return f"""<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Edge Intelligence Leaderboard</title><style>{CSS}</style></head><body>
+<meta name="robots" content="noindex,nofollow">
+<title>Edge Intelligence Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>{CSS}</style></head><body>
 <div class="wrap">
-<h1>Edge Intelligence Leaderboard</h1>
-<div class="sub">{len(rows)} edge models &middot; judge-free &middot; Q4_K_M GGUF on llama.cpp &middot;
-{n_cells} cells &middot; click a row for category splits, failure reasons &amp; per-position acceptance</div>
-<div class="scroll"><table>
-<thead>
-<tr class="grp"><th colspan="2"></th><th colspan="1">Headline</th>
-{cap_groups}
-<th colspan="5">Speed &amp; memory</th><th colspan="2">Hardware axis</th><th colspan="1">Spec</th><th></th></tr>
-<tr><th>#</th><th class="ml">Model</th>
-<th class="agent" title="mean of capability scores, 0-100">Average</th>{dim_head}
-<th title="prompt-eval tok/s">Prefill</th><th title="generation tok/s">Decode</th>
-<th title="time to first token">TTFT</th><th title="peak VRAM (MB)">VRAM</th><th title="on-disk (MB)">Size</th>
-<th title="device-specific">Battery</th><th title="device-specific">Hardware</th>
-<th title="accepted tokens/round (spec decode)">&tau;</th><th></th></tr></thead>
-<tbody>
-{chr(10).join(body)}
-</tbody></table></div>
-<div class="legend">
-<b>Average</b> = the 6 capability dimensions weighted equally ×100 (benchmarks averaged within a dimension first, so Reasoning's 4 benchmarks don't out-vote a 1-benchmark dimension). Ranking metric. Cell shade
-<span class="lg" style="{heat(0.2)}">low</span>
-<span class="lg" style="{heat(0.5)}">mid</span>
-<span class="lg" style="{heat(0.9)}">high</span> (not comparable across columns).
-<b>Battery / Hardware</b> are device-specific (Fluxion hardware axis) — N/A on a single dev box.
-<b>&tau; / per-position acceptance</b> fill in after the spec-decode pass.</div>
+<header>
+<div class="brand"><span class="dot"></span><h1>Edge Intelligence Leaderboard</h1></div>
+<button id="tg" onclick="theme()" title="light / dark">◐</button>
+</header>
+<div class="meta">{len(rows)} models · {n_cells} cells · big→small · click any header to sort · click a score for its config</div>
+{_universal_html()}
+{_deviations_html()}
+<nav>
+<button class="tab on" data-v="v1" onclick="tab(this)">Benchmarks</button>
+<button class="tab" data-v="v2" onclick="tab(this)">Dimensions</button>
+<button class="tab" data-v="v3" onclick="tab(this)">Averages &amp; charts</button>
+</nav>
+<div id="v1" class="view on"><div class="scroll">{_bench_table(rows)}</div></div>
+<div id="v2" class="view">{_dim_tables(rows)}</div>
+<div id="v3" class="view">
+<h3 class="dimh">Capability vs size<span class="mut"> · green = best model at its size (not beaten by anything smaller)</span></h3>
+{_pareto_svg(rows)}
+<h3 class="dimh">Ranked by dimension-weighted average</h3>
+{_bars_html(rows)}
+<h3 class="dimh">Averages table</h3>
+<div class="scroll">{_avg_table(rows)}</div>
 </div>
+<div class="legend">
+<span class="lg" style="{heat(0.15)}">low</span>
+<span class="lg" style="{heat(0.5)}">mid</span>
+<span class="lg" style="{heat(0.9)}">high</span>
+<span class="mut">· shade per cell, not comparable across columns · · = no score (excluded from averages) · <span class="flag">⚑</span> = per-model caveat below</span>
+</div>
+<div class="notes"><div class="nh"><span class="flag">⚑</span> Known per-model caveats (score understated by a documented artifact):</div>
+{"".join(f'<div class="fn"><b>{html.escape(m)}</b> — {html.escape(t)}</div>' for m, t in NOTES.items())}</div></div>
 <script>{JS}</script></body></html>"""
 
 
 CSS = """
-:root{--bg:#0b0e13;--s1:#141a22;--s2:#1c2530;--tx:#e6eaf0;--mut:#8a94a6;--bd:#28313f}
+:root,[data-theme=dark]{--bg:#0a0d12;--s1:#12171f;--s2:#1a212b;--tx:#e8ecf2;--mut:#7e8798;--bd:#242d3a;--acc:#7CBDF2;--acc2:#4EC98F}
+[data-theme=light]{--bg:#F5F7FA;--s1:#ffffff;--s2:#EEF1F6;--tx:#1b2430;--mut:#5c6675;--bd:#dbe1ea;--acc:#1B4E7A;--acc2:#17925A}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);
- font:12px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-.wrap{max-width:1500px;margin:0 auto;padding:30px 16px 70px}
-h1{font-size:25px;margin:0 0 4px}
-.sub{color:var(--mut);font-size:13px;margin-bottom:20px}
-.scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
-table{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums;white-space:nowrap}
-th,td{padding:6px 6px;text-align:right;border-bottom:1px solid var(--bd)}
-th{position:sticky;top:0;background:var(--s2);font-size:10.5px;font-weight:600;color:var(--mut);z-index:2}
-tr.grp th{background:var(--s1);color:var(--mut);font-size:10.5px;text-transform:uppercase;
- letter-spacing:.05em;text-align:center;border-bottom:1px solid var(--bd);position:static}
+ font:13px/1.45 'Sora',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1600px;margin:0 auto;padding:28px 18px 72px}
+header{display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;flex:1}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--acc2);box-shadow:0 0 10px var(--acc2)}
+h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em}
+#tg{background:var(--s2);color:var(--tx);border:1px solid var(--bd);border-radius:9px;width:36px;height:36px;font-size:16px;cursor:pointer}
+#tg:hover{border-color:var(--acc)}
+.meta{color:var(--mut);font-size:12px;margin:6px 0 18px}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;color:var(--acc);font-size:11.5px}
+nav{display:flex;gap:6px;margin-bottom:14px}
+.tab{background:var(--s1);color:var(--mut);border:1px solid var(--bd);border-radius:9px;padding:8px 16px;font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer}
+.tab:hover{color:var(--tx)}
+.tab.on{background:var(--acc);color:#0a0d12;border-color:var(--acc)}
+[data-theme=light] .tab.on{color:#fff}
+.view{display:none}.view.on{display:block}
+.dimh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:22px 0 8px}
+.dimh:first-child{margin-top:4px}
+.scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:11px;background:var(--s1)}
+table{border-collapse:separate;border-spacing:0;width:100%;white-space:nowrap}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--bd)}
+tbody tr:last-child td{border-bottom:none}
+th{position:sticky;top:0;background:var(--s2);font-size:10px;font-weight:600;color:var(--mut);
+ text-transform:uppercase;letter-spacing:.04em;z-index:2}
+th.so{cursor:pointer;user-select:none}th.so:hover{color:var(--acc)}
+th[data-dir=desc]::after{content:" ▾";color:var(--acc)}th[data-dir=asc]::after{content:" ▴";color:var(--acc)}
+tr.grp th{background:var(--s1);text-align:center;color:var(--acc2);position:static;font-size:9.5px}
 th.ml,td.ml{text-align:left}
-.rk{color:var(--mut)}
-td.ml{font-weight:600}
-.score{font-weight:800;font-size:15px;color:#8fd0a0}
-.agent{font-weight:700;color:#7cc4ff}
-td.sc{width:46px;border-radius:5px}
-.pf{color:var(--tx)}
+td{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;font-size:12px}
+td.ml{font-family:'Sora',sans-serif;font-weight:600;font-size:12.5px}
+td.sz{color:var(--mut);font-weight:500}
+td.sc{width:48px;border-radius:5px}
+td.av{font-weight:700;background:var(--s2);border-radius:5px}
+td.av.big{font-size:13.5px}
 .na{color:var(--mut)!important;background:transparent!important;font-weight:400!important}
-.row{cursor:pointer}.row:hover td{background:rgba(255,255,255,.03)}
-.exp{color:var(--mut)}
-.detail td{background:var(--s1);padding:0;white-space:normal}
-.dwrap{padding:14px 16px;display:flex;flex-wrap:wrap;gap:16px}
-.dblock{flex:1 1 340px;background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:11px 13px}
-.dh{font-size:12.5px;color:var(--tx);margin-bottom:8px}
-.mut{color:var(--mut)}
-.chips{display:flex;flex-wrap:wrap;gap:4px}
-.chip{font-size:11px;padding:2px 6px;border-radius:4px;color:#0b0e13}
-.fail{margin-top:8px;font-size:12px;color:#e0857f}
-.pp{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#7cc4ff;word-break:break-word}
-.legend{margin-top:16px;color:var(--mut);font-size:12px;line-height:1.7}
-.lg{padding:1px 7px;border-radius:4px;margin:0 2px;color:#0b0e13}
+tbody tr:hover td{outline:1px solid var(--acc);outline-offset:-1px}
+.legend{margin-top:16px;color:var(--mut);font-size:11.5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.lg{padding:1px 9px;border-radius:4px;color:#0a0d12;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:10.5px}
+.mut{color:var(--mut);font-weight:400;text-transform:none;letter-spacing:0}
+.params{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-size:11px;color:var(--mut);
+ background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:7px 11px;margin-bottom:16px;white-space:normal}
+.pk{color:var(--acc2);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-right:8px;font-size:9.5px}
+.specflag{color:var(--acc);cursor:pointer;font-size:10px;margin-left:1px;vertical-align:super}
+.specgrid{margin-top:10px}
+.uvlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.uv{display:flex;flex-direction:column;background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:5px 9px;min-width:118px}
+.uvk{color:var(--mut);font-size:9px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.uvv{color:var(--tx);font-size:11.5px;margin-top:2px}
+.sc{cursor:pointer}
+#specpop{position:absolute;z-index:60;max-width:270px;background:var(--s2);border:1px solid var(--acc);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--tx);box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;line-height:1.45}
+#specpop .sp-h{color:var(--acc);font-weight:700;font-size:10px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.devs{margin-top:9px;font-size:11.5px;color:var(--mut)}
+.devs ul{margin:5px 0 0;padding-left:2px;list-style:none}
+.devs li{margin:3px 0}
+.devs code{font-family:'JetBrains Mono',ui-monospace,monospace;color:var(--acc);font-size:11px}
+.devs b{color:var(--tx)}
+.flag{color:var(--acc2);cursor:help;font-size:11px}
+.notes{margin-top:12px;background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:11px 13px}
+.nh{color:var(--tx);font-size:12px;font-weight:600;margin-bottom:7px}
+.fn{color:var(--mut);font-size:11.5px;line-height:1.65}
+.fn b{color:var(--acc);font-family:'JetBrains Mono',monospace;font-weight:600}
+td.rk,th.rk{width:30px;text-align:right;color:var(--mut);font-family:'JetBrains Mono',monospace;font-weight:500;padding-right:10px}
+td.rk{font-size:11px}
+.sbs{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.sbs-col{flex:1 1 380px;min-width:300px}
+.sbs-h{font-family:'Sora',sans-serif;font-size:12.5px;font-weight:700;color:var(--tx);margin-bottom:6px}
+.chart{width:100%;max-width:760px;height:auto;margin:2px 0 10px;display:block}
+.bars{max-width:760px;display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.bar-row{display:flex;align-items:center;gap:9px;font-size:12px}
+.bar-rk{width:20px;text-align:right;color:var(--mut);font-family:'JetBrains Mono',monospace;font-size:11px}
+.bar-lab{width:158px;font-family:'Sora',sans-serif;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;background:var(--s2);border-radius:5px;height:16px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px 4px 4px 5px;min-width:2px}
+.bar-val{width:38px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700}
 """
 
 JS = """
-function tog(r){var d=r.nextElementSibling;if(d&&d.classList.contains('detail')){
-d.hidden=!d.hidden;r.querySelector('.exp').textContent=d.hidden?'\\u25be':'\\u25b4';}}
+(function(){var s=localStorage.getItem('lb-th');
+document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');})();
+function theme(){var h=document.documentElement,t=h.dataset.theme==='light'?'dark':'light';
+h.dataset.theme=t;localStorage.setItem('lb-th',t);}
+function showSpec(td,ev){ev.stopPropagation();var p=document.getElementById('specpop');
+if(!p){p=document.createElement('div');p.id='specpop';document.body.appendChild(p);}
+p.innerHTML='<div class="sp-h">'+td.dataset.mk+'</div>'+td.dataset.spec;
+var r=td.getBoundingClientRect();
+p.style.left=Math.min(r.left+window.scrollX,window.scrollX+window.innerWidth-270)+'px';
+p.style.top=(r.bottom+window.scrollY+5)+'px';p.style.display='block';}
+document.addEventListener('click',function(e){var p=document.getElementById('specpop');
+if(p&&!(e.target.classList&&e.target.classList.contains('sc')))p.style.display='none';});
+function tab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on');}
+function sortT(th){var tb=th.closest('table').tBodies[0],
+idx=[].indexOf.call(th.parentNode.children,th),
+dir=th.dataset.dir==='desc'?'asc':'desc';
+th.closest('table').querySelectorAll('th').forEach(h=>h.removeAttribute('data-dir'));
+th.dataset.dir=dir;
+[].slice.call(tb.rows).sort(function(a,b){
+var x=a.cells[idx].dataset.v,y=b.cells[idx].dataset.v,xn=parseFloat(x),yn=parseFloat(y),
+c=(!isNaN(xn)&&!isNaN(yn))?xn-yn:(x<y?-1:x>y?1:0);return dir==='asc'?c:-c;})
+.forEach(function(r){tb.appendChild(r);});
+var n=1;[].slice.call(tb.rows).forEach(function(r){var c=r.cells[0];
+if(c&&c.className.indexOf('rk')>-1){c.textContent=n++;}});}
 """
 
 

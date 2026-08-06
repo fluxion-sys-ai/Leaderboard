@@ -1,29 +1,29 @@
 {
   "metric": "accuracy",
-  "score": 0.0859,
+  "score": 0.6566,
   "n": 198,
-  "passed": 17,
+  "passed": 130,
   "ci95": [
-    0.0543,
-    0.1332
+    0.588,
+    0.7192
   ],
   "by_category": {
     "Biology": {
-      "score": 0.1579,
+      "score": 0.5789,
       "n": 19
     },
     "Chemistry": {
-      "score": 0.0323,
+      "score": 0.5054,
       "n": 93
     },
     "Physics": {
-      "score": 0.1279,
+      "score": 0.8372,
       "n": 86
     }
   },
   "failure_breakdown": {
-    "wrong_answer": 9,
-    "no_answer_parsed": 172
+    "wrong_answer": 67,
+    "no_answer_parsed": 1
   },
   "model": "ornith-1.0-9b",
   "benchmark": "gpqa_diamond",
@@ -32,16 +32,16 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1785547610,
+  "run_ts": 1786042688,
   "perf": {
-    "prefill_tps": 1674.22,
-    "decode_tps": 102.78,
-    "ttft_ms": 123.58,
-    "mean_prompt_tokens": 241.0,
-    "mean_completion_tokens": 1973.76,
-    "total_gen_tokens": 390805,
-    "model_load_s": 4.0,
+    "prefill_tps": 1693.32,
+    "decode_tps": 102.62,
+    "ttft_ms": 123.64,
+    "mean_prompt_tokens": 243.0,
+    "mean_completion_tokens": 2205.98,
+    "total_gen_tokens": 436784,
+    "model_load_s": 8.0,
     "gguf_mb": 5701.1,
-    "peak_vram_mb": 6012.0
+    "peak_vram_mb": 6004.0
   }
 }

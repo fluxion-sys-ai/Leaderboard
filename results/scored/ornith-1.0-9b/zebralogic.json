@@ -1,11 +1,11 @@
 {
   "metric": "accuracy",
-  "score": 0.4867,
+  "score": 0.1667,
   "n": 150,
-  "passed": 73,
+  "passed": 25,
   "ci95": [
-    0.408,
-    0.566
+    0.1155,
+    0.2345
   ],
   "by_category": {
     "2*2": {
@@ -13,51 +13,51 @@
       "n": 6
     },
     "2*3": {
-      "score": 1.0,
+      "score": 0.8333,
       "n": 6
     },
     "2*4": {
-      "score": 1.0,
+      "score": 0.6667,
       "n": 6
     },
     "2*5": {
-      "score": 1.0,
+      "score": 0.1667,
       "n": 6
     },
     "2*6": {
-      "score": 1.0,
+      "score": 0.1667,
       "n": 6
     },
     "3*2": {
-      "score": 1.0,
-      "n": 6
-    },
-    "3*3": {
-      "score": 0.8333,
-      "n": 6
-    },
-    "3*4": {
-      "score": 0.8333,
-      "n": 6
-    },
-    "3*5": {
       "score": 0.5,
       "n": 6
     },
+    "3*3": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "3*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*5": {
+      "score": 0.0,
+      "n": 6
+    },
     "3*6": {
-      "score": 0.3333,
+      "score": 0.1667,
       "n": 6
     },
     "4*2": {
-      "score": 1.0,
+      "score": 0.1667,
       "n": 6
     },
     "4*3": {
-      "score": 0.8333,
+      "score": 0.0,
       "n": 6
     },
     "4*4": {
-      "score": 0.1667,
+      "score": 0.0,
       "n": 6
     },
     "4*5": {
@@ -69,15 +69,15 @@
       "n": 6
     },
     "5*2": {
-      "score": 0.6667,
+      "score": 0.3333,
       "n": 6
     },
     "5*3": {
-      "score": 0.1667,
+      "score": 0.0,
       "n": 6
     },
     "5*4": {
-      "score": 0.1667,
+      "score": 0.0,
       "n": 6
     },
     "5*5": {
@@ -89,7 +89,7 @@
       "n": 6
     },
     "6*2": {
-      "score": 0.8333,
+      "score": 0.0,
       "n": 6
     },
     "6*3": {
@@ -97,7 +97,7 @@
       "n": 6
     },
     "6*4": {
-      "score": 0.0,
+      "score": 0.1667,
       "n": 6
     },
     "6*5": {
@@ -110,8 +110,8 @@
     }
   },
   "failure_breakdown": {
-    "no_grid_parsed": 75,
-    "wrong_cells": 2
+    "wrong_cells": 102,
+    "no_grid_parsed": 23
   },
   "model": "ornith-1.0-9b",
   "benchmark": "zebralogic",
@@ -120,15 +120,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1785355782,
+  "run_ts": 1786036115,
   "perf": {
-    "prefill_tps": 2587.85,
-    "decode_tps": 102.71,
-    "ttft_ms": 131.38,
-    "mean_prompt_tokens": 384.33,
-    "mean_completion_tokens": 1547.73,
-    "total_gen_tokens": 232159,
-    "model_load_s": 4.0,
+    "prefill_tps": 2569.95,
+    "decode_tps": 104.4,
+    "ttft_ms": 131.82,
+    "mean_prompt_tokens": 386.33,
+    "mean_completion_tokens": 756.63,
+    "total_gen_tokens": 113495,
+    "model_load_s": 8.0,
     "gguf_mb": 5701.1,
     "peak_vram_mb": 6004.0
   }

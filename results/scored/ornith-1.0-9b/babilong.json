@@ -1,28 +1,28 @@
 {
   "metric": "accuracy",
-  "score": 0.0067,
+  "score": 0.5733,
   "n": 150,
-  "passed": 1,
+  "passed": 86,
   "ci95": [
-    0.0012,
-    0.0368
+    0.4933,
+    0.6497
   ],
   "by_category": {
     "0k": {
-      "score": 0.0,
+      "score": 0.8,
       "n": 50
     },
     "16k": {
-      "score": 0.0,
+      "score": 0.44,
       "n": 50
     },
     "4k": {
-      "score": 0.02,
+      "score": 0.48,
       "n": 50
     }
   },
   "failure_breakdown": {
-    "wrong_or_missing": 149
+    "wrong_or_missing": 64
   },
   "model": "ornith-1.0-9b",
   "benchmark": "babilong",
@@ -31,15 +31,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1785356121,
+  "run_ts": 1786036411,
   "perf": {
-    "prefill_tps": 4082.38,
-    "decode_tps": 103.22,
-    "ttft_ms": 904.61,
-    "mean_prompt_tokens": 6379.01,
-    "mean_completion_tokens": 31.61,
-    "total_gen_tokens": 4742,
-    "model_load_s": 4.0,
+    "prefill_tps": 4058.8,
+    "decode_tps": 141.68,
+    "ttft_ms": 911.88,
+    "mean_prompt_tokens": 6381.01,
+    "mean_completion_tokens": 2.89,
+    "total_gen_tokens": 434,
+    "model_load_s": 8.0,
     "gguf_mb": 5701.1,
     "peak_vram_mb": 6004.0
   }

@@ -1,88 +1,88 @@
 {
   "metric": "ifeval_strict_accuracy",
-  "score": 0.33,
+  "score": 0.7567,
   "ci95": [
-    0.2792,
-    0.3851
+    0.7051,
+    0.8018
   ],
-  "instruction_accuracy": 0.4214,
+  "instruction_accuracy": 0.8297,
   "n": 300,
   "coverage": 1.0,
   "by_instruction_type": {
     "change_case:capital_word_frequency": {
-      "acc": 0.4286,
+      "acc": 0.7143,
       "n": 14
     },
     "change_case:english_capital": {
-      "acc": 0.375,
+      "acc": 0.8125,
       "n": 16
     },
     "change_case:english_lowercase": {
-      "acc": 0.3333,
+      "acc": 0.9048,
       "n": 21
     },
     "combination:repeat_prompt": {
-      "acc": 0.381,
+      "acc": 0.7143,
       "n": 21
     },
     "combination:two_responses": {
-      "acc": 0.2857,
+      "acc": 0.7857,
       "n": 14
     },
     "detectable_content:number_placeholders": {
-      "acc": 0.4167,
+      "acc": 0.8333,
       "n": 12
     },
     "detectable_content:postscript": {
-      "acc": 0.3,
+      "acc": 0.9,
       "n": 10
     },
     "detectable_format:constrained_response": {
-      "acc": 0.4286,
+      "acc": 0.8571,
       "n": 7
     },
     "detectable_format:json_format": {
-      "acc": 0.25,
+      "acc": 1.0,
       "n": 12
     },
     "detectable_format:multiple_sections": {
-      "acc": 0.1429,
+      "acc": 1.0,
       "n": 7
     },
     "detectable_format:number_bullet_lists": {
-      "acc": 0.2857,
+      "acc": 0.8571,
       "n": 14
     },
     "detectable_format:number_highlighted_sections": {
-      "acc": 0.12,
+      "acc": 0.96,
       "n": 25
     },
     "detectable_format:title": {
-      "acc": 0.45,
+      "acc": 1.0,
       "n": 20
     },
     "keywords:existence": {
-      "acc": 0.2609,
+      "acc": 1.0,
       "n": 23
     },
     "keywords:forbidden_words": {
-      "acc": 0.963,
+      "acc": 0.7037,
       "n": 27
     },
     "keywords:frequency": {
-      "acc": 0.3846,
+      "acc": 0.8077,
       "n": 26
     },
     "keywords:letter_frequency": {
-      "acc": 0.4118,
+      "acc": 0.7059,
       "n": 17
     },
     "language:response_language": {
-      "acc": 0.1176,
+      "acc": 0.9412,
       "n": 17
     },
     "length_constraints:nth_paragraph_first_word": {
-      "acc": 0.2857,
+      "acc": 1.0,
       "n": 7
     },
     "length_constraints:number_paragraphs": {
@@ -90,23 +90,23 @@
       "n": 13
     },
     "length_constraints:number_sentences": {
-      "acc": 0.6,
+      "acc": 0.8,
       "n": 30
     },
     "length_constraints:number_words": {
-      "acc": 0.3846,
+      "acc": 0.8462,
       "n": 26
     },
     "punctuation:no_comma": {
-      "acc": 1.0,
+      "acc": 0.7949,
       "n": 39
     },
     "startend:end_checker": {
-      "acc": 0.1765,
+      "acc": 0.8235,
       "n": 17
     },
     "startend:quotation": {
-      "acc": 0.3043,
+      "acc": 0.9565,
       "n": 23
     }
   },
@@ -117,15 +117,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1785342571,
+  "run_ts": 1786026092,
   "perf": {
-    "prefill_tps": 657.13,
-    "decode_tps": 103.52,
-    "ttft_ms": 78.34,
-    "mean_prompt_tokens": 55.88,
-    "mean_completion_tokens": 1175.66,
-    "total_gen_tokens": 352698,
-    "model_load_s": 4.0,
+    "prefill_tps": 690.15,
+    "decode_tps": 104.39,
+    "ttft_ms": 77.21,
+    "mean_prompt_tokens": 57.88,
+    "mean_completion_tokens": 447.8,
+    "total_gen_tokens": 134341,
+    "model_load_s": 8.0,
     "gguf_mb": 5701.1,
     "peak_vram_mb": 5983.0
   }

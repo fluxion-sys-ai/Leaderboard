@@ -1,0 +1,14 @@
+{
+ "universal": {
+  "Quantization": "Q4_K_M (all models)",
+  "Machine": "NVIDIA A100-SXM4-40GB",
+  "Engine": "llama.cpp b9892",
+  "Sampling": "greedy (temperature 0)",
+  "Grid context": "20,480 tokens",
+  "PinchBench context": "131,072 (128K)",
+  "Reasoning models": "run in no_think / direct-answer mode (enable_thinking=false)",
+  "gpt-oss (harmony)": "reasoning_effort default = low",
+  "Judge (writing / simpleqa / pinch)": "DeepSeek-Chat-v3.1 via OpenRouter"
+ },
+ "overrides": {}
+}

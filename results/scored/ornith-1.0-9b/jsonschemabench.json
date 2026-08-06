@@ -1,34 +1,34 @@
 {
   "metric": "accuracy",
-  "score": 0.6133,
+  "score": 0.71,
   "n": 300,
-  "passed": 184,
+  "passed": 213,
   "ci95": [
-    0.5571,
-    0.6667
+    0.6563,
+    0.7584
   ],
   "by_category": {
     "Github_easy": {
-      "score": 0.8933,
+      "score": 0.8533,
       "n": 75
     },
     "Github_hard": {
-      "score": 0.2667,
+      "score": 0.64,
       "n": 75
     },
     "Github_medium": {
-      "score": 0.6667,
+      "score": 0.76,
       "n": 75
     },
     "Github_trivial": {
-      "score": 0.6267,
+      "score": 0.5867,
       "n": 75
     }
   },
   "failure_breakdown": {
-    "no json found": 57,
-    "schema violation": 17,
-    "invalid json": 42
+    "schema violation": 53,
+    "no json found": 13,
+    "invalid json": 21
   },
   "model": "ornith-1.0-9b",
   "benchmark": "jsonschemabench",
@@ -37,15 +37,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1785349869,
+  "run_ts": 1786031072,
   "perf": {
-    "prefill_tps": 2810.01,
-    "decode_tps": 103.14,
-    "ttft_ms": 156.93,
-    "mean_prompt_tokens": 1022.36,
-    "mean_completion_tokens": 439.08,
-    "total_gen_tokens": 131725,
-    "model_load_s": 4.0,
+    "prefill_tps": 2811.15,
+    "decode_tps": 104.0,
+    "ttft_ms": 156.02,
+    "mean_prompt_tokens": 1024.36,
+    "mean_completion_tokens": 312.96,
+    "total_gen_tokens": 93889,
+    "model_load_s": 8.0,
     "gguf_mb": 5701.1,
     "peak_vram_mb": 6004.0
   }

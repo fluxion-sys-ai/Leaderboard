@@ -1,9 +1,9 @@
 {
   "metric": "simpleqa_accuracy",
-  "score": 0.1058,
-  "n": 293,
-  "correct": 31,
-  "incorrect": 262,
+  "score": 0.1038,
+  "n": 289,
+  "correct": 30,
+  "incorrect": 259,
   "not_attempted": 0,
   "not_attempted_rate": 0.0,
   "judge_model": "deepseek/deepseek-chat-v3.1",

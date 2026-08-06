@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.97,
+  "n": 300,
+  "passed": 291,
+  "ci95": [
+    0.944,
+    0.9841
+  ],
+  "failure_breakdown": {
+    "wrong_answer": 9
+  },
+  "model": "exaone-4.5-33b",
+  "benchmark": "gsm8k",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/exaone-4.5-33b/EXAONE-4.5-33B-Q4_K_M.gguf",
+  "run_ts": 1785958550,
+  "perf": {
+    "prefill_tps": 384.67,
+    "decode_tps": 42.04,
+    "ttft_ms": 213.39,
+    "mean_prompt_tokens": 76.8,
+    "mean_completion_tokens": 225.64,
+    "total_gen_tokens": 67692,
+    "model_load_s": 9.4,
+    "gguf_mb": 20047.8,
+    "peak_vram_mb": 23868.0
+  }
+}

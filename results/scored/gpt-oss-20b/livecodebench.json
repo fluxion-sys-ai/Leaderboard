@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.4381,
+  "n": 105,
+  "passed": 46,
+  "ci95": [
+    0.347,
+    0.5335
+  ],
+  "by_category": {
+    "easy": {
+      "score": 0.9167,
+      "n": 24
+    },
+    "hard": {
+      "score": 0.1404,
+      "n": 57
+    },
+    "medium": {
+      "score": 0.6667,
+      "n": 24
+    }
+  },
+  "failure_breakdown": {
+    "wrong_output": 38,
+    "runtime_error": 21
+  },
+  "model": "gpt-oss-20b",
+  "benchmark": "livecodebench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gpt-oss-20b/gpt-oss-20b-Q4_K_M.gguf",
+  "run_ts": 1786008510,
+  "perf": {
+    "prefill_tps": 3110.48,
+    "decode_tps": 175.09,
+    "ttft_ms": 179.7,
+    "mean_prompt_tokens": 626.96,
+    "mean_completion_tokens": 865.99,
+    "total_gen_tokens": 90929,
+    "model_load_s": 6.9,
+    "gguf_mb": 11624.8,
+    "peak_vram_mb": 11757.0
+  }
+}

@@ -1,7 +1,7 @@
 # Downloaded benchmark data (pulled from HF + cached, never vendored)
 data/
 # Model generations + scores are reproducible outputs, not source
-results/raw/
+# results/raw/  ← now TRACKED for backup/migration (79M of model outputs = days of GPU to regenerate)
 # HF / llama.cpp model weights live outside the repo
 /models/
 # Python

@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.7533,
+  "n": 300,
+  "passed": 226,
+  "ci95": [
+    0.7016,
+    0.7987
+  ],
+  "by_category": {
+    "Github_easy": {
+      "score": 0.88,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.6133,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.8267,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.6933,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "schema violation": 39,
+    "invalid json": 25,
+    "no json found": 10
+  },
+  "model": "mistral-small-3.2-24b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/mistral-small-3.2-24b/Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf",
+  "run_ts": 1785909674,
+  "perf": {
+    "prefill_tps": 1168.2,
+    "decode_tps": 43.04,
+    "ttft_ms": 349.96,
+    "mean_prompt_tokens": 1449.48,
+    "mean_completion_tokens": 193.86,
+    "total_gen_tokens": 58159,
+    "model_load_s": 10.6,
+    "gguf_mb": 14333.9,
+    "peak_vram_mb": 22837.0
+  }
+}

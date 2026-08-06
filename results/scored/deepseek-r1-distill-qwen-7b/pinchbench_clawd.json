@@ -1,0 +1,128 @@
+{
+  "metric": "accuracy",
+  "score": 0.0865,
+  "n": 104,
+  "passed": 9,
+  "ci95": [
+    0.0462,
+    0.1563
+  ],
+  "by_category": {
+    "blog": {
+      "score": 0.0,
+      "n": 5
+    },
+    "calendar": {
+      "score": 0.25,
+      "n": 4
+    },
+    "config_update": {
+      "score": 0.0,
+      "n": 4
+    },
+    "daily_summary": {
+      "score": 0.0,
+      "n": 5
+    },
+    "eli5_pdf": {
+      "score": 0.0,
+      "n": 4
+    },
+    "email": {
+      "score": 0.0,
+      "n": 5
+    },
+    "email_search": {
+      "score": 0.0,
+      "n": 5
+    },
+    "email_triage": {
+      "score": 0.2,
+      "n": 5
+    },
+    "events": {
+      "score": 0.0,
+      "n": 5
+    },
+    "files": {
+      "score": 0.0,
+      "n": 5
+    },
+    "humanizer": {
+      "score": 0.0,
+      "n": 4
+    },
+    "image_gen": {
+      "score": 0.0,
+      "n": 5
+    },
+    "market_research": {
+      "score": 0.2,
+      "n": 5
+    },
+    "memory": {
+      "score": 0.2,
+      "n": 5
+    },
+    "openclaw_comprehension": {
+      "score": 0.0,
+      "n": 3
+    },
+    "sanity": {
+      "score": 0.0,
+      "n": 2
+    },
+    "second_brain": {
+      "score": 0.0,
+      "n": 4
+    },
+    "skill_search": {
+      "score": 0.6,
+      "n": 5
+    },
+    "spreadsheet_summary": {
+      "score": 0.0,
+      "n": 5
+    },
+    "stock": {
+      "score": 0.25,
+      "n": 4
+    },
+    "summary": {
+      "score": 0.0,
+      "n": 5
+    },
+    "weather": {
+      "score": 0.2,
+      "n": 5
+    },
+    "workflow": {
+      "score": 0.0,
+      "n": 5
+    }
+  },
+  "failure_breakdown": {
+    "wrong_args": 8,
+    "no_tool_call": 64,
+    "wrong_tool": 23
+  },
+  "model": "deepseek-r1-distill-qwen-7b",
+  "benchmark": "pinchbench_clawd",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/deepseek-r1-distill-qwen-7b/DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf",
+  "run_ts": 1785491199,
+  "perf": {
+    "prefill_tps": 1110.36,
+    "decode_tps": 137.39,
+    "ttft_ms": 33.56,
+    "mean_prompt_tokens": 708.53,
+    "mean_completion_tokens": 806.44,
+    "total_gen_tokens": 83870,
+    "model_load_s": 4.0,
+    "gguf_mb": 4683.1,
+    "peak_vram_mb": 5582.0
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.4567,
+  "n": 300,
+  "passed": 137,
+  "ci95": [
+    0.4012,
+    0.5132
+  ],
+  "failure_breakdown": {
+    "wrong_trace": 163
+  },
+  "model": "qwen3.5-9b",
+  "benchmark": "cruxeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-9b/Qwen3.5-9B-Q4_K_M.gguf",
+  "run_ts": 1785907751,
+  "perf": {
+    "prefill_tps": 613.45,
+    "decode_tps": 53.86,
+    "ttft_ms": 125.63,
+    "mean_prompt_tokens": 624.81,
+    "mean_completion_tokens": 17.55,
+    "total_gen_tokens": 5265,
+    "model_load_s": 8.0,
+    "gguf_mb": 5627.0,
+    "peak_vram_mb": 22837.0
+  }
+}

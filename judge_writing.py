@@ -62,6 +62,31 @@ def main():
     if not models:
         print("no writing responses to judge yet"); return
 
+    # Only judge models that (a) aren't already judged — re-judging with an LLM would drift the
+    # published scores — and (b) have a COMPLETE generation, so a still-running model's partial
+    # writing.jsonl waits for the next sweep instead of locking in a short-count score.
+    # Each model runs a fixed SAMPLE of the writing pool (not all len(tasks)), so "complete" =
+    # having as many rows as the finished models do (the max row-count seen); a model still
+    # generating has fewer and is deferred to the next sweep.
+    counts = {m: sum(1 for r in read_jsonl(raw_path(m, "writing")) if r.get("task_id") in tasks)
+              for m in models}
+    expected = max(counts.values()) if counts else 0
+    def _needs_judging(model):
+        sp = scored_path(model, "writing")
+        if os.path.exists(sp):
+            try:
+                d = json.load(open(sp))
+                if d.get("score") is not None and not d.get("judge_pending"):
+                    return False
+            except Exception:
+                pass
+        return counts[model] >= expected
+    todo = [m for m in models if _needs_judging(m)]
+    if not todo:
+        print("no NEW complete writing responses to judge"); return
+    print(f"judging (new + complete only): {todo}", flush=True)
+    models = todo
+
     for model in models:
         rows = [r for r in read_jsonl(raw_path(model, "writing")) if r["task_id"] in tasks]
         with ThreadPoolExecutor(max_workers=12) as ex:      # parallelize the API calls

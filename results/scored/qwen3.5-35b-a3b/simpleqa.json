@@ -1,25 +1,11 @@
 {
   "metric": "simpleqa_accuracy",
-  "score": null,
-  "judge_pending": true,
-  "n": 300,
-  "model": "qwen3.5-35b-a3b",
-  "benchmark": "simpleqa",
-  "quant": "Q4_K_M",
-  "runner": "llamacpp",
-  "n_ctx": 20480,
-  "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-35b-a3b/Qwen_Qwen3.5-35B-A3B-Q4_K_M.gguf",
-  "run_ts": 1785797392,
-  "perf": {
-    "prefill_tps": 332.48,
-    "decode_tps": 109.07,
-    "ttft_ms": 103.41,
-    "mean_prompt_tokens": 35.61,
-    "mean_completion_tokens": 198.54,
-    "total_gen_tokens": 59563,
-    "model_load_s": 9.7,
-    "gguf_mb": 22285.1,
-    "peak_vram_mb": 22140.0
-  }
+  "score": 0.1884,
+  "n": 292,
+  "correct": 55,
+  "incorrect": 237,
+  "not_attempted": 0,
+  "not_attempted_rate": 0.0,
+  "judge_model": "deepseek/deepseek-chat-v3.1",
+  "judge_pending": false
 }

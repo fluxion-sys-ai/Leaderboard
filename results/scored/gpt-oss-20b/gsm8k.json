@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.9433,
+  "n": 300,
+  "passed": 283,
+  "ci95": [
+    0.9111,
+    0.9643
+  ],
+  "failure_breakdown": {
+    "wrong_answer": 17
+  },
+  "model": "gpt-oss-20b",
+  "benchmark": "gsm8k",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gpt-oss-20b/gpt-oss-20b-Q4_K_M.gguf",
+  "run_ts": 1786006086,
+  "perf": {
+    "prefill_tps": 820.44,
+    "decode_tps": 179.05,
+    "ttft_ms": 95.28,
+    "mean_prompt_tokens": 140.34,
+    "mean_completion_tokens": 232.54,
+    "total_gen_tokens": 69763,
+    "model_load_s": 6.9,
+    "gguf_mb": 11624.8,
+    "peak_vram_mb": 11498.0
+  }
+}

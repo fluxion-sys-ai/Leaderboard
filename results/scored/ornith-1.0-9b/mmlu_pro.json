@@ -1,73 +1,73 @@
 {
   "metric": "accuracy",
-  "score": 0.175,
+  "score": 0.7179,
   "n": 280,
-  "passed": 49,
+  "passed": 201,
   "ci95": [
-    0.135,
-    0.2238
+    0.6625,
+    0.7673
   ],
   "by_category": {
     "biology": {
-      "score": 0.35,
+      "score": 0.9,
       "n": 20
     },
     "business": {
-      "score": 0.3,
+      "score": 0.8,
       "n": 20
     },
     "chemistry": {
-      "score": 0.0,
+      "score": 0.8,
       "n": 20
     },
     "computer science": {
-      "score": 0.15,
+      "score": 0.6,
       "n": 20
     },
     "economics": {
-      "score": 0.25,
+      "score": 0.9,
       "n": 20
     },
     "engineering": {
-      "score": 0.0,
+      "score": 0.5,
       "n": 20
     },
     "health": {
-      "score": 0.1,
+      "score": 0.75,
       "n": 20
     },
     "history": {
-      "score": 0.15,
+      "score": 0.7,
       "n": 20
     },
     "law": {
-      "score": 0.0,
+      "score": 0.35,
       "n": 20
     },
     "math": {
-      "score": 0.25,
+      "score": 0.75,
       "n": 20
     },
     "other": {
-      "score": 0.35,
+      "score": 0.7,
       "n": 20
     },
     "philosophy": {
-      "score": 0.1,
+      "score": 0.75,
       "n": 20
     },
     "physics": {
-      "score": 0.1,
+      "score": 0.8,
       "n": 20
     },
     "psychology": {
-      "score": 0.35,
+      "score": 0.75,
       "n": 20
     }
   },
   "failure_breakdown": {
-    "no_answer_parsed": 209,
-    "wrong_answer": 22
+    "wrong_answer": 74,
+    "no_answer_parsed": 5
   },
   "model": "ornith-1.0-9b",
   "benchmark": "mmlu_pro",
@@ -76,15 +76,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1785347251,
+  "run_ts": 1786029515,
   "perf": {
-    "prefill_tps": 1548.3,
-    "decode_tps": 103.42,
-    "ttft_ms": 123.47,
-    "mean_prompt_tokens": 225.54,
-    "mean_completion_tokens": 985.9,
-    "total_gen_tokens": 276053,
-    "model_load_s": 4.0,
+    "prefill_tps": 1571.89,
+    "decode_tps": 103.53,
+    "ttft_ms": 123.08,
+    "mean_prompt_tokens": 227.54,
+    "mean_completion_tokens": 939.34,
+    "total_gen_tokens": 263014,
+    "model_load_s": 8.0,
     "gguf_mb": 5701.1,
     "peak_vram_mb": 6004.0
   }

@@ -1,0 +1,28 @@
+{
+  "metric": "accuracy",
+  "score": 0.25,
+  "n": 96,
+  "passed": 24,
+  "ci95": [
+    0.1741,
+    0.3451
+  ],
+  "by_category": {
+    "easy": {
+      "score": 0.7083,
+      "n": 24
+    },
+    "hard": {
+      "score": 0.0408,
+      "n": 49
+    },
+    "medium": {
+      "score": 0.2174,
+      "n": 23
+    }
+  },
+  "failure_breakdown": {
+    "wrong_output": 57,
+    "runtime_error": 15
+  }
+}

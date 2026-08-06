@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.4667,
+  "n": 300,
+  "passed": 140,
+  "ci95": [
+    0.411,
+    0.5232
+  ],
+  "failure_breakdown": {
+    "wrong_trace": 160
+  },
+  "model": "mistral-small-3.2-24b",
+  "benchmark": "cruxeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/mistral-small-3.2-24b/Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf",
+  "run_ts": 1785906700,
+  "perf": {
+    "prefill_tps": 620.94,
+    "decode_tps": 54.04,
+    "ttft_ms": 125.14,
+    "mean_prompt_tokens": 624.81,
+    "mean_completion_tokens": 13.27,
+    "total_gen_tokens": 3980,
+    "model_load_s": 10.6,
+    "gguf_mb": 14333.9,
+    "peak_vram_mb": 22837.0
+  }
+}

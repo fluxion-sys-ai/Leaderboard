@@ -1,68 +1,68 @@
 {
   "metric": "accuracy",
-  "score": 0.0,
+  "score": 0.9,
   "n": 150,
-  "passed": 0,
+  "passed": 135,
   "ci95": [
-    0.0,
-    0.025
+    0.8416,
+    0.9385
   ],
   "by_category": {
     "cwe": {
-      "score": 0.0,
+      "score": 0.1818,
       "n": 11
     },
     "fwe": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 12
     },
     "niah_multikey_1": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 11
     },
     "niah_multikey_2": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 11
     },
     "niah_multikey_3": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 12
     },
     "niah_multiquery": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 11
     },
     "niah_multivalue": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 12
     },
     "niah_single_1": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 12
     },
     "niah_single_2": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 11
     },
     "niah_single_3": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 14
     },
     "qa_1": {
-      "score": 0.0,
+      "score": 0.8182,
       "n": 11
     },
     "qa_2": {
-      "score": 0.0,
+      "score": 0.6364,
       "n": 11
     },
     "vt": {
-      "score": 0.0,
+      "score": 1.0,
       "n": 11
     }
   },
   "failure_breakdown": {
-    "missing_needle": 150
+    "missing_needle": 15
   },
   "model": "ornith-1.0-9b",
   "benchmark": "ruler",
@@ -71,16 +71,16 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/ornith-1.0-9b/Ornith-1.0-9B-Q4_K_M.gguf",
-  "run_ts": 1785542374,
+  "run_ts": 1786037767,
   "perf": {
-    "prefill_tps": 4211.08,
-    "decode_tps": 99.11,
-    "ttft_ms": 1917.71,
-    "mean_prompt_tokens": 8340.89,
-    "mean_completion_tokens": 128.0,
-    "total_gen_tokens": 19200,
-    "model_load_s": 4.0,
+    "prefill_tps": 4207.38,
+    "decode_tps": 101.31,
+    "ttft_ms": 1917.74,
+    "mean_prompt_tokens": 8342.89,
+    "mean_completion_tokens": 60.26,
+    "total_gen_tokens": 9039,
+    "model_load_s": 8.0,
     "gguf_mb": 5701.1,
-    "peak_vram_mb": 6012.0
+    "peak_vram_mb": 6004.0
   }
 }

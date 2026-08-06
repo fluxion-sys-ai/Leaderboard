@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.7433,
+  "ci95": [
+    0.691,
+    0.7895
+  ],
+  "instruction_accuracy": 0.8166,
+  "n": 300,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 0.6429,
+      "n": 14
+    },
+    "change_case:english_capital": {
+      "acc": 0.8125,
+      "n": 16
+    },
+    "change_case:english_lowercase": {
+      "acc": 0.8095,
+      "n": 21
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.7619,
+      "n": 21
+    },
+    "combination:two_responses": {
+      "acc": 0.8571,
+      "n": 14
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.8333,
+      "n": 12
+    },
+    "detectable_content:postscript": {
+      "acc": 0.9,
+      "n": 10
+    },
+    "detectable_format:constrained_response": {
+      "acc": 0.4286,
+      "n": 7
+    },
+    "detectable_format:json_format": {
+      "acc": 0.8333,
+      "n": 12
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 0.8571,
+      "n": 7
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 0.7143,
+      "n": 14
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 0.92,
+      "n": 25
+    },
+    "detectable_format:title": {
+      "acc": 1.0,
+      "n": 20
+    },
+    "keywords:existence": {
+      "acc": 0.913,
+      "n": 23
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.8889,
+      "n": 27
+    },
+    "keywords:frequency": {
+      "acc": 0.8077,
+      "n": 26
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.6471,
+      "n": 17
+    },
+    "language:response_language": {
+      "acc": 0.8824,
+      "n": 17
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 0.8571,
+      "n": 7
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.3077,
+      "n": 13
+    },
+    "length_constraints:number_sentences": {
+      "acc": 0.7333,
+      "n": 30
+    },
+    "length_constraints:number_words": {
+      "acc": 0.8462,
+      "n": 26
+    },
+    "punctuation:no_comma": {
+      "acc": 0.9231,
+      "n": 39
+    },
+    "startend:end_checker": {
+      "acc": 0.7647,
+      "n": 17
+    },
+    "startend:quotation": {
+      "acc": 0.913,
+      "n": 23
+    }
+  },
+  "model": "qwen3.5-9b",
+  "benchmark": "ifeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-9b/Qwen3.5-9B-Q4_K_M.gguf",
+  "run_ts": 1785900986,
+  "perf": {
+    "prefill_tps": 542.75,
+    "decode_tps": 46.11,
+    "ttft_ms": 78.95,
+    "mean_prompt_tokens": 582.44,
+    "mean_completion_tokens": 312.63,
+    "total_gen_tokens": 88161,
+    "model_load_s": 8.0,
+    "gguf_mb": 5627.0,
+    "peak_vram_mb": 22837.0
+  }
+}

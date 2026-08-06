@@ -1,0 +1,51 @@
+{
+  "metric": "accuracy",
+  "score": 0.5667,
+  "n": 240,
+  "passed": 136,
+  "ci95": [
+    0.5034,
+    0.6278
+  ],
+  "by_category": {
+    "multiple": {
+      "score": 0.2,
+      "n": 60
+    },
+    "parallel": {
+      "score": 0.8,
+      "n": 60
+    },
+    "parallel_multiple": {
+      "score": 0.6667,
+      "n": 60
+    },
+    "simple": {
+      "score": 0.6,
+      "n": 60
+    }
+  },
+  "failure_breakdown": {
+    "no_call_parsed": 84,
+    "wrong_call": 20
+  },
+  "model": "exaone-4.5-33b",
+  "benchmark": "bfcl",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/exaone-4.5-33b/EXAONE-4.5-33B-Q4_K_M.gguf",
+  "run_ts": 1785986345,
+  "perf": {
+    "prefill_tps": 854.52,
+    "decode_tps": 42.34,
+    "ttft_ms": 371.03,
+    "mean_prompt_tokens": 332.14,
+    "mean_completion_tokens": 78.92,
+    "total_gen_tokens": 18941,
+    "model_load_s": 9.4,
+    "gguf_mb": 20047.8,
+    "peak_vram_mb": 23914.0
+  }
+}

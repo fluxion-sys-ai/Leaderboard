@@ -1,38 +1,38 @@
 {
   "metric": "pinchbench_pct",
-  "score": 0.7724,
+  "score": 0.7948,
   "n": null,
   "by_category": {
     "PRODUCTIVITY": {
-      "score": 0.7494,
+      "score": 0.7761,
       "n": null
     },
     "RESEARCH": {
-      "score": 0.938,
+      "score": 0.944,
       "n": null
     },
     "WRITING": {
-      "score": 0.6865,
+      "score": 0.7808,
       "n": null
     },
     "CODING": {
-      "score": 0.6417,
+      "score": 0.6208,
       "n": null
     },
     "ANALYSIS": {
-      "score": 0.8269,
+      "score": 0.8693,
       "n": null
     },
     "CSV_ANALYSIS": {
-      "score": 0.8552,
+      "score": 0.8652,
       "n": null
     },
     "LOG_ANALYSIS": {
-      "score": 0.7574,
+      "score": 0.75,
       "n": null
     },
     "MEETING_ANALYSIS": {
-      "score": 0.701,
+      "score": 0.7579,
       "n": null
     },
     "MEMORY": {

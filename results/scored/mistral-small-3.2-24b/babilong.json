@@ -1,0 +1,46 @@
+{
+  "metric": "accuracy",
+  "score": 0.5067,
+  "n": 150,
+  "passed": 76,
+  "ci95": [
+    0.4275,
+    0.5855
+  ],
+  "by_category": {
+    "0k": {
+      "score": 0.74,
+      "n": 50
+    },
+    "16k": {
+      "score": 0.38,
+      "n": 50
+    },
+    "4k": {
+      "score": 0.4,
+      "n": 50
+    }
+  },
+  "failure_breakdown": {
+    "wrong_or_missing": 74
+  },
+  "model": "mistral-small-3.2-24b",
+  "benchmark": "babilong",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/mistral-small-3.2-24b/Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf",
+  "run_ts": 1785916115,
+  "perf": {
+    "prefill_tps": 1808.36,
+    "decode_tps": 83.79,
+    "ttft_ms": 1914.41,
+    "mean_prompt_tokens": 6962.46,
+    "mean_completion_tokens": 2.91,
+    "total_gen_tokens": 437,
+    "model_load_s": 10.6,
+    "gguf_mb": 14333.9,
+    "peak_vram_mb": 22837.0
+  }
+}

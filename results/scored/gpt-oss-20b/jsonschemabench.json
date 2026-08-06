@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.7467,
+  "n": 300,
+  "passed": 224,
+  "ci95": [
+    0.6945,
+    0.7926
+  ],
+  "by_category": {
+    "Github_easy": {
+      "score": 0.8667,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.6667,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.7867,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.6667,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "no json found": 11,
+    "invalid json": 24,
+    "schema violation": 41
+  },
+  "model": "gpt-oss-20b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gpt-oss-20b/gpt-oss-20b-Q4_K_M.gguf",
+  "run_ts": 1786007279,
+  "perf": {
+    "prefill_tps": 3091.25,
+    "decode_tps": 176.46,
+    "ttft_ms": 118.14,
+    "mean_prompt_tokens": 935.71,
+    "mean_completion_tokens": 162.41,
+    "total_gen_tokens": 48722,
+    "model_load_s": 6.9,
+    "gguf_mb": 11624.8,
+    "peak_vram_mb": 11757.0
+  }
+}

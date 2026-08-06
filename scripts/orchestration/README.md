@@ -25,4 +25,4 @@ Update them for a new host before reusing. The wait-conditions reference the scr
 - `rm -rf models/<name>` after each model to stay under disk.
 - Rebuild the site (`python3 -m src.report.build_leaderboard`) at the end.
 
-Everything else in this folder is **historical** — earlier chains kept for provenance, not the current pipeline.
+The 28 earlier chains are kept for provenance in **`archive/`** — not part of the current pipeline; safe to ignore.

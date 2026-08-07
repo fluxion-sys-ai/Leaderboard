@@ -20,10 +20,10 @@ class GenResult:
     text: str
     n_tokens: int              # completion tokens out
     prompt_tokens: int = 0     # prompt tokens in (context size actually used)
-    # Speed — the Fluxion prefill/decode columns.
+    # Speed — the prefill/decode columns.
     prefill_tps: float = 0.0   # prompt-eval throughput (tok/s)
     decode_tps: float = 0.0    # generation throughput (tok/s)
-    # Latency — prefill_ms ≈ time-to-first-token (Fluxion's TTFT metric).
+    # Latency — prefill_ms ≈ time-to-first-token (the TTFT metric).
     prefill_ms: float = 0.0
     decode_ms: float = 0.0
     total_ms: float = 0.0

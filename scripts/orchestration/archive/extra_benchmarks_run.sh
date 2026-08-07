@@ -1,6 +1,6 @@
 #!/bin/bash
 # Follow-on: run EXTRA benchmarks after the main watcher (PID 1812216) finishes.
-# ORDER (per shujun): PinchBench FIRST (Fluxion's headline Agent metric), then the
+# ORDER (per shujun): PinchBench FIRST (the headline Agent metric), then the
 # batched new benchmarks, then judges + leaderboard.
 # SOLO-GPU SAFE: waits for main watcher AND every llama-server to be gone.
 set -u
@@ -22,7 +22,7 @@ echo "[extra] GPU free -> starting extras $(date -u +%T)" >> $LOG
 MODELS=$(python3 scripts/top_models.py 8 | tr '\n' ' ')
 echo "[extra] scoped to top-8 models: $MODELS" >> $LOG
 
-# === Step 1 (FIRST PRIORITY): local PinchBench — Fluxion's Agent-score metric =====
+# === Step 1 (FIRST PRIORITY): local PinchBench — the Agent-score metric =====
 # SMOKE-GATE: run ONE model first, confirm it produced a valid pinchbench score, and
 # only then commit to the remaining ~17 (each ~30-45min). Never grind 12h on a broken harness.
 echo "[extra] Step 1/3: PinchBench (multi-turn agent) — smoke-gate first $(date -u +%T)" >> $LOG

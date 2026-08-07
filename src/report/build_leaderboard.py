@@ -137,7 +137,7 @@ def weighted_avg(row: dict):
 def heat(v):
     if v is None:
         return "background:transparent"
-    # Fluxion palette: warm red → amber (#D9A45E) → green (#4EC98F)
+    # palette: warm red → amber (#D9A45E) → green (#4EC98F)
     stops = [(0.0, (194, 94, 94)), (0.5, (217, 164, 94)), (1.0, (78, 201, 143))]
     for (a, ca), (b, cb) in zip(stops, stops[1:]):
         if v <= b:

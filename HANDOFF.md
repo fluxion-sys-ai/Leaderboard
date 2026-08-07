@@ -10,7 +10,7 @@ decision, show the **full control panel** (every knob + current value + options 
 never dribble knobs out one at a time. (See memory: `be-upfront-about-knobs`.)
 
 ## What this project is
-A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for the **Fluxion Edge Leaderboard**, run on a single
+A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for an edge-model capability leaderboard, run on a single
 **NVIDIA A100-SXM4-40GB** via **llama.cpp b9892**. Output is a self-contained `leaderboard.html`.
 - **Grid** = 15 judge-free academic benches (ifeval, jsonschemabench, gsm8k, aime2026, mmlu_pro, zebralogic,
   gpqa_diamond, livecodebench, humaneval, cruxeval, babilong, ruler, writing[LLM-judge], bfcl, simpleqa[LLM-judge]).

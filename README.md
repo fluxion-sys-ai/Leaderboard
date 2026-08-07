@@ -4,9 +4,8 @@ An automated benchmark that measures how *smart* edge-sized LLMs are — across
 instruction-following, reasoning, coding, long-context, writing, and agentic tool-use —
 on **quantized GGUF weights running on llama.cpp**, i.e. how they actually deploy on edge.
 
-Built to feed the [Fluxion Edge Leaderboard](https://fluxion-sys.ai/#leaderboard)
-(model × hardware × capability). Output is one self-contained, interactive HTML leaderboard,
-published live via GitHub Pages.
+A per-model × per-capability edge leaderboard. Output is one self-contained, interactive HTML
+leaderboard, published live via GitHub Pages.
 
 ### 🔗 Live interactive leaderboard → **https://fluxion-sys-ai.github.io/Leaderboard/**
 
@@ -93,7 +92,7 @@ auto-excluded; contaminated ones are temporarily hidden until a clean rerun.)
 | **Coding** | LiveCodeBench · HumanEval+ · CruxEval | write code vs hidden tests; output prediction | pass@1 (sandboxed / official evalplus); exact-match |
 | **Long-context** | BABILong · RULER | facts in long context; retrieval/aggregation | exact / string-match |
 | **Writing** | Writing set | open-ended quality | DeepSeek judge (1–10) |
-| **Agentic** | BFCL · PinchBench | function-calling; multi-turn real file/tool agent (**Fluxion's metric**) | AST/value match; task rubric (DeepSeek judge) |
+| **Agentic** | BFCL · PinchBench | function-calling; multi-turn real file/tool agent (the headline agentic metric) | AST/value match; task rubric (DeepSeek judge) |
 | *Factuality (shown, not counted)* | SimpleQA | short-fact recall + abstention | DeepSeek judge |
 
 ---
@@ -198,8 +197,8 @@ Three tabs (Benchmarks / Dimensions / Averages), light+dark, click any header to
 score to see the exact settings that produced it**. Published live via GitHub Pages (auto-deploys on
 push to `docs/index.html`).
 
-> No blended "overall score": Fluxion's blend weights aren't published and two of its inputs (price,
-> battery) are device-specific, so we rank on capability and show speed/cost separately.
+> No blended "overall score": blend weights are subjective and two common inputs (price, battery)
+> are device-specific, so we rank on capability and show speed/cost separately.
 
 ## Roadmap
 

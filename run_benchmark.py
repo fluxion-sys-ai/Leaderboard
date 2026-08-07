@@ -129,9 +129,9 @@ def run_cell(runner, benchmark, model_name: str, root=RESULTS) -> dict:
         return round(sum(vals) / len(vals), 2) if vals else 0.0
 
     perf = {
-        "prefill_tps": _median("prefill_tps"),   # Fluxion Prefill column
-        "decode_tps": _median("decode_tps"),     # Fluxion Decode column
-        "ttft_ms": _median("prefill_ms"),        # Fluxion TTFT metric
+        "prefill_tps": _median("prefill_tps"),   # Prefill column
+        "decode_tps": _median("decode_tps"),     # Decode column
+        "ttft_ms": _median("prefill_ms"),        # TTFT metric
         "mean_prompt_tokens": _mean("prompt_tokens"),
         "mean_completion_tokens": _mean("n_tokens"),
         "total_gen_tokens": sum(r.get("n_tokens", 0) for r in rows),

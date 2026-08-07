@@ -2,7 +2,7 @@
 """Import local-PinchBench results into the leaderboard as a first-class Agentic cell.
 
 PinchBench (the multi-turn OpenClaw agent harness in ~/pinchbench-skill/) is the SAME
-benchmark Fluxion uses for its "Agent score", so this is the headline agentic metric.
+benchmark used for the "Agent score", so this is the headline agentic metric.
 Its runner writes ~/pinchbench-skill/results/*.json with per-category scores; here we
 aggregate score/max_score across categories into a 0-1 score and write it into the
 edge-benchmark's results/scored/<model>/pinchbench.json so build_leaderboard picks it up.

@@ -1,151 +1,124 @@
 # Edge-Intelligence-Benchmark
 
-An automated, **judge-free** benchmark that measures how *smart* edge-sized LLMs are —
-across coding, reasoning, and instruction-following — while also recording the
-speed, memory, and speculative-decoding metrics you need to actually deploy them.
+An automated benchmark that measures how *smart* edge-sized LLMs are — across
+instruction-following, reasoning, coding, long-context, writing, and agentic tool-use —
+on **quantized GGUF weights running on llama.cpp**, i.e. how they actually deploy on edge.
 
 Built to feed the [Fluxion Edge Leaderboard](https://fluxion-sys.ai/#leaderboard)
-(model × hardware × capability). Output is one self-contained, interactive HTML
-leaderboard.
+(model × hardware × capability). Output is one self-contained, interactive HTML leaderboard,
+published live via GitHub Pages.
 
 ---
 
 ## Results
 
-**15 edge models, 16 benchmarks, 7 capability dimensions.** Scores are 0–100;
-**Average** is dimension-weighted (benchmarks averaged *within* a dimension, then
-dimensions averaged equally, so a dimension with 4 benchmarks doesn't out-vote one
-with 1). Ranked best-first.
+**17 models on the board, 16 benchmarks, 6 weighted capability dimensions** (+ SimpleQA/Factuality
+shown but *not* counted in the Average). Scores are 0–100; **Average** is dimension-weighted —
+benchmarks averaged *within* a dimension, then the 6 dimensions averaged equally, so a dimension
+with 5 benchmarks doesn't out-vote one with 1. Ranked best-first.
 
-| Model | Average | Instruction | Reasoning | Coding | Long-context | Writing | Agentic | Factuality |
-|---|--:|--:|--:|--:|--:|--:|--:|--:|
-| qwen2.5-7b-instruct | **65.2** | 70.9 | 40.5 | 42.7 | 73.7 | 81.0 | 82.5 | — |
-| granite-4.1-8b | **63.0** | 76.7 | 47.0 | 41.8 | 48.7 | 86.2 | 77.9 | — |
-| glm-4-9b-0414 | **62.3** | 74.3 | 39.5 | 46.1 | 41.3 | 85.6 | 87.1 | — |
-| gemma-2-9b-it | **58.1** | 64.8 | 38.3 | 35.5 | 42.7 | 84.1 | 83.3 | — |
-| qwen3-8b | **57.9** | 76.5 | 52.1 | 47.2 | 0.0 | 86.1 | 85.8 | — |
-| mistral-nemo-12b | **55.9** | 63.5 | 35.9 | 34.4 | 39.3 | 85.9 | 76.2 | — |
-| gemma-4-e4b | **52.1** | 67.7 | 37.3 | 28.2 | 24.7 | 85.0 | 69.6 | — |
-| llama-3.1-8b-instruct | **50.7** | 58.2 | 33.0 | 35.8 | 49.3 | 79.4 | 48.8 | — |
-| phi-4-mini-instruct | **50.5** | 46.5 | 35.5 | 32.3 | 39.3 | 70.3 | 78.8 | — |
-| ornith-1.0-9b | **47.8** | 47.2 | 36.4 | 49.0 | 0.7 | 69.5 | 84.2 | — |
-| tess-4-9b | **45.2** | 48.2 | 34.9 | 31.9 | 3.3 | 80.4 | 72.5 | — |
-| deepseek-r1-distill-qwen-7b | **41.8** | 45.3 | 40.4 | 35.2 | 0.7 | 61.0 | 68.3 | — |
-| llama-3.2-3b | **40.4** | 56.1 | 31.2 | 30.9 | 28.7 | 74.2 | 21.7 | — |
-| lfm2.5-8b-a1b | **39.9** | 44.0 | 31.8 | 35.0 | 0.7 | 76.9 | 50.8 | — |
-| llama-xlam-2-8b-fc | **39.4** | 31.5 | 22.6 | 25.3 | 35.3 | 44.8 | 76.7 | — |
+| # | Model | Size | Average |
+|--:|---|--:|--:|
+| 1 | gemma-4-31b | 31B | **82.3** |
+| 2 | qwen3.6-27b | 27B | **78.5** |
+| 3 | qwen3.5-35b-a3b | 35B | **75.3** |
+| 4 | qwen3.5-9b | 9B | **70.9** |
+| 5 | ornith-1.0-9b | 9B | **68.9** |
+| 6 | mistral-small-3.2-24b | 24B | **65.5** |
+| 7 | glm-4-9b-0414 | 9B | **64.9** |
+| 8 | granite-4.1-8b | 8B | **61.5** |
+| 9 | qwen2.5-7b-instruct | 7B | **59.9** |
+| 10 | exaone-4.5-33b | 33B | **59.9** |
+| 11 | gpt-oss-20b | 20B | **59.4** |
+| 12 | mistral-nemo-12b | 12B | **59.1** |
+| 13 | gemma-2-9b-it | 9B | **56.6** |
+| 14 | llama-3.1-8b-instruct | 8B | **53.5** |
+| 15 | phi-4-mini-instruct | 3.8B | **52.9** |
+| 16 | llama-3.2-3b | 3B | **44.1** |
+| 17 | llama-xlam-2-8b-fc | 8B | **40.1** |
 
-*Run in progress — **PinchBench** (multi-turn agent) is landing on the top models
-and **Factuality** (SimpleQA) is being judged, so the Agentic column will rise and
-Factuality will fill in. A few Long-context `0.0`s are RULER edge cases under review.
-The interactive version with per-category splits, confidence intervals, and deploy
-metrics is [`leaderboard.html`](leaderboard.html).*
+*Live snapshot — a full run is grinding through the remaining PinchBench/grid reruns, so numbers
+shift as they land (the dashboard auto-refreshes). The interactive version — per-dimension splits,
+per-score settings on click, heat-maps, light/dark — is [`leaderboard.html`](leaderboard.html),
+served at **https://fluxion-sys-ai.github.io/Leaderboard/**.*
+
+**Hidden pending clean reruns** (contaminated grids or unfixable output — auto-reappear when a rerun
+comes back <15% empty): `qwen3-8b`, `gemma-4-12b`, `gemma-4-e4b`, `tess-4-9b`, `lfm2.5-8b-a1b`,
+`deepseek-r1-distill-qwen-7b`.
 
 ---
 
 ## Why this exists
 
-Most LLM benchmarks target frontier models and one number ("how smart"). Edge
-deployment needs something different:
+Most LLM benchmarks target frontier models and one number ("how smart"). Edge deployment needs
+something different:
 
-- **Which model, for which task** — a 3B can tie an 8B on instruction-following yet
-  collapse on code reasoning. One score hides that; a per-dimension board shows it.
-- **Smart *and* cheap/fast** — an edge model is only useful if it runs. Every score
-  sits next to decode speed, time-to-first-token, and memory.
-- **Trustworthy numbers** — judge-free scoring (no LLM grader), contamination-resistant
-  datasets, and a recorded reason for every failure so a low score is explainable,
-  not mysterious.
+- **Which model, for which task** — a 9B can top the board while a 33B trails it; one score hides
+  that, a per-dimension board shows it.
+- **Smart *and* cheap/fast** — an edge model is only useful if it runs. Scores sit next to decode
+  speed, TTFT, and memory.
+- **Trustworthy numbers** — objective scoring wherever honest, and a **recorded reason for every
+  failure** so a low score is explainable (e.g. "empty output from thinking-token stripping",
+  "harmony analysis-channel bug", "128K KV OOM"), not mysterious.
 
 ---
 
 ## What it measures
 
-**15 usable models × 16 benchmarks across 7 dimensions.** Every model runs every
-benchmark. (19 models were pulled; 4 were excluded for running broken on this
-llama.cpp build — below-random output or an unsupported architecture.)
+**16 benchmarks across 7 capability areas** (the Average is weighted over 6 — SimpleQA/Factuality is
+shown but excluded). Every model runs every benchmark, on an **NVIDIA A100-SXM4-40GB** via
+**llama.cpp b9892**, all at **Q4_K_M**.
 
-### Models (quantized Q4_K_M GGUF, run on llama.cpp)
+### Models (quantized Q4_K_M GGUF)
 
-| Model | Size | Family | Category |
+Spanning **3B → 35B**, floor models to 2026 flagships and the new 20–35B tier:
+
+- **20–35B tier:** gemma-4-31b, qwen3.5-35b-a3b (MoE, ~3B active), qwen3.6-27b, mistral-small-3.2-24b,
+  exaone-4.5-33b, gpt-oss-20b (OpenAI open, harmony)
+- **7–12B:** qwen3.5-9b, ornith-1.0-9b, glm-4-9b-0414, granite-4.1-8b, qwen2.5-7b-instruct,
+  mistral-nemo-12b, gemma-2-9b-it, llama-3.1-8b-instruct, llama-xlam-2-8b-fc (function-calling)
+- **floor (≤4B):** phi-4-mini-instruct, llama-3.2-3b
+
+(Models that run broken on this llama.cpp build — unsupported arch or below-random output — are
+auto-excluded; contaminated ones are temporarily hidden until a clean rerun.)
+
+### Benchmarks (grouped by capability)
+
+| Dimension (weighted) | Benchmark | Tests | Scoring |
 |---|---|---|---|
-| llama-3.2-3b | 3B | Llama | floor |
-| phi-4-mini-instruct | 3.8B | Phi | floor |
-| gemma-4-e4b | ~4B | Gemma | **2026 flagship** |
-| qwen2.5-7b-instruct | 7B | Qwen | anchor |
-| deepseek-r1-distill-qwen-7b | 7B | DeepSeek-distill | reasoning (long CoT) |
-| llama-xlam-2-8b-fc | 8B | xLAM (Salesforce) | **function-calling specialist** |
-| lfm2.5-8b-a1b | 8B-A1B | LFM (LiquidAI) | **2026 MoE (~1B active)** |
-| qwen3-8b | 8B | Qwen | **2026, thinking mode** |
-| llama-3.1-8b-instruct | 8B | Llama | baseline |
-| granite-4.1-8b | 8B | Granite (IBM) | **2026, new family** |
-| gemma-2-9b-it | 9B | Gemma | heavyweight |
-| glm-4-9b-0414 | 9B | GLM (THUDM) | **2026, new family** |
-| ornith-1.0-9b | 9B | Ornith | 2026 |
-| tess-4-9b | 9B | Tess (fine-tune) | instruction fine-tune |
-| mistral-nemo-12b | 12B | Mistral | long-context |
-
-*Excluded (ran broken on this llama.cpp build): gemma-4-12b, nanbeige4.2-3b,
-qwen3.5-4b, qwen3.5-9b.*
-
-### Benchmarks (grouped into 7 capability dimensions)
-
-| Dimension | Benchmark | What it tests | Scoring |
-|---|---|---|---|
-| **Instruction-Following** | IFEval | verifiable constraints (format/length/keywords) | programmatic constraint checks |
-| | JSONSchemaBench | emit JSON valid against a schema | schema validation |
-| **Reasoning** | GSM8K | grade-school math (easy) | exact-match |
-| | AIME 2026 | olympiad math (hard, fresh) | exact-match (`\boxed{}`) |
-| | MMLU-Pro | 14-subject knowledge | exact-match (MC) |
-| | ZebraLogic | deductive logic-grid puzzles | full-grid exact-match |
-| | GPQA Diamond | graduate-level science (Google-proof) | exact-match (MC) |
-| **Coding** | LiveCodeBench | write code, run vs hidden tests (contamination-free) | pass@1, sandboxed |
-| | HumanEval+ | write code (floor) | pass@1, **official evalplus scorer** |
-| | CruxEval | predict a function's output (code reasoning) | exact-match |
-| **Long-context** | BABILong | find facts hidden in long context (length-scaling) | exact-match |
-| | RULER | retrieval/aggregation at 8k context | string-match |
-| **Agentic** | BFCL | call the right tool/function for a request | AST / value match |
-| | PinchBench-Clawd | single-turn personal tasks (right tool + args) | judge-free tool/arg match |
-| | PinchBench | multi-turn agent on real file/tool tasks (**Fluxion's metric**) | task rubric (DeepSeek judge) |
-| **Writing** | AlpacaEval | open-ended writing quality | **DeepSeek judge** (1–10) |
-| **Factuality** | SimpleQA | short-fact recall + calibration (abstention) | **DeepSeek judge** (correct/incorrect/not-attempted) |
+| **Instruction** | IFEval · JSONSchemaBench | verifiable constraints; schema-valid JSON | programmatic |
+| **Reasoning** | GSM8K · AIME 2026 · MMLU-Pro · ZebraLogic · GPQA Diamond | math (easy→olympiad), knowledge, logic, grad science | exact-match |
+| **Coding** | LiveCodeBench · HumanEval+ · CruxEval | write code vs hidden tests; output prediction | pass@1 (sandboxed / official evalplus); exact-match |
+| **Long-context** | BABILong · RULER | facts in long context; retrieval/aggregation | exact / string-match |
+| **Writing** | Writing set | open-ended quality | DeepSeek judge (1–10) |
+| **Agentic** | BFCL · PinchBench | function-calling; multi-turn real file/tool agent (**Fluxion's metric**) | AST/value match; task rubric (DeepSeek judge) |
+| *Factuality (shown, not counted)* | SimpleQA | short-fact recall + abstention | DeepSeek judge |
 
 ---
 
 ## Methodology (the rules that make the numbers trustworthy)
 
-- **Judge-free where it's honest.** 11 of the 16 benchmarks are scored objectively —
-  execution, exact-match, or a programmatic validator — with **Wilson confidence
-  intervals** on every cell. The 5 that can't be exact-matched (Writing, Factuality,
-  and the two PinchBench agent benchmarks) use a DeepSeek judge, kept strictly
-  separate from the judge-free grid. Where an official reference scorer exists and
-  scoring is hard (e.g. evalplus for HumanEval), it's used instead of an in-repo one.
-- **Broken models auto-excluded.** A model scoring below the random floor on a
-  multiple-choice benchmark (degenerate output) is aborted and logged, not left to
-  waste hours or pollute the board.
-- **Contamination-resistant.** LiveCodeBench is date-filtered to problems released
-  *after* the models' training; AIME/ZebraLogic use fresh 2026 data. Older static
-  benchmarks (GSM8K, HumanEval) are kept as floors, not discriminators.
-- **Random, stratified sampling.** A fixed-seed random sample (never a biased
-  first-N slice), stratified across a benchmark's sub-categories so each is
-  represented. Expanding the sample is **additive** — prior prompts are kept, only
-  new ones are generated, never repeated.
-- **Edge-honest runtime.** Q4_K_M GGUF on llama.cpp — what actually deploys on edge,
-  including the quality hit from quantization. Quant is fixed and reported.
-- **Reasoning models get room.** Long-CoT models (DeepSeek-R1-distill, Qwen3-8B) get
-  a larger token budget so they aren't truncated before the answer; `<think>` blocks
-  are stripped before scoring.
-- **Sandboxed code execution.** Generated code runs in an isolated subprocess with
-  CPU/heap/file limits and a wall-clock timeout — never on the host unguarded.
-
-### What every cell records
-
-Beyond the headline score:
-- **per-category splits** (e.g. MMLU-Pro by subject, IFEval by instruction type)
-- **failure breakdown** (wrong answer vs. couldn't-parse vs. schema violation vs. timeout)
-- **speed / latency / memory** — prefill & decode tok/s, TTFT, peak VRAM, on-disk size
-- **speculative-decoding** — per-position acceptance, τ, accept-rate (when a drafter
-  is attached; see the `--spec` pass)
-- **reproducibility stamp** — quant, engine, context, temperature, GGUF path, timestamp
+- **Objective where it's honest.** Most benchmarks are scored by execution / exact-match / a
+  programmatic validator (Wilson CIs per cell). The few that can't be — Writing, Factuality, and
+  PinchBench — use a **DeepSeek judge (via OpenRouter)**, kept strictly separate from the objective
+  grid. Where an official reference scorer exists (evalplus for HumanEval+), it's used.
+- **Reasoning models run in direct-answer mode.** Dual-mode models (Qwen3.x, EXAONE, Ornith,
+  Gemma-4, …) are run with `no_think` (`enable_thinking:false`) — otherwise they dump `<think>`
+  tokens that get stripped, leaving empty output and fake-low scores. This is the single most common
+  failure mode we corrected. gpt-oss (harmony format) uses `reasoning_effort` instead.
+- **Every non-default setting is recorded.** Each score carries its exact per-model settings
+  (`no_think`, `reasoning_effort`, `max_tokens_mult`, context), shown on click in the dashboard; a
+  ◆ marks any score run under a non-default spec (e.g. exaone PinchBench at 64K because 128K KV OOMs
+  the 40 GB card).
+- **Bad data never ships silently.** A contaminated model (high empty-output %) is **hidden** from
+  the board until a clean rerun (<15% empty) auto-un-hides it, rather than publishing artifact-low
+  numbers. Broken-on-load models are auto-excluded.
+- **Contamination-resistant.** LiveCodeBench is date-filtered to post-training problems; AIME/Zebra
+  use fresh 2026 data. Static benchmarks (GSM8K, HumanEval) are floors, not discriminators.
+- **Random, stratified, additive sampling.** Fixed-seed random sample (never a biased first-N),
+  stratified across sub-categories; expanding a sample keeps prior prompts and only generates new.
+- **Edge-honest runtime.** Q4_K_M GGUF on llama.cpp — including the quantization quality hit. Quant
+  is fixed and reported. Grid at 20K context; **PinchBench at 128K**. Sandboxed code execution.
 
 ---
 
@@ -153,37 +126,39 @@ Beyond the headline score:
 
 ```
 configs/
-  models.yaml         models under test (+ runner, quant, optional draft model)
-  benchmarks.yaml     benchmarks, sample sizes, dataset pins, seed
-  pinchbench_tasks.txt  the pinned PinchBench task suite
+  models.yaml          models + per-model knobs (gguf/quant, no_think, reasoning_effort, max_tokens_mult)
+  benchmarks.yaml      benchmarks, sample sizes, dataset pins, seed
+  pinchbench_tasks.txt the pinned 116-task PinchBench suite
+  score_specs.json     universal run specs + per-score ◆ deviations (shown in the dashboard)
+  hidden_models.json   models hidden pending a clean rerun (auto-un-hide when <15% empty)
 src/
-  models/             uniform ModelRunner interface + llama.cpp runner (spec-decode aware)
-  benchmarks/         one module per benchmark (load / prompt / score) + registry
-  evaluators/         judge-free scorers: IFEval checks, sandboxed code executor
-  report/             assembles results into the HTML leaderboard (build_leaderboard.py)
-  utils/              config IO, resumable-run cache, random/stratified sampler
-  models_fetch.py     resolve + download GGUFs from HuggingFace (confirmed at pull time)
+  models/              uniform runner interface + llama.cpp runner (no_think/reasoning/spec-decode aware)
+  benchmarks/          one module per benchmark (load / prompt / score) + registry
+  evaluators/          objective scorers: IFEval checks, sandboxed code executor
+  report/              build_leaderboard.py → the interactive HTML board
+  utils/               config IO, resumable-run cache, stratified sampler
+  models_fetch.py      resolve + download GGUFs from HuggingFace (confirmed at pull time)
 scripts/
-  pinchbench_run.sh   run PinchBench (multi-turn agent) against one model's endpoint
-  top_models.py       rank models by the dimension-weighted Average
-run_benchmark.py      the single orchestrator (judge-free grid)
-rescore_all.py        re-score all cells offline from cached generations (no GPU)
-score_official.py     official reference scorers where scoring is hard (evalplus/HumanEval)
-judge_writing.py      DeepSeek judge → Writing scores
-judge_simpleqa.py     DeepSeek judge → Factuality scores
-import_pinchbench.py  fold PinchBench agent results into the grid
+  pinchbench_run.sh    run PinchBench against one model (128K; env: FORCE_PINCH, REASONING_EFFORT, PINCH_CTX)
+  preflight.py         smoke-test a model's config (load/context/empty/degenerate) BEFORE a full run
+  orchestration/       detached solo-GPU "waiter" scripts for unattended runs (+ README, archive/)
+run_benchmark.py       the grid orchestrator (objective benchmarks)
+rescore_all.py         re-score all cells offline from cached generations (no GPU)
+score_official.py      official reference scorers (evalplus/HumanEval+)
+judge_writing.py       DeepSeek judge → Writing (skip-guard: only new/complete, no drift)
+judge_simpleqa.py      DeepSeek judge → Factuality (same skip-guard)
+import_pinchbench.py   fold PinchBench agent results into the grid
+docs/index.html        the dashboard served by GitHub Pages
 results/
-  raw/<model>/<benchmark>.jsonl     model generations (cached — the expensive part; gitignored)
-  scored/<model>/<benchmark>.json   metrics (cheap, regenerable)
-  spec/                             speculative-decode pass results
-leaderboard.html      the interactive output (open in a browser)
-CANDIDATES.md         scouted edge models parked for a future run
+  raw/<model>/<bench>.jsonl     model generations (cached — the expensive part)
+  scored/<model>/<bench>.json   metrics (cheap, regenerable)
+leaderboard.html       the interactive output (open in a browser)
+MIGRATION.md           moving to a new GPU: setup, run commands, dashboard hosting
+HANDOFF.md             read-me-first for a successor: state, gotchas, open items
 ```
 
-**Design:** every `(model, benchmark)` is its own pair of files, so you can re-run
-one cell, resume a crash (a crash costs one cell, not the run), or re-score without
-regenerating. Adding a model is a config edit; adding a benchmark is one file + one
-registry line.
+**Design:** every `(model, benchmark)` is its own pair of files — re-run one cell, resume a crash
+(costs one cell, not the run), or re-score without regenerating. Adding a model is a config edit.
 
 ---
 
@@ -191,55 +166,41 @@ registry line.
 
 ```bash
 pip install -r requirements.txt
-export LLAMACPP_BIN=/path/to/llama.cpp      # directory containing llama-server
+export LLAMACPP_BIN=/path/to/llama.cpp      # directory containing llama-server (b9892+)
+# secrets (gitignored): .hf_token (HF download), .openrouter_key (DeepSeek judge)
 
 # one cell (fast smoke)
-python run_benchmark.py --models qwen2.5-7b-instruct --benchmarks ifeval --limit 10
+python run_benchmark.py --models qwen2.5-7b-instruct --benchmarks ifeval
 
-# the full grid (all models × all benchmarks, resumable)
-python run_benchmark.py
+# a model's full grid
+python run_benchmark.py --models gemma-4-31b --benchmarks ifeval jsonschemabench gsm8k aime2026 \
+  mmlu_pro zebralogic gpqa_diamond livecodebench humaneval cruxeval babilong ruler writing bfcl simpleqa
 
-# speculative-decoding pass — per-position acceptance for models with a draft model
-python run_benchmark.py --spec
+# PinchBench (multi-turn agent) for one model — 128K, top-10 gate
+bash scripts/pinchbench_run.sh gemma-4-31b
 
-# re-score everything offline (no GPU), then rebuild the board
-python rescore_all.py
-python -m src.report.build_leaderboard
+# judge passes (API-only, no GPU) + rebuild the board
+python judge_writing.py && python judge_simpleqa.py && python import_pinchbench.py
+python -m src.report.build_leaderboard      # -> leaderboard.html
 ```
 
-Results land in `results/`; open `leaderboard.html`.
+Full setup for a fresh GPU (deps, llama.cpp, keys, auto-downloaded GGUFs, dashboard hosting) is in
+[`MIGRATION.md`](MIGRATION.md).
 
 ---
 
 ## The leaderboard
 
-Ranked by **Average** (dimension-weighted mean of the capability scores, 0–100),
-with every dimension heat-mapped and grouped by type. Alongside sit the deploy metrics — prefill/decode
-tok/s, TTFT, VRAM, size — plus placeholders for the device-specific columns
-(battery, hardware cost) that Fluxion fills per physical device. Click any row to
-expand its per-category splits, failure reasons, and per-position acceptance.
+Ranked by **Average** (dimension-weighted mean, 0–100), every dimension heat-mapped and grouped.
+Three tabs (Benchmarks / Dimensions / Averages), light+dark, click any header to sort, **click any
+score to see the exact settings that produced it**. Published live via GitHub Pages (auto-deploys on
+push to `docs/index.html`).
 
-> No blended "overall score": Fluxion's own blend weights aren't published and two
-> of its inputs (price, battery) are device-specific, so we rank on capability and
-> show speed/cost separately rather than invent a formula.
-
----
-
-## The judge-based dimensions (Writing, Factuality, Agentic)
-
-Some capabilities can't be exact-matched, so they're scored by a **DeepSeek judge
-(via OpenRouter)** — generated in the normal grid, then judged separately so the
-judge-free cells stay untouched:
-- `python judge_writing.py` — rates each response 1–10 → mean / 10.
-- `python judge_simpleqa.py` — grades Factuality as correct / incorrect / not-attempted.
-- **PinchBench** runs the model as a real multi-turn OpenClaw agent (files + tools);
-  the judge scores the task rubric. This is the axis that feeds Fluxion's Agent score.
-
-Swap the judge and re-run to re-score cached responses (no regeneration).
+> No blended "overall score": Fluxion's blend weights aren't published and two of its inputs (price,
+> battery) are device-specific, so we rank on capability and show speed/cost separately.
 
 ## Roadmap
 
-- **LiveBench** — adopt the contamination-free, self-refreshing 7-category suite
-- **BFCL v4** — re-run agentic tool-use on the current harness version
+- **Harness fix for harmony models** — read the analysis channel so gpt-oss's agentic isn't understated
+- **LiveBench** — adopt the contamination-free, self-refreshing suite
 - **Tests** — unit coverage for the scorers + sandboxed executor
-- **v2 writing tasks** — expand Writing beyond a single open-ended set

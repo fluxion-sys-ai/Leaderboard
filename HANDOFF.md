@@ -40,11 +40,11 @@ A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for an edge-model capabi
     so re-running the sweep doesn't drift already-published LLM-judge scores.
 11. **exaone ruler 0.02 is REAL** (degenerate repetition, not a bug) — a genuine long-context weakness. Flagged, kept.
 
-## Current run state (2026-08-07 ~19:56 UTC / 12:56 PM PT — will be stale; RE-CHECK live)
+## Current run state (2026-08-07 ~20:11 UTC / 1:11 PM PT — will be stale; RE-CHECK live)
 Runs are chained solo-GPU via detached waiters in `/tmp/*.sh` (copied to `scripts/orchestration/`). The
 early stages (`stage2 → ornith_rerun → gptoss_medium → qwen_128k_fix → exaone FORCE pinch`) are **done**.
 - **17 models on the board.** **gemma-4-31b is #1 (82.3 overall)**, clean 0%-empty grid; its PinchBench is
-  running now at ~0.75 (68/116, holding) — folds Agentic 85→~80, overall settles ~81.5, still #1 (qwen3.6-27b #2 at 78.5).
+  running now at ~0.746 (79/116, holding) — folds Agentic 85→~80, overall settles ~81.5, still #1 (qwen3.6-27b #2 at 78.5).
 - **gpt-oss-20b is DONE and staying visible-but-flagged** (#11, 59.4). Its bfcl/pinch/babilong are harmony-channel
   understated (answer lands in the "analysis" channel; harness reads only "final"). `reasoning_effort` can't fix it
   (low is best; medium worse; off no help) — needs the harness patch. Not re-running it. Locked at `reasoning_effort: low`.
@@ -53,18 +53,18 @@ early stages (`stage2 → ornith_rerun → gptoss_medium → qwen_128k_fix → e
 - Re-derive live status: `ls /tmp/*.sh` running, `tail /tmp/<name>.log`, `nvidia-smi`, and the empty% sweep.
 
 ### Remaining queue — detailed ETA phases (solo-GPU, each gates on the prior + a free GPU)
-Anchored 2026-08-07 19:56 UTC / 12:56 PM PT. Grid durations are **estimates** (±30–60 min); every phase
+Anchored 2026-08-07 20:11 UTC / 1:11 PM PT. Grid durations are **estimates** (±30–60 min); every phase
 auto-gates and self-adjusts/skips, so a stumble delays but never corrupts the run. All times UTC (PT in parens).
 
 | # | Phase (`/tmp/*.sh`) | What it does | Est. finish |
 |--:|---|---|---|
-| 1 | **gemma-4-31b pinch** (`gemma_last`) | PinchBench @128K, 116 tasks · ~2.75 min/task, ~44 left | **~22:00 UTC (3:00 PM PT)** |
-| 2 | **gemma-4-e4b grid** (`gemma_e4b`) | 15-bench grid, tiny e4b model (fast) | ~23:30 UTC (4:30 PM PT) |
-| 3 | **tail reruns** (`lfm_tess`) | grids for tess-4-9b, lfm2.5-8b-a1b, qwen3-8b, gemma-4-12b (4×15) — auto-un-hides each if <15% empty | ~04:30 UTC Sat (9:30 PM PT Fri) |
-| 4 | **nemotron-3-nano-30b** (`nemotron_test`) | preflight → smoke → auto-add `no_think` if empty → full grid + pinch@32K (skips cleanly if it can't run) | ~08:00 UTC Sat (1:00 AM PT Sat) |
-| 5 | **exaone-4.5-33b pinch @64K** (`exaone_pinch_64k`) | PinchBench @64K (128K OOMs the 40GB card), 33B dense = slow · marks a ◆ 64K spec | ~12:00 UTC Sat (5:00 AM PT Sat) |
+| 1 | **gemma-4-31b pinch** (`gemma_last`) | PinchBench @128K, 116 tasks · ~2.2 min/task, ~37 left | **~21:35 UTC (2:35 PM PT)** |
+| 2 | **gemma-4-e4b grid** (`gemma_e4b`) | 15-bench grid, tiny e4b model (fast) | ~23:00 UTC (4:00 PM PT) |
+| 3 | **tail reruns** (`lfm_tess`) | grids for tess-4-9b, lfm2.5-8b-a1b, qwen3-8b, gemma-4-12b (4×15) — auto-un-hides each if <15% empty | ~04:00 UTC Sat (9:00 PM PT Fri) |
+| 4 | **nemotron-3-nano-30b** (`nemotron_test`) | preflight → smoke → auto-add `no_think` if empty → full grid + pinch@32K (skips cleanly if it can't run) | ~07:30 UTC Sat (12:30 AM PT Sat) |
+| 5 | **exaone-4.5-33b pinch @64K** (`exaone_pinch_64k`) | PinchBench @64K (128K OOMs the 40GB card), 33B dense = slow · marks a ◆ 64K spec | ~11:30 UTC Sat (4:30 AM PT Sat) |
 
-**Full finish ≈ Sat 2026-08-08 ~12:00 UTC (~5:00 AM PT).** The judge daemon (`judge_daemon.sh`) runs
+**Full finish ≈ Sat 2026-08-08 ~11:30 UTC (~4:30 AM PT).** The judge daemon (`judge_daemon.sh`) runs
 concurrently the whole time — judging Writing/SimpleQA/pinch, rescoring, and rebuilding the board as cells land.
 Each phase copies the fresh `leaderboard.html` → `docs/index.html`; a `git push` is still **manual** (see below).
 

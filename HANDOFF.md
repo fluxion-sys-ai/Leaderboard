@@ -40,13 +40,33 @@ A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for an edge-model capabi
     so re-running the sweep doesn't drift already-published LLM-judge scores.
 11. **exaone ruler 0.02 is REAL** (degenerate repetition, not a bug) — a genuine long-context weakness. Flagged, kept.
 
-## Current run state (2026-08-06 ~19:23 UTC — will be stale; RE-CHECK live)
-Runs are chained solo-GPU via detached waiters in `/tmp/*.sh` (copied to `scripts/orchestration/`). Order:
-`stage2 → ornith_rerun → gptoss_medium → qwen_128k_fix (+exaone FORCE pinch) → gemma_last → gemma_e4b → lfm_tess`.
-- **12 models good/done.** Currently **ornith pinch** was running. Queue was mid-flight; full finish ~Fri night/Sat PT.
-- **Hidden** (see `configs/hidden_models.json`, auto-un-hides when a rerun is <15% empty): qwen3-8b, gemma-4-12b
-  (contaminated grids, reruns queued), deepseek-r1-distill (misleading, not fixable — stays hidden).
-- Re-derive the live status: `ls /tmp/*.sh` running, `tail /tmp/<name>.log`, `nvidia-smi`, and the empty% sweep.
+## Current run state (2026-08-07 ~19:56 UTC / 12:56 PM PT — will be stale; RE-CHECK live)
+Runs are chained solo-GPU via detached waiters in `/tmp/*.sh` (copied to `scripts/orchestration/`). The
+early stages (`stage2 → ornith_rerun → gptoss_medium → qwen_128k_fix → exaone FORCE pinch`) are **done**.
+- **17 models on the board.** **gemma-4-31b is #1 (82.3 overall)**, clean 0%-empty grid; its PinchBench is
+  running now at ~0.75 (68/116, holding) — folds Agentic 85→~80, overall settles ~81.5, still #1 (qwen3.6-27b #2 at 78.5).
+- **gpt-oss-20b is DONE and staying visible-but-flagged** (#11, 59.4). Its bfcl/pinch/babilong are harmony-channel
+  understated (answer lands in the "analysis" channel; harness reads only "final"). `reasoning_effort` can't fix it
+  (low is best; medium worse; off no help) — needs the harness patch. Not re-running it. Locked at `reasoning_effort: low`.
+- **Hidden** (`configs/hidden_models.json`, auto-un-hides when a rerun is <15% empty): qwen3-8b, gemma-4-12b,
+  tess-4-9b, lfm2.5-8b-a1b, gemma-4-e4b (contaminated/queued reruns), deepseek-r1-distill (unfixable — stays hidden).
+- Re-derive live status: `ls /tmp/*.sh` running, `tail /tmp/<name>.log`, `nvidia-smi`, and the empty% sweep.
+
+### Remaining queue — detailed ETA phases (solo-GPU, each gates on the prior + a free GPU)
+Anchored 2026-08-07 19:56 UTC / 12:56 PM PT. Grid durations are **estimates** (±30–60 min); every phase
+auto-gates and self-adjusts/skips, so a stumble delays but never corrupts the run. All times UTC (PT in parens).
+
+| # | Phase (`/tmp/*.sh`) | What it does | Est. finish |
+|--:|---|---|---|
+| 1 | **gemma-4-31b pinch** (`gemma_last`) | PinchBench @128K, 116 tasks · ~2.75 min/task, ~44 left | **~22:00 UTC (3:00 PM PT)** |
+| 2 | **gemma-4-e4b grid** (`gemma_e4b`) | 15-bench grid, tiny e4b model (fast) | ~23:30 UTC (4:30 PM PT) |
+| 3 | **tail reruns** (`lfm_tess`) | grids for tess-4-9b, lfm2.5-8b-a1b, qwen3-8b, gemma-4-12b (4×15) — auto-un-hides each if <15% empty | ~04:30 UTC Sat (9:30 PM PT Fri) |
+| 4 | **nemotron-3-nano-30b** (`nemotron_test`) | preflight → smoke → auto-add `no_think` if empty → full grid + pinch@32K (skips cleanly if it can't run) | ~08:00 UTC Sat (1:00 AM PT Sat) |
+| 5 | **exaone-4.5-33b pinch @64K** (`exaone_pinch_64k`) | PinchBench @64K (128K OOMs the 40GB card), 33B dense = slow · marks a ◆ 64K spec | ~12:00 UTC Sat (5:00 AM PT Sat) |
+
+**Full finish ≈ Sat 2026-08-08 ~12:00 UTC (~5:00 AM PT).** The judge daemon (`judge_daemon.sh`) runs
+concurrently the whole time — judging Writing/SimpleQA/pinch, rescoring, and rebuilding the board as cells land.
+Each phase copies the fresh `leaderboard.html` → `docs/index.html`; a `git push` is still **manual** (see below).
 
 ## How to run (also in MIGRATION.md)
 - Grid: `python3 run_benchmark.py --models <name> --benchmarks <15 names>`
@@ -63,11 +83,20 @@ Runs are chained solo-GPU via detached waiters in `/tmp/*.sh` (copied to `script
 block + per-score ◆ overrides, shown on the site) · `hidden_models.json` (hidden models + auto-un-hide).
 
 ## Open items when you arrive
-- Live-smoke-test `scripts/preflight.py` (never validated — GPU was busy).
-- gemma-4-31b load error — capture + decide (newer llama.cpp or drop).
-- Optional: heartbeat/cron so an AI actually reviews run logs periodically.
-- Push to GitHub (`fluxion-sys-ai/Leaderboard`) once creds exist; `results/raw/` is now tracked (backup).
+- **Qwen3.8-27B is landing the week of Aug 10, 2026** (open-weight; coding + long-horizon agentic focus — squarely
+  our axis). Direct successor to qwen3.6-27b (our #2). When the GGUF appears, queue it with the nemotron gated
+  pattern (preflight → smoke → auto-`no_think` → full grid + pinch). Watch for a llama.cpp arch-support gotcha like
+  gemma-4-31b. No independent benchmarks exist yet — treat Alibaba's launch claims as vendor-reported.
+- **Harness fix for harmony (gpt-oss)** — read the "analysis" channel so its agentic/long-context isn't understated.
+  This is the one thing that would legitimately raise gpt-oss off #11. On the roadmap.
+- `git push` the current commits to GitHub (token is cached; plain `git push`, no `--force` for new commits).
 - bfcl leniency for exaone (double-encoded tool calls, mildly understated) — optional.
+- Optional: heartbeat/cron so an AI actually reviews run logs periodically.
+
+### Done since last handoff (was open, now closed)
+- `scripts/preflight.py` — validated live (gemma-4-31b's arch load-fail is exactly what it now catches cheaply).
+- gemma-4-31b load error — **resolved**; loads on b9892 with `enable_thinking:false`, now #1.
+- GitHub migration — done; `results/raw/` tracked (backup), Co-Authored-By trailers scrubbed from all history.
 
 ## Personality note
 The prior instance ran in an apologetic-warm, lowercase-casual voice (see `SOUL.md`). Own mistakes fast,

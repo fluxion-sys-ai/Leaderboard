@@ -8,6 +8,8 @@ Built to feed the [Fluxion Edge Leaderboard](https://fluxion-sys.ai/#leaderboard
 (model × hardware × capability). Output is one self-contained, interactive HTML leaderboard,
 published live via GitHub Pages.
 
+### 🔗 Live interactive leaderboard → **https://fluxion-sys-ai.github.io/Leaderboard/**
+
 ---
 
 ## Results

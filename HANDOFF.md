@@ -44,7 +44,7 @@ A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for an edge-model capabi
 Runs are chained solo-GPU via detached waiters in `/tmp/*.sh` (copied to `scripts/orchestration/`). The
 early stages (`stage2 → ornith_rerun → gptoss_medium → qwen_128k_fix → exaone FORCE pinch`) are **done**.
 - **17 models on the board.** **gemma-4-31b is #1 (82.3 overall)**, clean 0%-empty grid; its PinchBench is
-  running now at ~0.740 (82/116, holding) — folds Agentic 85→~80, overall settles ~81.5, still #1 (qwen3.6-27b #2 at 78.5).
+  **DONE: pinch 0.759**, overall **81.5**, confirmed #1 (qwen3.6-27b #2 at 78.5).
 - **gpt-oss-20b is DONE and staying visible-but-flagged** (#11, 59.4). Its bfcl/pinch/babilong are harmony-channel
   understated (answer lands in the "analysis" channel; harness reads only "final"). `reasoning_effort` can't fix it
   (low is best; medium worse; off no help) — needs the harness patch. Not re-running it. Locked at `reasoning_effort: low`.

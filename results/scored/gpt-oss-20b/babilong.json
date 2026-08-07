@@ -1,0 +1,46 @@
+{
+  "metric": "accuracy",
+  "score": 0.34,
+  "n": 150,
+  "passed": 51,
+  "ci95": [
+    0.269,
+    0.419
+  ],
+  "by_category": {
+    "0k": {
+      "score": 0.54,
+      "n": 50
+    },
+    "16k": {
+      "score": 0.2,
+      "n": 50
+    },
+    "4k": {
+      "score": 0.28,
+      "n": 50
+    }
+  },
+  "failure_breakdown": {
+    "wrong_or_missing": 99
+  },
+  "model": "gpt-oss-20b",
+  "benchmark": "babilong",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gpt-oss-20b/gpt-oss-20b-Q4_K_M.gguf",
+  "run_ts": 1786010157,
+  "perf": {
+    "prefill_tps": 4551.87,
+    "decode_tps": 170.98,
+    "ttft_ms": 792.72,
+    "mean_prompt_tokens": 6300.63,
+    "mean_completion_tokens": 53.57,
+    "total_gen_tokens": 8035,
+    "model_load_s": 6.9,
+    "gguf_mb": 11624.8,
+    "peak_vram_mb": 11757.0
+  }
+}

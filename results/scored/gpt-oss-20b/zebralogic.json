@@ -1,0 +1,136 @@
+{
+  "metric": "accuracy",
+  "score": 0.4667,
+  "n": 150,
+  "passed": 70,
+  "ci95": [
+    0.3887,
+    0.5463
+  ],
+  "by_category": {
+    "2*2": {
+      "score": 1.0,
+      "n": 6
+    },
+    "2*3": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "2*4": {
+      "score": 1.0,
+      "n": 6
+    },
+    "2*5": {
+      "score": 0.5,
+      "n": 6
+    },
+    "2*6": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "3*2": {
+      "score": 1.0,
+      "n": 6
+    },
+    "3*3": {
+      "score": 1.0,
+      "n": 6
+    },
+    "3*4": {
+      "score": 0.5,
+      "n": 6
+    },
+    "3*5": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "3*6": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "4*2": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "4*3": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "4*4": {
+      "score": 0.5,
+      "n": 6
+    },
+    "4*5": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "4*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*2": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "5*3": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "5*4": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "5*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*2": {
+      "score": 0.5,
+      "n": 6
+    },
+    "6*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*6": {
+      "score": 0.0,
+      "n": 6
+    }
+  },
+  "failure_breakdown": {
+    "wrong_cells": 38,
+    "no_grid_parsed": 41,
+    "wrong_shape": 1
+  },
+  "model": "gpt-oss-20b",
+  "benchmark": "zebralogic",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gpt-oss-20b/gpt-oss-20b-Q4_K_M.gguf",
+  "run_ts": 1786009872,
+  "perf": {
+    "prefill_tps": 2930.54,
+    "decode_tps": 176.27,
+    "ttft_ms": 105.98,
+    "mean_prompt_tokens": 416.71,
+    "mean_completion_tokens": 1222.81,
+    "total_gen_tokens": 183421,
+    "model_load_s": 6.9,
+    "gguf_mb": 11624.8,
+    "peak_vram_mb": 11757.0
+  }
+}

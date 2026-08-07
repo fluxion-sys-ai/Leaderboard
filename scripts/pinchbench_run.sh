@@ -111,6 +111,10 @@ case "$MODEL" in
   mistral-nemo-12b|glm-4-9b-0414) CTX=131072 ;;
   gemma-2-9b-it)                  CTX=8192 ;;
 esac
+# PINCH_CTX env override — for models whose 128K KV OOMs the 40GB card (exaone-33B dense). Lower
+# context shrinks the KV to fit. The clamp-guard only fires for the 128K target, so a smaller CTX
+# runs as-is. This is a documented spec deviation (marked ◆ in the leaderboard).
+[ -n "${PINCH_CTX:-}" ] && CTX="$PINCH_CTX"
 # no-think for Qwen3.5/3.6 thinking models — else the agent burns its budget in <think>
 # and truncates (empty turns), same as the judge-free grid. Direct-answer mode is fair
 # for these explicitly dual-mode models.
@@ -126,6 +130,11 @@ NT=$(python3 -c "import yaml;m=[x for x in yaml.safe_load(open('$REPO/configs/mo
 # pinch. Empty = the GGUF's default. gpt-oss has no NOTHINK_ARG, so no --chat-template-kwargs clash.
 EFFORT_ARG=""
 [ -n "${REASONING_EFFORT:-}" ] && EFFORT_ARG="--chat-template-kwargs {\"reasoning_effort\":\"${REASONING_EFFORT}\"}"
+# reasoning_off (gpt-oss/harmony) from config — disables analysis channel so the FINAL answer lands
+# in message.content (fixes the empty-final that tanked pinch to 0.05). Verified 0% empty.
+REASONING_ARG=""
+RO=$(python3 -c "import yaml;m=[x for x in yaml.safe_load(open('$REPO/configs/models.yaml'))['models'] if x['name']=='$MODEL'];print('1' if (m and m[0].get('reasoning_off')) else '')" 2>/dev/null)
+[ -n "$RO" ] && REASONING_ARG="--reasoning off"
 # Optional chat-template override (e.g. CHAT_TEMPLATE=chatglm4). Empty = use the GGUF's.
 TPL_ARG=""
 [ -n "${CHAT_TEMPLATE:-}" ] && TPL_ARG="--chat-template ${CHAT_TEMPLATE}"
@@ -133,7 +142,7 @@ echo "[pb] model=$MODEL gguf=$GGUF ctx=$CTX yarn=${YARN_ARG:-no} template=${CHAT
 
 # start the llama-server
 /home/ubuntu/llama.cpp/llama-b9892/llama-server \
-  -m "$GGUF" -c "$CTX" --parallel 1 -ngl 999 $YARN_ARG $NOTHINK_ARG $EFFORT_ARG $TPL_ARG --host 127.0.0.1 --port $PORT --no-webui \
+  -m "$GGUF" -c "$CTX" --parallel 1 -ngl 999 $YARN_ARG $NOTHINK_ARG $EFFORT_ARG $REASONING_ARG $TPL_ARG --host 127.0.0.1 --port $PORT --no-webui \
   >/tmp/pb_llama_${MODEL}.log 2>&1 &
 LP=$!
 trap "kill $LP 2>/dev/null || true" EXIT

@@ -1,0 +1,136 @@
+{
+  "metric": "accuracy",
+  "score": 0.1867,
+  "n": 150,
+  "passed": 28,
+  "ci95": [
+    0.1324,
+    0.2566
+  ],
+  "by_category": {
+    "2*2": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "2*3": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "2*4": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "2*5": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "2*6": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "3*2": {
+      "score": 0.5,
+      "n": 6
+    },
+    "3*3": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "3*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*6": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "4*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*2": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "5*3": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "5*4": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "5*5": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "5*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*4": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "6*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*6": {
+      "score": 0.0,
+      "n": 6
+    }
+  },
+  "failure_breakdown": {
+    "wrong_cells": 86,
+    "no_grid_parsed": 35,
+    "wrong_shape": 1
+  },
+  "model": "qwen3.5-9b",
+  "benchmark": "zebralogic",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-9b/Qwen3.5-9B-Q4_K_M.gguf",
+  "run_ts": 1786071543,
+  "perf": {
+    "prefill_tps": 2514.38,
+    "decode_tps": 105.76,
+    "ttft_ms": 135.62,
+    "mean_prompt_tokens": 386.33,
+    "mean_completion_tokens": 1110.95,
+    "total_gen_tokens": 166642,
+    "model_load_s": 4.0,
+    "gguf_mb": 5627.0,
+    "peak_vram_mb": 5938.0
+  }
+}

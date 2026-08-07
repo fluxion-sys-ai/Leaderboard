@@ -58,6 +58,11 @@ class LlamaCppRunner(ModelRunner):
             # reasoning short so it reaches the final channel before the token cap.
             import json as _json
             cmd += ["--chat-template-kwargs", _json.dumps(self.cfg["template_kwargs"])]
+        # gpt-oss/harmony: '--reasoning off' disables the analysis channel so the answer lands in
+        # message.content (the harness reads only content). reasoning_effort was a no-op for the
+        # empty-final bug — this is the actual lever. Verified 0% empty on an 8-task bfcl probe.
+        if self.cfg.get("reasoning_off"):
+            cmd += ["--reasoning", "off"]
         # Speculative-decoding mode: attach a draft model → llama-server logs
         # per-position acceptance we parse back out. Only when cfg['draft'] is set.
         self._spec = bool(self.cfg.get("draft"))

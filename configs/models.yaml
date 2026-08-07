@@ -161,7 +161,7 @@ models:
   - name: gpt-oss-20b
     role: gpt-oss-20b (Aug 2025) — OpenAI open MoE (~3.6B active), harmony reasoning fmt; SMOKE-TEST harmony + reasoning-effort before trusting a full run
     gguf: { repo: unsloth/gpt-oss-20b-GGUF, file: "*Q4_K_M.gguf" }
-    template_kwargs: { reasoning_effort: medium }   # gpt-oss uses harmony reasoning_effort, NOT enable_thinking (no_think was a no-op for it)
+    template_kwargs: { reasoning_effort: low }   # gpt-oss uses harmony reasoning_effort, NOT enable_thinking (no_think was a no-op for it)
     max_tokens_mult: 2
 
 # gemma-4-31b (bonus) MOVED TO VERY END (2026-08-05) — pulled from config so the running stage2
@@ -184,3 +184,9 @@ models:
   - name: gemma-4-26b-a4b
     role: gemma-4-26B-A4B-it (Mar 2026) — Google, 26B MoE (4B active), 256K native; dense-vs-MoE contrast with gemma-4-31b
     gguf: { repo: unsloth/gemma-4-26B-A4B-it-GGUF, file: "*Q4_K_M.gguf" }
+
+  - name: gemma-4-31b
+    role: gemma-4-31B-it (2026) — 31B dense Gemma-4 flagship
+    gguf: { repo: unsloth/gemma-4-31B-it-GGUF, file: "*Q4_K_M.gguf" }
+    no_think: true            # Gemma-4 reasoner (same as e4b/12b) — 2026-08-05, avoid empty-output contamination
+    max_tokens_mult: 2

@@ -356,8 +356,11 @@ def _pareto_svg(rows):
             P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="6" fill="var(--acc2)">'
                      f'<title>{html.escape(n)} — {y_:.1f} @ {s:g}B (frontier)</title></circle>')
         else:
-            P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="5" fill="var(--acc)" opacity="0.6">'
-                     f'<title>{html.escape(n)} — {y_:.1f} @ {s:g}B</title></circle>')
+            lbl = f'{n} — {y_:.1f} @ {s:g}B'
+            P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="5" fill="var(--acc)" opacity="0.6" '
+                     f'class="ndot" data-lbl="{html.escape(lbl)}" '
+                     f'onmouseover="dotIn(this)" onmouseout="dotOut()" style="cursor:pointer">'
+                     f'<title>{html.escape(lbl)}</title></circle>')
     # frontier labels with vertical anti-collision (push down if within 12px; leader line if nudged)
     last_y = -99.0
     for s, y_, n in sorted(front, key=lambda t: Y(t[1])):
@@ -506,6 +509,8 @@ tbody tr:hover td{outline:1px solid var(--acc);outline-offset:-1px}
 .ftbadge{color:var(--acc2);cursor:pointer;font-size:11px;margin-left:3px;border:1px solid var(--acc2);border-radius:4px;padding:0 3px;line-height:1.4;opacity:.75}
 .ftbadge:hover{opacity:1}
 #ftpop{position:absolute;z-index:60;max-width:240px;background:var(--s2);border:1px solid var(--acc2);border-radius:8px;padding:7px 10px;font-size:11px;color:var(--tx);box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;line-height:1.45}
+#dotpop{position:absolute;z-index:60;max-width:200px;background:var(--s2);border:1px solid var(--acc);border-radius:7px;padding:5px 9px;font-size:11px;font-weight:600;color:var(--tx);box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;white-space:nowrap;pointer-events:none}
+.ndot{transition:r .08s,opacity .08s}
 .notes{margin-top:12px;background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:11px 13px}
 .nh{color:var(--tx);font-size:12px;font-weight:600;margin-bottom:7px}
 .fn{color:var(--mut);font-size:11.5px;line-height:1.65}
@@ -545,6 +550,14 @@ p.style.left=Math.min(r.left+window.scrollX,window.scrollX+window.innerWidth-250
 p.style.top=(r.bottom+window.scrollY+5)+'px';p.style.display='block';}
 document.addEventListener('click',function(e){var p=document.getElementById('ftpop');
 if(p&&!(e.target.classList&&e.target.classList.contains('ftbadge')))p.style.display='none';});
+function dotIn(el){var p=document.getElementById('dotpop');
+if(!p){p=document.createElement('div');p.id='dotpop';document.body.appendChild(p);}
+p.textContent=el.getAttribute('data-lbl');el.setAttribute('r','7');el.setAttribute('opacity','1');
+var r=el.getBoundingClientRect();
+p.style.left=Math.min(r.right+window.scrollX+6,window.scrollX+window.innerWidth-190)+'px';
+p.style.top=(r.top+window.scrollY-6)+'px';p.style.display='block';}
+function dotOut(){var p=document.getElementById('dotpop');if(p)p.style.display='none';
+document.querySelectorAll('.ndot').forEach(function(c){c.setAttribute('r','5');c.setAttribute('opacity','0.6');});}
 function tab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
 document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
 b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on');}

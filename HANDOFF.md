@@ -40,6 +40,19 @@ A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for an edge-model capabi
     so re-running the sweep doesn't drift already-published LLM-judge scores.
 11. **exaone ruler 0.02 is REAL** (degenerate repetition, not a bug) — a genuine long-context weakness. Flagged, kept.
 
+## UNATTENDED 14h RUN (set 2026-08-08 ~16:55 UTC / 9:55 AM PT Sat) — 5 detached procs
+Board at **20 models** (qwen3-8b #8, gemma-4-12b #4 un-hid clean; pushed live). Chain running solo-GPU:
+1. **exaone_pinch_64k** (RUNNING) — exaone PinchBench @64K, no OOM (~35GB fits)
+2. **nemotron_rerun** — nemotron with `no_think` (first run dumped think-tokens → 44% empty); gated smoke on
+   mmlu_pro, full grid+pinch@32K only if the toggle actually works, else stays hidden+flagged
+3. **fill_batch** — 5 unscheduled models, each auto-configured via mmlu_pro smoke-gate (preflight → no_think →
+   max_tokens → skip if unfixable), grid-only, un-hide+commit+push per model, frees its GGUF after:
+   gemma-4-26b-a4b → granite-4.1-30b → devstral-small-2-24b → qwen3.5-4b → nanbeige4.2-3b
+4. **auto_push** — commits+pushes the board every ~16 min (excludes the live/in-write model); push verified working
+5. **judge_daemon** — concurrent Writing/SimpleQA judging + rescore + rebuild
+Disk freed to 92G (deleted done-model GGUFs). Hidden: r1-distill, lfm2.5, gemma-4-e4b (fixes insufficient) +
+the batch models until clean. To check: `tail /tmp/{exaone_pinch_64k,nemotron_rerun,fill_batch,auto_push}.log`.
+
 ## Current run state (2026-08-08 ~00:12 UTC / 5:12 PM PT Fri — will be stale; RE-CHECK live)
 Runs are chained solo-GPU via detached waiters in `/tmp/*.sh` (copied to `scripts/orchestration/`). The
 early stages (`stage2 → ornith_rerun → gptoss_medium → qwen_128k_fix → exaone FORCE pinch → gemma-4-31b pinch`) are **done**.

@@ -357,9 +357,10 @@ def _pareto_svg(rows):
                      f'<title>{html.escape(n)} — {y_:.1f} @ {s:g}B (frontier)</title></circle>')
         else:
             lbl = f'{n} — {y_:.1f} @ {s:g}B'
-            P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="5" fill="var(--acc)" opacity="0.6" '
-                     f'class="ndot" data-lbl="{html.escape(lbl)}" '
-                     f'onmouseover="dotIn(this)" onmouseout="dotOut()" style="cursor:pointer">'
+            # visible dot + a bigger transparent hit-circle so it's easy to hover
+            P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="5" fill="var(--acc)" opacity="0.6" class="ndot"/>')
+            P.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="13" fill="transparent" style="cursor:pointer" '
+                     f'data-lbl="{html.escape(lbl)}" onmouseover="dotIn(this)" onmouseout="dotOut()">'
                      f'<title>{html.escape(lbl)}</title></circle>')
     # frontier labels with vertical anti-collision (push down if within 12px; leader line if nudged)
     last_y = -99.0
@@ -552,12 +553,11 @@ document.addEventListener('click',function(e){var p=document.getElementById('ftp
 if(p&&!(e.target.classList&&e.target.classList.contains('ftbadge')))p.style.display='none';});
 function dotIn(el){var p=document.getElementById('dotpop');
 if(!p){p=document.createElement('div');p.id='dotpop';document.body.appendChild(p);}
-p.textContent=el.getAttribute('data-lbl');el.setAttribute('r','7');el.setAttribute('opacity','1');
+p.textContent=el.getAttribute('data-lbl');
 var r=el.getBoundingClientRect();
-p.style.left=Math.min(r.right+window.scrollX+6,window.scrollX+window.innerWidth-190)+'px';
-p.style.top=(r.top+window.scrollY-6)+'px';p.style.display='block';}
-function dotOut(){var p=document.getElementById('dotpop');if(p)p.style.display='none';
-document.querySelectorAll('.ndot').forEach(function(c){c.setAttribute('r','5');c.setAttribute('opacity','0.6');});}
+p.style.left=Math.min(r.left+r.width/2+window.scrollX+8,window.scrollX+window.innerWidth-190)+'px';
+p.style.top=(r.top+r.height/2+window.scrollY-10)+'px';p.style.display='block';}
+function dotOut(){var p=document.getElementById('dotpop');if(p)p.style.display='none';}
 function tab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
 document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
 b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on');}

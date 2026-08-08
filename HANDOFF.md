@@ -40,16 +40,19 @@ A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for an edge-model capabi
     so re-running the sweep doesn't drift already-published LLM-judge scores.
 11. **exaone ruler 0.02 is REAL** (degenerate repetition, not a bug) — a genuine long-context weakness. Flagged, kept.
 
-## Current run state (2026-08-07 ~21:50 UTC / 2:50 PM PT — will be stale; RE-CHECK live)
+## Current run state (2026-08-08 ~00:12 UTC / 5:12 PM PT Fri — will be stale; RE-CHECK live)
 Runs are chained solo-GPU via detached waiters in `/tmp/*.sh` (copied to `scripts/orchestration/`). The
 early stages (`stage2 → ornith_rerun → gptoss_medium → qwen_128k_fix → exaone FORCE pinch → gemma-4-31b pinch`) are **done**.
-- **17 models on the board.** **gemma-4-31b is #1 — 81.5 overall** (was 82.3 grid-only; **PinchBench DONE at 0.759**
+- **18 models on the board.** **gemma-4-31b is #1 — 81.5 overall** (was 82.3 grid-only; **PinchBench DONE at 0.759**
   folded Agentic 85→80.4 → settled 81.5), clean 0%-empty grid. qwen3.6-27b #2 at 78.5 — a safe ~3-pt lead.
+- **tess-4-9b UN-HID → #12 (57.9)**, clean 0% empty. Note: lands *below* its base qwen3.5-9b (#4, 70.8) — the
+  no_think config fixed 5 contaminated dims (Long-context 2→64!, Instruction, Coding, +bfcl) but cost Reasoning
+  (zebra 0.35→0.07) and Writing (81→62, terser direct-mode prose). Net +16 on complete dims. A good case study.
 - **gpt-oss-20b is DONE and staying visible-but-flagged** (#11, 59.4). Its bfcl/pinch/babilong are harmony-channel
   understated (answer lands in the "analysis" channel; harness reads only "final"). `reasoning_effort` can't fix it
   (low is best; medium worse; off no help) — needs the harness patch. Not re-running it. Locked at `reasoning_effort: low`.
 - **Hidden** (`configs/hidden_models.json`, auto-un-hides when a rerun is <15% empty): qwen3-8b, gemma-4-12b,
-  tess-4-9b, lfm2.5-8b-a1b, gemma-4-e4b (contaminated/queued reruns), deepseek-r1-distill (unfixable — stays hidden).
+  lfm2.5-8b-a1b, gemma-4-e4b (contaminated/queued reruns), deepseek-r1-distill (unfixable — stays hidden). [tess-4-9b un-hid ✓]
 - Re-derive live status: `ls /tmp/*.sh` running, `tail /tmp/<name>.log`, `nvidia-smi`, and the empty% sweep.
 
 ### Remaining queue — detailed ETA phases (solo-GPU, each gates on the prior + a free GPU)
@@ -61,7 +64,7 @@ reruns run **before** the e4b grid now (harmless — solo-GPU held, exactly 1 se
 | # | Phase (`/tmp/*.sh`) | What it does | Est. finish |
 |--:|---|---|---|
 | ✅ | **gemma-4-31b pinch** (`gemma_last`) | PinchBench @128K — **DONE, 0.759 → #1 at 81.5** | done 21:17 UTC |
-| 1 | **tail reruns** (`lfm_tess`) — RUNNING | grids for tess-4-9b, lfm2.5-8b-a1b, qwen3-8b, gemma-4-12b (4×15); `no_think` fix — auto-un-hides each if <15% empty (tess running clean, 0% empty) | ~03:30 UTC Sat (8:30 PM PT Fri) |
+| 1 | **tail reruns** (`lfm_tess`) — RUNNING | grids for tess ✓(un-hid #12), **lfm2.5 now**, qwen3-8b, gemma-4-12b; `no_think`/`max_tokens` fix — auto-un-hides each if <15% empty. Slower than est (reasoning benches). | ~06:00 UTC Sat (11 PM PT Fri) |
 | 2 | **gemma-4-e4b grid** (`gemma_e4b`) | 15-bench grid, tiny e4b model (fast), `no_think` fix | ~04:15 UTC Sat (9:15 PM PT Fri) |
 | 3 | **nemotron-3-nano-30b** (`nemotron_test`) | preflight → smoke → auto-add `no_think` if empty → full grid + pinch@32K (skips cleanly if it can't run) | ~07:15 UTC Sat (12:15 AM PT Sat) |
 | 4 | **exaone-4.5-33b pinch @64K** (`exaone_pinch_64k`) | PinchBench @64K (128K OOMs the 40GB card), 33B dense = slow · marks a ◆ 64K spec | ~11:15 UTC Sat (4:15 AM PT Sat) |

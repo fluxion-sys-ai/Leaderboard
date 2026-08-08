@@ -1,8 +1,7 @@
 {
- "qwen3-8b": "grid contaminated (ran pre-no_think, ~29% empty) — clean rerun queued; auto-unhides when <15% empty.",
- "gemma-4-12b": "grid contaminated (pre-no_think, ~62% empty) — clean rerun queued; auto-unhides when <15% empty.",
- "deepseek-r1-distill-qwen-7b": "misleading — runaway reasoner truncates (~23% empty), not readily fixable; hidden until fixed.",
- "tess-4-9b": "grid contaminated (babilong/aime/ruler ~95% empty) — no_think rerun queued in lfm_tess; auto-unhides when clean.",
- "lfm2.5-8b-a1b": "grid contaminated (babilong/aime ~85% empty) — max_tokens rerun queued in lfm_tess; auto-unhides when clean.",
- "gemma-4-e4b": "grid contaminated (ruler 100%, livecode 90% empty) — no_think rerun queued in gemma_e4b; auto-unhides when clean."
+ "qwen3-8b": "grid contaminated (ran pre-no_think, ~29% empty) \u2014 clean rerun queued; auto-unhides when <15% empty.",
+ "gemma-4-12b": "grid contaminated (pre-no_think, ~62% empty) \u2014 clean rerun queued; auto-unhides when <15% empty.",
+ "deepseek-r1-distill-qwen-7b": "misleading \u2014 runaway reasoner truncates (~23% empty), not readily fixable; hidden until fixed.",
+ "lfm2.5-8b-a1b": "grid contaminated (babilong/aime ~85% empty) \u2014 max_tokens rerun queued in lfm_tess; auto-unhides when clean.",
+ "gemma-4-e4b": "grid contaminated (ruler 100%, livecode 90% empty) \u2014 no_think rerun queued in gemma_e4b; auto-unhides when clean."
 }

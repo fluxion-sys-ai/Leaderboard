@@ -1,15 +1,15 @@
 {
   "metric": "accuracy",
-  "score": 0.5067,
+  "score": 0.36,
   "n": 300,
-  "passed": 152,
+  "passed": 108,
   "ci95": [
-    0.4504,
-    0.5628
+    0.3078,
+    0.4158
   ],
   "failure_breakdown": {
-    "no_answer_parsed": 132,
-    "wrong_trace": 16
+    "wrong_trace": 165,
+    "no_answer_parsed": 27
   },
   "model": "tess-4-9b",
   "benchmark": "cruxeval",
@@ -18,15 +18,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/tess-4-9b/migtissera_Tess-4-9B-Q4_K_M.gguf",
-  "run_ts": 1785365662,
+  "run_ts": 1786141112,
   "perf": {
-    "prefill_tps": 831.24,
-    "decode_tps": 102.55,
-    "ttft_ms": 98.7,
-    "mean_prompt_tokens": 80.47,
-    "mean_completion_tokens": 489.17,
-    "total_gen_tokens": 146752,
-    "model_load_s": 4.1,
+    "prefill_tps": 850.46,
+    "decode_tps": 111.24,
+    "ttft_ms": 98.18,
+    "mean_prompt_tokens": 82.47,
+    "mean_completion_tokens": 63.29,
+    "total_gen_tokens": 18986,
+    "model_load_s": 10.2,
     "gguf_mb": 6047.7,
     "peak_vram_mb": 6335.0
   }

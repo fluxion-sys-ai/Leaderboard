@@ -199,6 +199,16 @@ NOTES = {
     "exaone-4.5-33b": "Long-context is a genuine weakness (RULER 0.02, BaBILong 0.41): output degenerates into repetition on long retrieval (verified NOT empty — not a harness/no_think bug). Short-context is strong (IFEval 0.84, GSM8K 0.97).",
 }
 
+# Third-party finetunes → the base model they're built on. Renders a ⑂ badge on the
+# model name; click it to see "<model> — finetune of <base>". Official first-party
+# instruct/chat releases are NOT listed here (we treat those as the base entry).
+FINETUNE = {
+    "tess-4-9b": "Qwen3.5-9B",
+    "ornith-1.0-9b": "Qwen3.5-9B",
+    "llama-xlam-2-8b-fc": "Llama-3.1-8B",
+    "deepseek-r1-distill-qwen-7b": "Qwen2.5-Math-7B",
+}
+
 
 # ── cell renderers (data-v drives client-side sort; -1 sinks blanks) ──
 def sc(v, model=None, key=None):   # 0..1 benchmark score — click shows this score's config
@@ -218,7 +228,12 @@ def av(v, cls="av"):   # 0..100 average
 def mlcell(name):
     flag = (f' <span class="flag" title="{html.escape(NOTES[name])}">⚑</span>'
             if name in NOTES else "")
-    return f'<td class="ml" data-v="{html.escape(name)}">{html.escape(name)}{flag}</td>'
+    ft = ""
+    if name in FINETUNE:
+        info = f"{name} — finetune of {FINETUNE[name]}"
+        ft = (f' <span class="ftbadge" title="{html.escape(info)}" data-ft="{html.escape(info)}"'
+              f' onclick="showFT(this,event)">⑂</span>')
+    return f'<td class="ml" data-v="{html.escape(name)}">{html.escape(name)}{flag}{ft}</td>'
 
 def szcell(s):
     return f'<td class="sz" data-v="{s:.1f}">{s:g}B</td>'
@@ -488,6 +503,9 @@ tbody tr:hover td{outline:1px solid var(--acc);outline-offset:-1px}
 .devs code{font-family:'JetBrains Mono',ui-monospace,monospace;color:var(--acc);font-size:11px}
 .devs b{color:var(--tx)}
 .flag{color:var(--acc2);cursor:help;font-size:11px}
+.ftbadge{color:var(--acc2);cursor:pointer;font-size:11px;margin-left:3px;border:1px solid var(--acc2);border-radius:4px;padding:0 3px;line-height:1.4;opacity:.75}
+.ftbadge:hover{opacity:1}
+#ftpop{position:absolute;z-index:60;max-width:240px;background:var(--s2);border:1px solid var(--acc2);border-radius:8px;padding:7px 10px;font-size:11px;color:var(--tx);box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;line-height:1.45}
 .notes{margin-top:12px;background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:11px 13px}
 .nh{color:var(--tx);font-size:12px;font-weight:600;margin-bottom:7px}
 .fn{color:var(--mut);font-size:11.5px;line-height:1.65}
@@ -520,6 +538,13 @@ p.style.left=Math.min(r.left+window.scrollX,window.scrollX+window.innerWidth-270
 p.style.top=(r.bottom+window.scrollY+5)+'px';p.style.display='block';}
 document.addEventListener('click',function(e){var p=document.getElementById('specpop');
 if(p&&!(e.target.classList&&e.target.classList.contains('sc')))p.style.display='none';});
+function showFT(el,ev){ev.stopPropagation();var p=document.getElementById('ftpop');
+if(!p){p=document.createElement('div');p.id='ftpop';document.body.appendChild(p);}
+p.textContent=el.dataset.ft;var r=el.getBoundingClientRect();
+p.style.left=Math.min(r.left+window.scrollX,window.scrollX+window.innerWidth-250)+'px';
+p.style.top=(r.bottom+window.scrollY+5)+'px';p.style.display='block';}
+document.addEventListener('click',function(e){var p=document.getElementById('ftpop');
+if(p&&!(e.target.classList&&e.target.classList.contains('ftbadge')))p.style.display='none';});
 function tab(b){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
 document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
 b.classList.add('on');document.getElementById(b.dataset.v).classList.add('on');}

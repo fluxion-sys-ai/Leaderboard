@@ -165,9 +165,10 @@ models:
     max_tokens_mult: 2
 
   - name: nemotron-3-nano-30b
-    role: NVIDIA Nemotron-3-Nano-30B-A3B (Jan 2026) — 30B MoE (~3B active), 32K ctx, non-reasoning; small-KV so no 128K OOM. SMOKE-TEST first, auto-adjust no_think/max_tokens if empty.
+    role: NVIDIA Nemotron-3-Nano-30B-A3B (Jan 2026) — 30B MoE (~3B active), 32K ctx, REASONING (first run dumped think-tokens to the cap → mmlu 44% empty). Run no_think.
     gguf: { repo: lmstudio-community/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF, file: "*Q4_K_M.gguf" }
     max_tokens_mult: 2
+    no_think: true   # 2026-08-08: it IS a reasoning model; disable thinking (if the template ignores enable_thinking, the gated smoke will catch it)
 
 # gemma-4-31b (bonus) MOVED TO VERY END (2026-08-05) — pulled from config so the running stage2
 # fail-skips it in seconds; re-added + run dead-last by /tmp/gemma_last.sh.

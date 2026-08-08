@@ -1,15 +1,14 @@
 {
   "metric": "accuracy",
-  "score": 0.39,
+  "score": 0.9633,
   "n": 300,
-  "passed": 117,
+  "passed": 289,
   "ci95": [
-    0.3365,
-    0.4463
+    0.9355,
+    0.9794
   ],
   "failure_breakdown": {
-    "no_answer_parsed": 173,
-    "wrong_answer": 10
+    "wrong_answer": 11
   },
   "model": "gemma-4-12b",
   "benchmark": "gsm8k",
@@ -18,15 +17,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-12b/gemma-4-12b-it-Q4_K_M.gguf",
-  "run_ts": 1785314809,
+  "run_ts": 1786185967,
   "perf": {
-    "prefill_tps": 681.09,
-    "decode_tps": 66.4,
-    "ttft_ms": 126.95,
-    "mean_prompt_tokens": 93.38,
-    "mean_completion_tokens": 865.38,
-    "total_gen_tokens": 259613,
-    "model_load_s": 4.7,
+    "prefill_tps": 707.07,
+    "decode_tps": 67.76,
+    "ttft_ms": 126.53,
+    "mean_prompt_tokens": 90.38,
+    "mean_completion_tokens": 273.68,
+    "total_gen_tokens": 82103,
+    "model_load_s": 10.0,
     "gguf_mb": 7121.9,
     "peak_vram_mb": 9571.0
   }

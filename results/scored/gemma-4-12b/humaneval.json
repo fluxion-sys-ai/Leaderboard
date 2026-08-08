@@ -1,26 +1,17 @@
 {
   "metric": "accuracy",
-  "score": 0.1829,
+  "score": 0.8902,
   "n": 164,
-  "passed": 30,
+  "passed": 146,
   "ci95": [
-    0.1312,
-    0.2491
+    0.8332,
+    0.9294
   ],
   "failure_breakdown": {
-    "fail": 111,
-    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 10,
-    "error:nonzero_exit": 1,
-    "error:SyntaxError: invalid syntax": 3,
-    "error:TypeError: Value after * must be an iterable, not NoneType": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 40)": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 39)": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 47)": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 38)": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 43)": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 55)": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 41)": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 44)": 1
+    "error:nonzero_exit": 5,
+    "error:TypeError: Value after * must be an iterable, not float": 1,
+    "fail": 9,
+    "error:SyntaxError: invalid syntax": 3
   },
   "model": "gemma-4-12b",
   "benchmark": "humaneval",
@@ -29,15 +20,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-12b/gemma-4-12b-it-Q4_K_M.gguf",
-  "run_ts": 1785327020,
+  "run_ts": 1786190614,
   "perf": {
-    "prefill_tps": 918.97,
-    "decode_tps": 66.12,
-    "ttft_ms": 174.7,
-    "mean_prompt_tokens": 178.3,
-    "mean_completion_tokens": 846.09,
-    "total_gen_tokens": 138758,
-    "model_load_s": 4.7,
+    "prefill_tps": 1045.0,
+    "decode_tps": 67.48,
+    "ttft_ms": 157.6,
+    "mean_prompt_tokens": 175.3,
+    "mean_completion_tokens": 278.48,
+    "total_gen_tokens": 45671,
+    "model_load_s": 10.0,
     "gguf_mb": 7121.9,
     "peak_vram_mb": 9595.0
   }

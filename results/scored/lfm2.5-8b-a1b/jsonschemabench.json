@@ -1,34 +1,34 @@
 {
   "metric": "accuracy",
-  "score": 0.2367,
+  "score": 0.3767,
   "n": 300,
-  "passed": 71,
+  "passed": 113,
   "ci95": [
-    0.1921,
-    0.2879
+    0.3237,
+    0.4327
   ],
   "by_category": {
     "Github_easy": {
-      "score": 0.4133,
+      "score": 0.48,
       "n": 75
     },
     "Github_hard": {
-      "score": 0.04,
+      "score": 0.1867,
       "n": 75
     },
     "Github_medium": {
-      "score": 0.1467,
+      "score": 0.4533,
       "n": 75
     },
     "Github_trivial": {
-      "score": 0.3467,
+      "score": 0.3867,
       "n": 75
     }
   },
   "failure_breakdown": {
-    "no json found": 156,
-    "schema violation": 68,
-    "invalid json": 5
+    "invalid json": 14,
+    "schema violation": 134,
+    "no json found": 39
   },
   "model": "lfm2.5-8b-a1b",
   "benchmark": "jsonschemabench",
@@ -37,15 +37,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/lfm2.5-8b-a1b/LFM2.5-8B-A1B-Q4_K_M.gguf",
-  "run_ts": 1785379793,
+  "run_ts": 1786154024,
   "perf": {
-    "prefill_tps": 7492.63,
-    "decode_tps": 258.97,
-    "ttft_ms": 49.57,
+    "prefill_tps": 7531.19,
+    "decode_tps": 259.6,
+    "ttft_ms": 49.69,
     "mean_prompt_tokens": 907.67,
-    "mean_completion_tokens": 639.87,
-    "total_gen_tokens": 191961,
-    "model_load_s": 4.0,
+    "mean_completion_tokens": 1290.6,
+    "total_gen_tokens": 387179,
+    "model_load_s": 8.0,
     "gguf_mb": 5155.6,
     "peak_vram_mb": 5605.0
   }

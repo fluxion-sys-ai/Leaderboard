@@ -1,11 +1,11 @@
 {
   "metric": "accuracy",
-  "score": 0.14,
+  "score": 0.4133,
   "n": 150,
-  "passed": 21,
+  "passed": 62,
   "ci95": [
-    0.0934,
-    0.2046
+    0.3377,
+    0.4933
   ],
   "by_category": {
     "cwe": {
@@ -17,15 +17,15 @@
       "n": 12
     },
     "niah_multikey_1": {
-      "score": 0.0909,
+      "score": 0.6364,
       "n": 11
     },
     "niah_multikey_2": {
-      "score": 0.0,
+      "score": 0.7273,
       "n": 11
     },
     "niah_multikey_3": {
-      "score": 0.0,
+      "score": 0.5833,
       "n": 12
     },
     "niah_multiquery": {
@@ -33,15 +33,15 @@
       "n": 11
     },
     "niah_multivalue": {
-      "score": 0.0,
+      "score": 0.1667,
       "n": 12
     },
     "niah_single_1": {
-      "score": 0.0,
+      "score": 0.6667,
       "n": 12
     },
     "niah_single_2": {
-      "score": 0.6364,
+      "score": 0.9091,
       "n": 11
     },
     "niah_single_3": {
@@ -49,11 +49,11 @@
       "n": 14
     },
     "qa_1": {
-      "score": 0.0,
+      "score": 0.4545,
       "n": 11
     },
     "qa_2": {
-      "score": 0.0,
+      "score": 0.1818,
       "n": 11
     },
     "vt": {
@@ -62,7 +62,7 @@
     }
   },
   "failure_breakdown": {
-    "missing_needle": 129
+    "missing_needle": 88
   },
   "model": "lfm2.5-8b-a1b",
   "benchmark": "ruler",
@@ -71,16 +71,16 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/lfm2.5-8b-a1b/LFM2.5-8B-A1B-Q4_K_M.gguf",
-  "run_ts": 1785553117,
+  "run_ts": 1786163555,
   "perf": {
-    "prefill_tps": 12051.89,
-    "decode_tps": 250.38,
-    "ttft_ms": 629.43,
+    "prefill_tps": 12025.0,
+    "decode_tps": 246.43,
+    "ttft_ms": 631.84,
     "mean_prompt_tokens": 7706.97,
-    "mean_completion_tokens": 114.51,
-    "total_gen_tokens": 17177,
-    "model_load_s": 4.0,
+    "mean_completion_tokens": 368.62,
+    "total_gen_tokens": 55293,
+    "model_load_s": 8.0,
     "gguf_mb": 5155.6,
-    "peak_vram_mb": 5566.0
+    "peak_vram_mb": 5605.0
   }
 }

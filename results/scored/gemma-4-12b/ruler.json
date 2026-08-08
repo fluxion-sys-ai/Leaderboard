@@ -1,27 +1,27 @@
 {
   "metric": "accuracy",
-  "score": 0.8333,
+  "score": 0.96,
   "n": 150,
-  "passed": 125,
+  "passed": 144,
   "ci95": [
-    0.7655,
-    0.8845
+    0.9155,
+    0.9815
   ],
   "by_category": {
     "cwe": {
-      "score": 0.4545,
+      "score": 1.0,
       "n": 11
     },
     "fwe": {
-      "score": 0.9167,
+      "score": 1.0,
       "n": 12
     },
     "niah_multikey_1": {
-      "score": 0.9091,
+      "score": 1.0,
       "n": 11
     },
     "niah_multikey_2": {
-      "score": 0.9091,
+      "score": 1.0,
       "n": 11
     },
     "niah_multikey_3": {
@@ -33,7 +33,7 @@
       "n": 11
     },
     "niah_multivalue": {
-      "score": 0.8333,
+      "score": 1.0,
       "n": 12
     },
     "niah_single_1": {
@@ -49,38 +49,38 @@
       "n": 14
     },
     "qa_1": {
-      "score": 0.4545,
+      "score": 0.8182,
       "n": 11
     },
     "qa_2": {
-      "score": 0.4545,
+      "score": 0.6364,
       "n": 11
     },
     "vt": {
-      "score": 0.8182,
+      "score": 1.0,
       "n": 11
     }
   },
   "failure_breakdown": {
-    "missing_needle": 25
+    "missing_needle": 6
   },
-  "model": "qwen3-8b",
+  "model": "gemma-4-12b",
   "benchmark": "ruler",
   "quant": "Q4_K_M",
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen3-8B-128K-Q4_K_M.gguf",
-  "run_ts": 1786178776,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-12b/gemma-4-12b-it-Q4_K_M.gguf",
+  "run_ts": 1786198984,
   "perf": {
-    "prefill_tps": 4672.0,
-    "decode_tps": 104.08,
-    "ttft_ms": 1688.3,
-    "mean_prompt_tokens": 8255.94,
-    "mean_completion_tokens": 87.15,
-    "total_gen_tokens": 13073,
-    "model_load_s": 4.0,
-    "gguf_mb": 5027.8,
-    "peak_vram_mb": 7579.0
+    "prefill_tps": 2684.22,
+    "decode_tps": 63.54,
+    "ttft_ms": 3086.28,
+    "mean_prompt_tokens": 8417.07,
+    "mean_completion_tokens": 32.35,
+    "total_gen_tokens": 4852,
+    "model_load_s": 10.0,
+    "gguf_mb": 7121.9,
+    "peak_vram_mb": 9595.0
   }
 }

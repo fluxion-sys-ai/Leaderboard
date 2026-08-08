@@ -1,73 +1,73 @@
 {
   "metric": "accuracy",
-  "score": 0.325,
+  "score": 0.5393,
   "n": 280,
-  "passed": 91,
+  "passed": 151,
   "ci95": [
-    0.2728,
-    0.3819
+    0.4808,
+    0.5967
   ],
   "by_category": {
     "biology": {
-      "score": 0.55,
+      "score": 0.85,
       "n": 20
     },
     "business": {
-      "score": 0.4,
+      "score": 0.6,
       "n": 20
     },
     "chemistry": {
-      "score": 0.35,
+      "score": 0.6,
       "n": 20
     },
     "computer science": {
-      "score": 0.2,
+      "score": 0.6,
       "n": 20
     },
     "economics": {
-      "score": 0.25,
+      "score": 0.4,
       "n": 20
     },
     "engineering": {
-      "score": 0.15,
-      "n": 20
-    },
-    "health": {
-      "score": 0.45,
-      "n": 20
-    },
-    "history": {
-      "score": 0.25,
-      "n": 20
-    },
-    "law": {
-      "score": 0.0,
-      "n": 20
-    },
-    "math": {
-      "score": 0.45,
-      "n": 20
-    },
-    "other": {
-      "score": 0.25,
-      "n": 20
-    },
-    "philosophy": {
       "score": 0.3,
       "n": 20
     },
+    "health": {
+      "score": 0.5,
+      "n": 20
+    },
+    "history": {
+      "score": 0.6,
+      "n": 20
+    },
+    "law": {
+      "score": 0.25,
+      "n": 20
+    },
+    "math": {
+      "score": 0.75,
+      "n": 20
+    },
+    "other": {
+      "score": 0.5,
+      "n": 20
+    },
+    "philosophy": {
+      "score": 0.4,
+      "n": 20
+    },
     "physics": {
-      "score": 0.35,
+      "score": 0.5,
       "n": 20
     },
     "psychology": {
-      "score": 0.6,
+      "score": 0.7,
       "n": 20
     }
   },
   "failure_breakdown": {
-    "no_answer_parsed": 163,
-    "wrong_answer": 26
+    "no_answer_parsed": 54,
+    "wrong_answer": 75
   },
   "model": "lfm2.5-8b-a1b",
   "benchmark": "mmlu_pro",
@@ -76,15 +76,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/lfm2.5-8b-a1b/LFM2.5-8B-A1B-Q4_K_M.gguf",
-  "run_ts": 1785378580,
+  "run_ts": 1786151898,
   "perf": {
-    "prefill_tps": 4562.0,
-    "decode_tps": 260.96,
-    "ttft_ms": 38.87,
+    "prefill_tps": 4584.67,
+    "decode_tps": 259.7,
+    "ttft_ms": 38.83,
     "mean_prompt_tokens": 210.96,
-    "mean_completion_tokens": 849.5,
-    "total_gen_tokens": 237859,
-    "model_load_s": 4.0,
+    "mean_completion_tokens": 1846.71,
+    "total_gen_tokens": 517078,
+    "model_load_s": 8.0,
     "gguf_mb": 5155.6,
     "peak_vram_mb": 5558.0
   }

@@ -1,28 +1,28 @@
 {
   "metric": "accuracy",
-  "score": 0.0067,
+  "score": 0.0667,
   "n": 150,
-  "passed": 1,
+  "passed": 10,
   "ci95": [
-    0.0012,
-    0.0368
+    0.0366,
+    0.1184
   ],
   "by_category": {
     "0k": {
-      "score": 0.0,
+      "score": 0.08,
       "n": 50
     },
     "16k": {
-      "score": 0.02,
+      "score": 0.04,
       "n": 50
     },
     "4k": {
-      "score": 0.0,
+      "score": 0.08,
       "n": 50
     }
   },
   "failure_breakdown": {
-    "wrong_or_missing": 149
+    "wrong_or_missing": 140
   },
   "model": "lfm2.5-8b-a1b",
   "benchmark": "babilong",
@@ -31,15 +31,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/lfm2.5-8b-a1b/LFM2.5-8B-A1B-Q4_K_M.gguf",
-  "run_ts": 1785382588,
+  "run_ts": 1786162276,
   "perf": {
-    "prefill_tps": 11508.86,
-    "decode_tps": 264.94,
-    "ttft_ms": 324.69,
+    "prefill_tps": 11516.68,
+    "decode_tps": 257.13,
+    "ttft_ms": 322.25,
     "mean_prompt_tokens": 6431.46,
-    "mean_completion_tokens": 27.47,
-    "total_gen_tokens": 4120,
-    "model_load_s": 4.0,
+    "mean_completion_tokens": 106.73,
+    "total_gen_tokens": 16010,
+    "model_load_s": 8.0,
     "gguf_mb": 5155.6,
     "peak_vram_mb": 5605.0
   }

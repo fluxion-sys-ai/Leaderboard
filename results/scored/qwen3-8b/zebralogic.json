@@ -1,63 +1,67 @@
 {
   "metric": "accuracy",
-  "score": 0.5467,
+  "score": 0.04,
   "n": 150,
-  "passed": 82,
+  "passed": 6,
+  "ci95": [
+    0.0185,
+    0.0845
+  ],
   "by_category": {
     "2*2": {
-      "score": 0.8333,
+      "score": 0.3333,
       "n": 6
     },
     "2*3": {
-      "score": 1.0,
+      "score": 0.1667,
       "n": 6
     },
     "2*4": {
-      "score": 1.0,
+      "score": 0.1667,
       "n": 6
     },
     "2*5": {
-      "score": 0.8333,
+      "score": 0.0,
       "n": 6
     },
     "2*6": {
-      "score": 0.6667,
+      "score": 0.1667,
       "n": 6
     },
     "3*2": {
-      "score": 1.0,
+      "score": 0.0,
       "n": 6
     },
     "3*3": {
-      "score": 1.0,
+      "score": 0.1667,
       "n": 6
     },
     "3*4": {
-      "score": 0.8333,
+      "score": 0.0,
       "n": 6
     },
     "3*5": {
-      "score": 0.8333,
+      "score": 0.0,
       "n": 6
     },
     "3*6": {
-      "score": 0.3333,
+      "score": 0.0,
       "n": 6
     },
     "4*2": {
-      "score": 1.0,
+      "score": 0.0,
       "n": 6
     },
     "4*3": {
-      "score": 0.5,
+      "score": 0.0,
       "n": 6
     },
     "4*4": {
-      "score": 0.5,
+      "score": 0.0,
       "n": 6
     },
     "4*5": {
-      "score": 0.3333,
+      "score": 0.0,
       "n": 6
     },
     "4*6": {
@@ -65,15 +69,15 @@
       "n": 6
     },
     "5*2": {
-      "score": 0.8333,
+      "score": 0.0,
       "n": 6
     },
     "5*3": {
-      "score": 0.3333,
+      "score": 0.0,
       "n": 6
     },
     "5*4": {
-      "score": 0.6667,
+      "score": 0.0,
       "n": 6
     },
     "5*5": {
@@ -85,11 +89,11 @@
       "n": 6
     },
     "6*2": {
-      "score": 0.8333,
+      "score": 0.0,
       "n": 6
     },
     "6*3": {
-      "score": 0.3333,
+      "score": 0.0,
       "n": 6
     },
     "6*4": {
@@ -106,8 +110,7 @@
     }
   },
   "failure_breakdown": {
-    "no_grid_parsed": 64,
-    "wrong_cells": 4
+    "wrong_cells": 144
   },
   "model": "qwen3-8b",
   "benchmark": "zebralogic",
@@ -115,21 +118,17 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen_Qwen3-8B-Q4_K_M.gguf",
-  "run_ts": 1785297565,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen3-8B-128K-Q4_K_M.gguf",
+  "run_ts": 1786176846,
   "perf": {
-    "prefill_tps": 4193.23,
-    "decode_tps": 114.06,
-    "ttft_ms": 75.83,
-    "mean_prompt_tokens": 366.1,
-    "mean_completion_tokens": 3716.13,
-    "total_gen_tokens": 557419,
+    "prefill_tps": 4191.6,
+    "decode_tps": 120.14,
+    "ttft_ms": 75.99,
+    "mean_prompt_tokens": 370.1,
+    "mean_completion_tokens": 89.43,
+    "total_gen_tokens": 13414,
     "model_load_s": 4.0,
     "gguf_mb": 5027.8,
-    "peak_vram_mb": 7589.0
-  },
-  "ci95": [
-    0.4668,
-    0.6242
-  ]
+    "peak_vram_mb": 7579.0
+  }
 }

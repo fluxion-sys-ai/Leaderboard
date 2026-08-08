@@ -1,14 +1,14 @@
 {
   "metric": "accuracy",
-  "score": 0.0,
+  "score": 0.5,
   "n": 30,
-  "passed": 0,
+  "passed": 15,
   "ci95": [
-    -0.0,
-    0.1135
+    0.3315,
+    0.6685
   ],
   "failure_breakdown": {
-    "no_answer_parsed": 30
+    "wrong_answer": 15
   },
   "model": "gemma-4-12b",
   "benchmark": "aime2026",
@@ -17,15 +17,15 @@
   "n_ctx": 20480,
   "temperature": 0.0,
   "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-12b/gemma-4-12b-it-Q4_K_M.gguf",
-  "run_ts": 1785331034,
+  "run_ts": 1786193653,
   "perf": {
-    "prefill_tps": 852.04,
-    "decode_tps": 64.61,
-    "ttft_ms": 187.68,
-    "mean_prompt_tokens": 155.63,
-    "mean_completion_tokens": 3072.0,
-    "total_gen_tokens": 92160,
-    "model_load_s": 4.7,
+    "prefill_tps": 906.51,
+    "decode_tps": 65.49,
+    "ttft_ms": 172.96,
+    "mean_prompt_tokens": 152.63,
+    "mean_completion_tokens": 2047.67,
+    "total_gen_tokens": 61430,
+    "model_load_s": 10.0,
     "gguf_mb": 7121.9,
     "peak_vram_mb": 9595.0
   }

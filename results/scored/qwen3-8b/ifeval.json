@@ -1,28 +1,32 @@
 {
   "metric": "ifeval_strict_accuracy",
-  "score": 0.8233,
-  "instruction_accuracy": 0.8777,
+  "score": 0.83,
+  "ci95": [
+    0.7834,
+    0.8683
+  ],
+  "instruction_accuracy": 0.8843,
   "n": 300,
   "coverage": 1.0,
   "by_instruction_type": {
     "change_case:capital_word_frequency": {
-      "acc": 0.7143,
+      "acc": 0.7857,
       "n": 14
     },
     "change_case:english_capital": {
-      "acc": 0.875,
+      "acc": 0.8125,
       "n": 16
     },
     "change_case:english_lowercase": {
-      "acc": 0.9524,
+      "acc": 1.0,
       "n": 21
     },
     "combination:repeat_prompt": {
-      "acc": 0.8571,
+      "acc": 0.9524,
       "n": 21
     },
     "combination:two_responses": {
-      "acc": 0.8571,
+      "acc": 1.0,
       "n": 14
     },
     "detectable_content:number_placeholders": {
@@ -30,11 +34,11 @@
       "n": 12
     },
     "detectable_content:postscript": {
-      "acc": 0.9,
+      "acc": 0.8,
       "n": 10
     },
     "detectable_format:constrained_response": {
-      "acc": 1.0,
+      "acc": 0.5714,
       "n": 7
     },
     "detectable_format:json_format": {
@@ -42,11 +46,11 @@
       "n": 12
     },
     "detectable_format:multiple_sections": {
-      "acc": 1.0,
+      "acc": 0.8571,
       "n": 7
     },
     "detectable_format:number_bullet_lists": {
-      "acc": 0.7857,
+      "acc": 0.9286,
       "n": 14
     },
     "detectable_format:number_highlighted_sections": {
@@ -58,7 +62,7 @@
       "n": 20
     },
     "keywords:existence": {
-      "acc": 0.913,
+      "acc": 0.9565,
       "n": 23
     },
     "keywords:forbidden_words": {
@@ -66,15 +70,15 @@
       "n": 27
     },
     "keywords:frequency": {
-      "acc": 0.9231,
+      "acc": 0.8462,
       "n": 26
     },
     "keywords:letter_frequency": {
-      "acc": 0.6471,
+      "acc": 0.7059,
       "n": 17
     },
     "language:response_language": {
-      "acc": 0.9412,
+      "acc": 1.0,
       "n": 17
     },
     "length_constraints:nth_paragraph_first_word": {
@@ -82,7 +86,7 @@
       "n": 7
     },
     "length_constraints:number_paragraphs": {
-      "acc": 0.0,
+      "acc": 0.2308,
       "n": 13
     },
     "length_constraints:number_sentences": {
@@ -90,7 +94,7 @@
       "n": 30
     },
     "length_constraints:number_words": {
-      "acc": 0.9615,
+      "acc": 0.8462,
       "n": 26
     },
     "punctuation:no_comma": {
@@ -112,21 +116,17 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen_Qwen3-8B-Q4_K_M.gguf",
-  "run_ts": 1785268150,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen3-8B-128K-Q4_K_M.gguf",
+  "run_ts": 1786169863,
   "perf": {
-    "prefill_tps": 1522.61,
-    "decode_tps": 119.41,
-    "ttft_ms": 31.01,
-    "mean_prompt_tokens": 53.61,
-    "mean_completion_tokens": 1020.6,
-    "total_gen_tokens": 306180,
+    "prefill_tps": 1562.55,
+    "decode_tps": 120.49,
+    "ttft_ms": 31.07,
+    "mean_prompt_tokens": 57.61,
+    "mean_completion_tokens": 480.76,
+    "total_gen_tokens": 144228,
     "model_load_s": 4.0,
     "gguf_mb": 5027.8,
     "peak_vram_mb": 7504.0
-  },
-  "ci95": [
-    0.7762,
-    0.8623
-  ]
+  }
 }

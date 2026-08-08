@@ -1,15 +1,21 @@
 {
   "metric": "accuracy",
-  "score": 0.5549,
+  "score": 0.7134,
   "n": 164,
-  "passed": 91,
+  "passed": 117,
+  "ci95": [
+    0.6399,
+    0.7771
+  ],
   "failure_breakdown": {
-    "fail": 63,
-    "error:nonzero_exit": 2,
-    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 4,
-    "error:SyntaxError: invalid syntax": 2,
-    "error:TypeError: Value after * must be an iterable, not NoneType": 1,
-    "error:SyntaxError: unterminated triple-quoted string literal (detected at line 47)": 1
+    "fail": 38,
+    "error:nonzero_exit": 3,
+    "error:TypeError: ufunc 'isfinite' not supported for the input types, and the inputs co": 1,
+    "error:TypeError: type NoneType doesn't define __round__ method": 1,
+    "error:ValueError: n must be a positive integer": 1,
+    "error:SyntaxError: invalid syntax": 1,
+    "error:TypeError: '<' not supported between instances of 'list' and 'int'": 1,
+    "error:IndentationError: unindent does not match any outer indentation level": 1
   },
   "model": "qwen3-8b",
   "benchmark": "humaneval",
@@ -17,21 +23,17 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen_Qwen3-8B-Q4_K_M.gguf",
-  "run_ts": 1785285914,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen3-8B-128K-Q4_K_M.gguf",
+  "run_ts": 1786174058,
   "perf": {
-    "prefill_tps": 2031.57,
-    "decode_tps": 116.48,
-    "ttft_ms": 53.81,
-    "mean_prompt_tokens": 157.22,
-    "mean_completion_tokens": 2040.49,
-    "total_gen_tokens": 334640,
+    "prefill_tps": 2092.17,
+    "decode_tps": 120.55,
+    "ttft_ms": 53.58,
+    "mean_prompt_tokens": 161.22,
+    "mean_completion_tokens": 246.85,
+    "total_gen_tokens": 40483,
     "model_load_s": 4.0,
     "gguf_mb": 5027.8,
-    "peak_vram_mb": 7589.0
-  },
-  "ci95": [
-    0.4784,
-    0.6288
-  ]
+    "peak_vram_mb": 7579.0
+  }
 }

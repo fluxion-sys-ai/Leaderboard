@@ -1,19 +1,23 @@
 {
   "metric": "accuracy",
-  "score": 0.7067,
+  "score": 0.7033,
   "n": 300,
-  "passed": 212,
+  "passed": 211,
+  "ci95": [
+    0.6493,
+    0.7522
+  ],
   "by_category": {
     "Github_easy": {
-      "score": 0.84,
+      "score": 0.8533,
       "n": 75
     },
     "Github_hard": {
-      "score": 0.5733,
+      "score": 0.52,
       "n": 75
     },
     "Github_medium": {
-      "score": 0.7333,
+      "score": 0.76,
       "n": 75
     },
     "Github_trivial": {
@@ -22,9 +26,9 @@
     }
   },
   "failure_breakdown": {
-    "schema violation": 43,
-    "no json found": 34,
-    "invalid json": 11
+    "no json found": 11,
+    "invalid json": 22,
+    "schema violation": 56
   },
   "model": "qwen3-8b",
   "benchmark": "jsonschemabench",
@@ -32,21 +36,17 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen_Qwen3-8B-Q4_K_M.gguf",
-  "run_ts": 1785282930,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3-8b/Qwen3-8B-128K-Q4_K_M.gguf",
+  "run_ts": 1786173639,
   "perf": {
-    "prefill_tps": 4163.54,
-    "decode_tps": 117.3,
-    "ttft_ms": 91.72,
-    "mean_prompt_tokens": 882.17,
-    "mean_completion_tokens": 1121.66,
-    "total_gen_tokens": 336499,
+    "prefill_tps": 4138.44,
+    "decode_tps": 119.58,
+    "ttft_ms": 91.95,
+    "mean_prompt_tokens": 886.17,
+    "mean_completion_tokens": 285.39,
+    "total_gen_tokens": 85616,
     "model_load_s": 4.0,
     "gguf_mb": 5027.8,
-    "peak_vram_mb": 7589.0
-  },
-  "ci95": [
-    0.6528,
-    0.7553
-  ]
+    "peak_vram_mb": 7579.0
+  }
 }

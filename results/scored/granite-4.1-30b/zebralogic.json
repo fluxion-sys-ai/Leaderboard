@@ -1,0 +1,134 @@
+{
+  "metric": "accuracy",
+  "score": 0.1667,
+  "n": 150,
+  "passed": 25,
+  "ci95": [
+    0.1155,
+    0.2345
+  ],
+  "by_category": {
+    "2*2": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "2*3": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "2*4": {
+      "score": 0.8333,
+      "n": 6
+    },
+    "2*5": {
+      "score": 0.5,
+      "n": 6
+    },
+    "2*6": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "3*2": {
+      "score": 0.3333,
+      "n": 6
+    },
+    "3*3": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "3*4": {
+      "score": 0.1667,
+      "n": 6
+    },
+    "3*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "3*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "4*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "5*6": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*2": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*3": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*4": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*5": {
+      "score": 0.0,
+      "n": 6
+    },
+    "6*6": {
+      "score": 0.0,
+      "n": 6
+    }
+  },
+  "failure_breakdown": {
+    "wrong_cells": 125
+  },
+  "model": "granite-4.1-30b",
+  "benchmark": "zebralogic",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/granite-4.1-30b/ibm-granite_granite-4.1-30b-Q4_K_M.gguf",
+  "run_ts": 1786290174,
+  "perf": {
+    "prefill_tps": 1084.29,
+    "decode_tps": 20.75,
+    "ttft_ms": 292.88,
+    "mean_prompt_tokens": 380.61,
+    "mean_completion_tokens": 83.72,
+    "total_gen_tokens": 12558,
+    "model_load_s": 8.7,
+    "gguf_mb": 17796.4,
+    "peak_vram_mb": 22467.0
+  }
+}

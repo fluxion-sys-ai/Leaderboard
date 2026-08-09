@@ -1,0 +1,47 @@
+{
+  "metric": "accuracy",
+  "score": 0.3429,
+  "n": 105,
+  "passed": 36,
+  "ci95": [
+    0.2591,
+    0.4378
+  ],
+  "by_category": {
+    "easy": {
+      "score": 0.875,
+      "n": 24
+    },
+    "hard": {
+      "score": 0.1228,
+      "n": 57
+    },
+    "medium": {
+      "score": 0.3333,
+      "n": 24
+    }
+  },
+  "failure_breakdown": {
+    "wrong_output": 56,
+    "runtime_error": 13
+  },
+  "model": "granite-4.1-30b",
+  "benchmark": "livecodebench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/granite-4.1-30b/ibm-granite_granite-4.1-30b-Q4_K_M.gguf",
+  "run_ts": 1786287541,
+  "perf": {
+    "prefill_tps": 1126.69,
+    "decode_tps": 23.3,
+    "ttft_ms": 597.07,
+    "mean_prompt_tokens": 627.98,
+    "mean_completion_tokens": 332.81,
+    "total_gen_tokens": 34945,
+    "model_load_s": 8.7,
+    "gguf_mb": 17796.4,
+    "peak_vram_mb": 22467.0
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.8633,
+  "ci95": [
+    0.8198,
+    0.8976
+  ],
+  "instruction_accuracy": 0.8996,
+  "n": 300,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 0.8571,
+      "n": 14
+    },
+    "change_case:english_capital": {
+      "acc": 1.0,
+      "n": 16
+    },
+    "change_case:english_lowercase": {
+      "acc": 1.0,
+      "n": 21
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.5714,
+      "n": 21
+    },
+    "combination:two_responses": {
+      "acc": 0.9286,
+      "n": 14
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.9167,
+      "n": 12
+    },
+    "detectable_content:postscript": {
+      "acc": 0.9,
+      "n": 10
+    },
+    "detectable_format:constrained_response": {
+      "acc": 0.8571,
+      "n": 7
+    },
+    "detectable_format:json_format": {
+      "acc": 0.8333,
+      "n": 12
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 0.8571,
+      "n": 7
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 0.9286,
+      "n": 14
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 1.0,
+      "n": 25
+    },
+    "detectable_format:title": {
+      "acc": 1.0,
+      "n": 20
+    },
+    "keywords:existence": {
+      "acc": 1.0,
+      "n": 23
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.9259,
+      "n": 27
+    },
+    "keywords:frequency": {
+      "acc": 0.9615,
+      "n": 26
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.8235,
+      "n": 17
+    },
+    "language:response_language": {
+      "acc": 1.0,
+      "n": 17
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 1.0,
+      "n": 7
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.1538,
+      "n": 13
+    },
+    "length_constraints:number_sentences": {
+      "acc": 0.8667,
+      "n": 30
+    },
+    "length_constraints:number_words": {
+      "acc": 0.8846,
+      "n": 26
+    },
+    "punctuation:no_comma": {
+      "acc": 1.0,
+      "n": 39
+    },
+    "startend:end_checker": {
+      "acc": 0.9412,
+      "n": 17
+    },
+    "startend:quotation": {
+      "acc": 0.913,
+      "n": 23
+    }
+  },
+  "model": "granite-4.1-30b",
+  "benchmark": "ifeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/granite-4.1-30b/ibm-granite_granite-4.1-30b-Q4_K_M.gguf",
+  "run_ts": 1786270876,
+  "perf": {
+    "prefill_tps": 371.71,
+    "decode_tps": 31.17,
+    "ttft_ms": 113.19,
+    "mean_prompt_tokens": 53.89,
+    "mean_completion_tokens": 259.24,
+    "total_gen_tokens": 77772,
+    "model_load_s": 8.7,
+    "gguf_mb": 17796.4,
+    "peak_vram_mb": 22399.0
+  }
+}

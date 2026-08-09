@@ -196,7 +196,7 @@ NOTES = {
     "qwen3-8b": "BaBILong ~0 is an empty-output extraction bug (reasoning tokens stripped, no answer parsed) — long-context understated.",
     "deepseek-r1-distill-qwen-7b": "BaBILong ~0 is an empty-output extraction bug on this reasoning model — long-context understated.",
     "gpt-oss-20b": "Agentic (bfcl 0.34, PinchBench 0.05) + long-context (babilong 0.34) UNDERSTATED: harmony puts the answer in the analysis channel but the BFCL/PinchBench harness reads only the final channel → empty finals (60%/43% empty). NOT effort-fixable — a medium-effort rerun made it WORSE (zebra 12%→51% empty). Needs a harness channel-extraction fix; grid non-agentic scores (gsm8k 0.94, HEval+ 0.87) are clean.",
-    "exaone-4.5-33b": "Long-context is a genuine weakness (RULER 0.02, BaBILong 0.41): output degenerates into repetition on long retrieval (verified NOT empty — not a harness/no_think bug). Short-context is strong (IFEval 0.84, GSM8K 0.97).",
+    "exaone-4.5-33b": "PinchBench EXCLUDED (agentic = BFCL only): its 0.005 was a transcript-not-found harness bug — the 'exaone-4.5'→'4-5' agent-name mangling skipped all 116 tasks, not a real score. Long-context IS a genuine weakness (RULER 0.02, BaBILong 0.41): repetition-degeneration on long retrieval (verified NOT empty). Short-context strong (IFEval 0.84, GSM8K 0.97).",
 }
 
 # Third-party finetunes → the base model they're built on. Renders a ⑂ badge on the
@@ -393,7 +393,8 @@ def _bars_html(rows):
 # at 128K. Removing the cell drops them from the PinchBench table AND the Agentic average
 # (which then falls back to BFCL only), so a stale 32K score never counts.
 STALE_PINCHBENCH = {"gemma-2-9b-it", "glm-4-9b-0414", "mistral-nemo-12b",
-                    "qwen3-8b"}   # qwen2.5-7b un-staled 2026-08-07: fresh 128K pinch 0.199 (clamp-guard verified)
+                    "qwen3-8b", "exaone-4.5-33b"}   # qwen2.5-7b un-staled 2026-08-07: fresh 128K pinch 0.199 (clamp-guard verified).
+# exaone added 2026-08-09: its pinch 0.005 was the transcript-not-found harness bug (agent name "exaone-4.5"→"4-5" mangling skipped all 116 tasks), not a real score.
 
 
 def build() -> str:

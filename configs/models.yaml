@@ -1,198 +1,213 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# models.yaml — the edge models under test.
-#
-# Every model here is run against every benchmark in benchmarks.yaml (full grid).
-# The "role" field is descriptive only — a note on why the model is interesting.
-# It does NOT restrict which benchmarks the model runs.
-#
-# All models run through the llama.cpp runner on QUANTIZED GGUF weights, because
-# this is an *edge* benchmark: edge devices run GGUF, and the quality hit from
-# quantization is part of "how good is this model on edge". The quant level is a
-# fixed, reported benchmark parameter (see `defaults.quant`) — same for everyone.
-# ─────────────────────────────────────────────────────────────────────────────
-
 defaults:
-  runner: llamacpp        # maps to src/models/llamacpp_runner.py via the registry
-  quant: Q4_K_M           # fixed for all models so scores are comparable
-  n_ctx: 20480            # fits BABILong 16k context + gen; safe for 12B on 40GB
-  temperature: 0.0        # greedy — deterministic, reproducible scoring
-  max_tokens: 1024        # generation cap (overridden per benchmark if needed)
-
-# `gguf` is a HuggingFace repo id + file pattern for the quantized weights.
-# We confirm each repo/file actually exists at pull time — never assumed from memory.
+  runner: llamacpp
+  quant: Q4_K_M
+  n_ctx: 20480
+  temperature: 0.0
+  max_tokens: 1024
 models:
-  # Local-GGUF example / pipeline smoke model (no download needed).
-  # draft_gguf = vocab-compatible small model for the --spec (per-position acceptance) pass.
-  - name: llama-3.2-3b
-    role: smoke test — local pre-downloaded GGUF
-    gguf: { local: /home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf }
-    draft_gguf: { repo: bartowski/Llama-3.2-1B-Instruct-GGUF, file: "*Q4_K_M.gguf" }
-
-  # ── the locked matrix (all repos resolved from HF API, ungated, Q4_K_M) ──
-  - name: qwen2.5-7b-instruct
-    role: all-round anchor. GGUF swapped to the 1M-context build (2026-08-05) — base 32K GGUF
-      has NO YaRN baked in so b9892 clamps -c 131072 → 32K; the -1M build loads 128K on plain -c.
-    gguf: { repo: bartowski/Qwen2.5-7B-Instruct-1M-GGUF, file: "*Q4_K_M.gguf" }
-    draft_gguf: { repo: bartowski/Qwen2.5-0.5B-Instruct-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: llama-3.1-8b-instruct
-    role: community baseline
-    gguf: { repo: bartowski/Meta-Llama-3.1-8B-Instruct-GGUF, file: "*Q4_K_M.gguf" }
-    draft_gguf: { repo: bartowski/Llama-3.2-1B-Instruct-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: gemma-2-9b-it
-    role: heavyweight (reasoning ceiling, structured output)
-    gguf: { repo: bartowski/gemma-2-9b-it-GGUF, file: "*Q4_K_M.gguf" }
-    draft_gguf: { repo: bartowski/gemma-2-2b-it-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: mistral-nemo-12b
-    role: long-context specialist (128k)
-    gguf: { repo: bartowski/Mistral-Nemo-Instruct-2407-GGUF, file: "*Q4_K_M.gguf" }
-    # no spec pass: no small same-tokenizer (Tekken) drafter available
-
-  - name: deepseek-r1-distill-qwen-7b
-    role: reasoning / CoT specialist (expect low IFEval — think-stripping needed)
-    gguf: { repo: bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF, file: "*Q4_K_M.gguf" }
-    draft_gguf: { repo: bartowski/DeepSeek-R1-Distill-Qwen-1.5B-GGUF, file: "*Q4_K_M.gguf" }
-    max_tokens_mult: 4        # long CoT — needs 4× the cap or it truncates before answering
-
-  - name: phi-4-mini-instruct        # short alias → used as the results/ folder name
-    role: floor / entry (Phi family, edge-realistic ~3.8B)
-    gguf: { repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF, file: "*Q4_K_M.gguf" }
-
-  # Qwen3.5-4B un-deferred below (added at proper Q4_K_M via unsloth). Gemma-3-4B
-  # still parked: superseded by gemma-4-e4b/gemma-4-12b already in the matrix.
-
-  # More models get added here as we validate each GGUF. Full locked matrix:
-  #   qwen3-8b, llama-3.x-8b, gemma-3-12b, mistral-nemo-12b,
-  #   deepseek-r1-distill-qwen-7b, gemma-3-4b, phi-4-mini-instruct
-  # We start with one model to prove the pipeline, then fan out.
-
-  # ── 2026 additions (added 2026-07-27, run later) ──
-  - name: gemma-4-e4b
-    role: 2026 flagship edge model (Gemma 4, Apache-2.0)
-    gguf: { repo: lmstudio-community/gemma-4-E4B-it-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # 2026-08-05 fix — reasoning model, was missing no_think
-
-  - name: glm-4-9b-0414
-    role: new family (THUDM GLM-4, code + function-calling)
-    gguf: { repo: bartowski/THUDM_GLM-4-9B-0414-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: qwen3-8b
-    role: Qwen3 dual-mode. GGUF swapped to the 128K build (2026-08-05) — base 32K GGUF has no
-      YaRN baked in (b9892 clamps to 32K); the -128K build loads 128K on plain -c.
-    gguf: { repo: unsloth/Qwen3-8B-128K-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # 2026-08-05 fix — Qwen3 reasoner, was missing no_think (66pct+ empty on hard benches)
-    max_tokens_mult: 3        # thinking mode -> needs more tokens (like DeepSeek)
-
-  # ── 2026-07-28 additions ──
-  - name: llama-xlam-2-8b-fc
-    role: agent / function-calling specialist (Salesforce xLAM-2, SOTA-at-8B on BFCL)
-    gguf: { repo: Salesforce/Llama-xLAM-2-8b-fc-r-gguf, file: "*Q4_K_M.gguf" }
-    draft_gguf: { repo: bartowski/Llama-3.2-1B-Instruct-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: gemma-4-12b
-    role: 2026 flagship Gemma 4 at the 12B tier (completes the Gemma-4 family sweep)
-    gguf: { repo: unsloth/gemma-4-12b-it-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # 2026-08-05 fix — reasoning model, was missing no_think (may un-break its "excluded" run)
-    # multimodal weights, run text-only here; no small same-arch drafter -> no spec pass
-
-  # ── fresh community models scouted 2026-07-28 (recent uploads, verified GGUF) ──
-  - name: ornith-1.0-9b
-    role: Qwen3.5-9B MoE, RL-trained (deepreinforce-ai) — most-adopted fresh 9B
-    gguf: { repo: unsloth/Ornith-1.0-9B-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # REASONING model — was 66 pct empty ifeval without this (2026-08-05 fix)
-    max_tokens_mult: 2
-    # MoE (qwen3_5_moe): confirm b9892 loads it; runner is resilient if it can't
-
-  - name: tess-4-9b
-    role: Qwen3.5-9B reasoning/agentic finetune (migtissera Tess series)
-    gguf: { repo: bartowski/migtissera_Tess-4-9B-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # Qwen3.5 lineage → enable_thinking:false kills the thinking-dump empties
-
-  - name: nanbeige4.2-3b
-    role: fresh general EN/ZH 3B (Nanbeige, ~19k dl in first week)
-    gguf: { repo: bartowski/Nanbeige_Nanbeige4.2-3B-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: lfm2.5-8b-a1b
-    role: Liquid AI edge MoE — 8.5B total / ~1B active (efficiency-first, 158k dl)
-    gguf: { repo: LiquidAI/LFM2.5-8B-A1B-GGUF, file: "*Q4_K_M.gguf" }
-    max_tokens_mult: 4        # no think-toggle → was truncating mid-answer at 1× cap; give it room
-    # Lfm2MoeForCausalLM arch: confirm b9892 loads it; runner is resilient if not
-
-  - name: granite-4.1-8b
-    role: IBM Granite 4.1 — 8.8B dense, Apache-2.0, huge adoption (3.85M dl); safe arch
-    gguf: { repo: ibm-granite/granite-4.1-8b-GGUF, file: "*Q4_K_M.gguf" }
-
-  # Qwen3.5 BASE models (un-defers the floor slot; now available at Q4_K_M).
-  # Same Qwen3_5 arch as tess-4-9b/ornith -> base-vs-finetune comparison.
-  - name: qwen3.5-9b
-    role: Qwen3.5-9B base — anchor for the Ornith/Tess Qwen3.5-9B finetunes
-    gguf: { repo: lmstudio-community/Qwen3.5-9B-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # Qwen3.5 thinking model — run direct-answer (un-deferred 2026-08-03)
-    max_tokens_mult: 2
-
-  - name: qwen3.5-4b
-    role: Qwen3.5-4B base — floor tier (un-deferred; this GGUF is Q4_K_M, local was Q4_K_S)
-    gguf: { repo: unsloth/Qwen3.5-4B-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # Qwen3.5 thinking model — run direct-answer (un-deferred 2026-08-03)
-    max_tokens_mult: 2
-
-  # Larger Qwen models added 2026-08-03 (stakeholder request). Bigger than the edge tier
-  # but requested for the leaderboard. Q4_K_M verified on HF at add time.
-  - name: qwen3.5-35b-a3b
-    role: Qwen3.5-35B-A3B — 35B MoE (~3B active), well-supported llama.cpp arch
-    gguf: { repo: bartowski/Qwen_Qwen3.5-35B-A3B-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # too verbose — thinking truncates (~30% empty even at 6x); run direct-answer
-    max_tokens_mult: 2        # direct answers are short; small buffer only
-
-  - name: qwen3.6-27b
-    role: Qwen3.6-27B — 27B dense (May 2026). NOVEL arch (Gated DeltaNet) — load-test on b9892 first
-    gguf: { repo: unsloth/Qwen3.6-27B-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # dual-mode — run direct-answer to avoid thinking-truncation
-    max_tokens_mult: 2
-
-  # ── non-Qwen additions (Aug 2026) — all ≥128K-native; PinchBench ctx set to 128K in
-  #    scripts/pinchbench_run.sh so they don't repeat the 64K overflow/compaction bug. ──
-  - name: mistral-small-3.2-24b
-    role: Mistral-Small-3.2-24B (Jun 2026) — 24B dense generalist, 128K native; non-Qwen lineage
-    gguf: { repo: unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: gpt-oss-20b
-    role: gpt-oss-20b (Aug 2025) — OpenAI open MoE (~3.6B active), harmony reasoning fmt; SMOKE-TEST harmony + reasoning-effort before trusting a full run
-    gguf: { repo: unsloth/gpt-oss-20b-GGUF, file: "*Q4_K_M.gguf" }
-    template_kwargs: { reasoning_effort: low }   # gpt-oss uses harmony reasoning_effort, NOT enable_thinking (no_think was a no-op for it)
-    max_tokens_mult: 2
-
-  - name: nemotron-3-nano-30b
-    role: NVIDIA Nemotron-3-Nano-30B-A3B (Jan 2026) — 30B MoE (~3B active), 32K ctx, REASONING (first run dumped think-tokens to the cap → mmlu 44% empty). Run no_think.
-    gguf: { repo: lmstudio-community/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF, file: "*Q4_K_M.gguf" }
-    max_tokens_mult: 2
-    no_think: true   # 2026-08-08: it IS a reasoning model; disable thinking (if the template ignores enable_thinking, the gated smoke will catch it)
-
-# gemma-4-31b (bonus) MOVED TO VERY END (2026-08-05) — pulled from config so the running stage2
-# fail-skips it in seconds; re-added + run dead-last by /tmp/gemma_last.sh.
-
-  - name: devstral-small-2-24b
-    role: Devstral-Small-2-24B (Dec 2025) — agentic-coding specialist on the Mistral-Small 24B base; generalist-vs-specialist pair with mistral-small-3.2-24b
-    gguf: { repo: unsloth/Devstral-Small-2-24B-Instruct-2512-GGUF, file: "*Q4_K_M.gguf" }
-
-  # ── wave 2 (Aug 2026): new lineages 30-33B. contexts verified: granite/gemma 128K+ native;
-  #    EXAONE uses llama3 rope-scaling off an 8K base -> SMOKE-CHECK long-ctx doesn't clamp/garble. ──
-  - name: exaone-4.5-33b
-    role: "EXAONE-4.5-33B (Apr 2026) — LG, exaone4_5 arch, 33B. REASONING model — no_think REQUIRED (2026-08-05 fix; without it 73 pct of ifeval outputs came back empty)."
-    gguf: { repo: LGAI-EXAONE/EXAONE-4.5-33B-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # template supports enable_thinking:false — verified
-    max_tokens_mult: 2
-  - name: granite-4.1-30b
-    role: granite-4.1-30b (Apr 2026) — IBM, 30B dense, 128K native; extends the granite-4.1-8b into an 8B->30B scaling curve
-    gguf: { repo: bartowski/ibm-granite_granite-4.1-30b-GGUF, file: "*Q4_K_M.gguf" }
-  - name: gemma-4-26b-a4b
-    role: gemma-4-26B-A4B-it (Mar 2026) — Google, 26B MoE (4B active), 256K native; dense-vs-MoE contrast with gemma-4-31b
-    gguf: { repo: unsloth/gemma-4-26B-A4B-it-GGUF, file: "*Q4_K_M.gguf" }
-
-  - name: gemma-4-31b
-    role: gemma-4-31B-it (2026) — 31B dense Gemma-4 flagship
-    gguf: { repo: unsloth/gemma-4-31B-it-GGUF, file: "*Q4_K_M.gguf" }
-    no_think: true            # Gemma-4 reasoner (same as e4b/12b) — 2026-08-05, avoid empty-output contamination
-    max_tokens_mult: 2
+- name: llama-3.2-3b
+  role: "smoke test \u2014 local pre-downloaded GGUF"
+  gguf:
+    local: /home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf
+  draft_gguf:
+    repo: bartowski/Llama-3.2-1B-Instruct-GGUF
+    file: '*Q4_K_M.gguf'
+- name: qwen2.5-7b-instruct
+  role: "all-round anchor. GGUF swapped to the 1M-context build (2026-08-05) \u2014\
+    \ base 32K GGUF has NO YaRN baked in so b9892 clamps -c 131072 \u2192 32K; the\
+    \ -1M build loads 128K on plain -c."
+  gguf:
+    repo: bartowski/Qwen2.5-7B-Instruct-1M-GGUF
+    file: '*Q4_K_M.gguf'
+  draft_gguf:
+    repo: bartowski/Qwen2.5-0.5B-Instruct-GGUF
+    file: '*Q4_K_M.gguf'
+- name: llama-3.1-8b-instruct
+  role: community baseline
+  gguf:
+    repo: bartowski/Meta-Llama-3.1-8B-Instruct-GGUF
+    file: '*Q4_K_M.gguf'
+  draft_gguf:
+    repo: bartowski/Llama-3.2-1B-Instruct-GGUF
+    file: '*Q4_K_M.gguf'
+- name: gemma-2-9b-it
+  role: heavyweight (reasoning ceiling, structured output)
+  gguf:
+    repo: bartowski/gemma-2-9b-it-GGUF
+    file: '*Q4_K_M.gguf'
+  draft_gguf:
+    repo: bartowski/gemma-2-2b-it-GGUF
+    file: '*Q4_K_M.gguf'
+- name: mistral-nemo-12b
+  role: long-context specialist (128k)
+  gguf:
+    repo: bartowski/Mistral-Nemo-Instruct-2407-GGUF
+    file: '*Q4_K_M.gguf'
+- name: deepseek-r1-distill-qwen-7b
+  role: "reasoning / CoT specialist (expect low IFEval \u2014 think-stripping needed)"
+  gguf:
+    repo: bartowski/DeepSeek-R1-Distill-Qwen-7B-GGUF
+    file: '*Q4_K_M.gguf'
+  draft_gguf:
+    repo: bartowski/DeepSeek-R1-Distill-Qwen-1.5B-GGUF
+    file: '*Q4_K_M.gguf'
+  max_tokens_mult: 4
+- name: phi-4-mini-instruct
+  role: floor / entry (Phi family, edge-realistic ~3.8B)
+  gguf:
+    repo: bartowski/microsoft_Phi-4-mini-instruct-GGUF
+    file: '*Q4_K_M.gguf'
+- name: gemma-4-e4b
+  role: 2026 flagship edge model (Gemma 4, Apache-2.0)
+  gguf:
+    repo: lmstudio-community/gemma-4-E4B-it-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+- name: glm-4-9b-0414
+  role: new family (THUDM GLM-4, code + function-calling)
+  gguf:
+    repo: bartowski/THUDM_GLM-4-9B-0414-GGUF
+    file: '*Q4_K_M.gguf'
+- name: qwen3-8b
+  role: "Qwen3 dual-mode. GGUF swapped to the 128K build (2026-08-05) \u2014 base\
+    \ 32K GGUF has no YaRN baked in (b9892 clamps to 32K); the -128K build loads 128K\
+    \ on plain -c."
+  gguf:
+    repo: unsloth/Qwen3-8B-128K-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 3
+- name: llama-xlam-2-8b-fc
+  role: agent / function-calling specialist (Salesforce xLAM-2, SOTA-at-8B on BFCL)
+  gguf:
+    repo: Salesforce/Llama-xLAM-2-8b-fc-r-gguf
+    file: '*Q4_K_M.gguf'
+  draft_gguf:
+    repo: bartowski/Llama-3.2-1B-Instruct-GGUF
+    file: '*Q4_K_M.gguf'
+- name: gemma-4-12b
+  role: 2026 flagship Gemma 4 at the 12B tier (completes the Gemma-4 family sweep)
+  gguf:
+    repo: unsloth/gemma-4-12b-it-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+- name: ornith-1.0-9b
+  role: "Qwen3.5-9B MoE, RL-trained (deepreinforce-ai) \u2014 most-adopted fresh 9B"
+  gguf:
+    repo: unsloth/Ornith-1.0-9B-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 2
+- name: tess-4-9b
+  role: Qwen3.5-9B reasoning/agentic finetune (migtissera Tess series)
+  gguf:
+    repo: bartowski/migtissera_Tess-4-9B-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+- name: nanbeige4.2-3b
+  role: fresh general EN/ZH 3B (Nanbeige, ~19k dl in first week)
+  gguf:
+    repo: bartowski/Nanbeige_Nanbeige4.2-3B-GGUF
+    file: '*Q4_K_M.gguf'
+- name: lfm2.5-8b-a1b
+  role: "Liquid AI edge MoE \u2014 8.5B total / ~1B active (efficiency-first, 158k\
+    \ dl)"
+  gguf:
+    repo: LiquidAI/LFM2.5-8B-A1B-GGUF
+    file: '*Q4_K_M.gguf'
+  max_tokens_mult: 4
+- name: granite-4.1-8b
+  role: "IBM Granite 4.1 \u2014 8.8B dense, Apache-2.0, huge adoption (3.85M dl);\
+    \ safe arch"
+  gguf:
+    repo: ibm-granite/granite-4.1-8b-GGUF
+    file: '*Q4_K_M.gguf'
+- name: qwen3.5-9b
+  role: "Qwen3.5-9B base \u2014 anchor for the Ornith/Tess Qwen3.5-9B finetunes"
+  gguf:
+    repo: lmstudio-community/Qwen3.5-9B-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 2
+- name: qwen3.5-4b
+  role: "Qwen3.5-4B base \u2014 floor tier (un-deferred; this GGUF is Q4_K_M, local\
+    \ was Q4_K_S)"
+  gguf:
+    repo: unsloth/Qwen3.5-4B-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 2
+- name: qwen3.5-35b-a3b
+  role: "Qwen3.5-35B-A3B \u2014 35B MoE (~3B active), well-supported llama.cpp arch"
+  gguf:
+    repo: bartowski/Qwen_Qwen3.5-35B-A3B-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 2
+- name: qwen3.6-27b
+  role: "Qwen3.6-27B \u2014 27B dense (May 2026). NOVEL arch (Gated DeltaNet) \u2014\
+    \ load-test on b9892 first"
+  gguf:
+    repo: unsloth/Qwen3.6-27B-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 2
+- name: mistral-small-3.2-24b
+  role: "Mistral-Small-3.2-24B (Jun 2026) \u2014 24B dense generalist, 128K native;\
+    \ non-Qwen lineage"
+  gguf:
+    repo: unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF
+    file: '*Q4_K_M.gguf'
+- name: gpt-oss-20b
+  role: "gpt-oss-20b (Aug 2025) \u2014 OpenAI open MoE (~3.6B active), harmony reasoning\
+    \ fmt; SMOKE-TEST harmony + reasoning-effort before trusting a full run"
+  gguf:
+    repo: unsloth/gpt-oss-20b-GGUF
+    file: '*Q4_K_M.gguf'
+  template_kwargs:
+    reasoning_effort: low
+  max_tokens_mult: 2
+- name: nemotron-3-nano-30b
+  role: "NVIDIA Nemotron-3-Nano-30B-A3B (Jan 2026) \u2014 30B MoE (~3B active), 32K\
+    \ ctx, REASONING (first run dumped think-tokens to the cap \u2192 mmlu 44% empty).\
+    \ Run no_think."
+  gguf:
+    repo: lmstudio-community/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF
+    file: '*Q4_K_M.gguf'
+  max_tokens_mult: 2
+  no_think: true
+- name: devstral-small-2-24b
+  role: "Devstral-Small-2-24B (Dec 2025) \u2014 agentic-coding specialist on the Mistral-Small\
+    \ 24B base; generalist-vs-specialist pair with mistral-small-3.2-24b"
+  gguf:
+    repo: unsloth/Devstral-Small-2-24B-Instruct-2512-GGUF
+    file: '*Q4_K_M.gguf'
+- name: exaone-4.5-33b
+  role: "EXAONE-4.5-33B (Apr 2026) \u2014 LG, exaone4_5 arch, 33B. REASONING model\
+    \ \u2014 no_think REQUIRED (2026-08-05 fix; without it 73 pct of ifeval outputs\
+    \ came back empty)."
+  gguf:
+    repo: LGAI-EXAONE/EXAONE-4.5-33B-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 2
+- name: granite-4.1-30b
+  role: "granite-4.1-30b (Apr 2026) \u2014 IBM, 30B dense, 128K native; extends the\
+    \ granite-4.1-8b into an 8B->30B scaling curve"
+  gguf:
+    repo: bartowski/ibm-granite_granite-4.1-30b-GGUF
+    file: '*Q4_K_M.gguf'
+- name: gemma-4-26b-a4b
+  role: "gemma-4-26B-A4B-it (Mar 2026) \u2014 Google, 26B MoE (4B active), 256K native;\
+    \ dense-vs-MoE contrast with gemma-4-31b"
+  gguf:
+    repo: unsloth/gemma-4-26B-A4B-it-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+- name: gemma-4-31b
+  role: "gemma-4-31B-it (2026) \u2014 31B dense Gemma-4 flagship"
+  gguf:
+    repo: unsloth/gemma-4-31B-it-GGUF
+    file: '*Q4_K_M.gguf'
+  no_think: true
+  max_tokens_mult: 2

@@ -13,6 +13,9 @@
  "overrides": {
   "exaone-4.5-33b": {
    "pinchbench": "PinchBench ctx 64K (not the standard 128K) \u2014 33B dense + 128K KV OOMs the 40GB card"
+  },
+  "nemotron-3-nano-30b": {
+   "pinchbench": "PinchBench ctx 32K (model is 32K-native, not the standard 128K)"
   }
  }
 }

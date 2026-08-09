@@ -10,5 +10,9 @@
   "gpt-oss (harmony)": "reasoning_effort default = low",
   "Judge (writing / simpleqa / pinch)": "DeepSeek-Chat-v3.1 via OpenRouter"
  },
- "overrides": {}
+ "overrides": {
+  "exaone-4.5-33b": {
+   "pinchbench": "PinchBench ctx 64K (not the standard 128K) \u2014 33B dense + 128K KV OOMs the 40GB card"
+  }
+ }
 }

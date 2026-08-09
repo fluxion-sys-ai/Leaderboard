@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.8467,
+  "ci95": [
+    0.8015,
+    0.883
+  ],
+  "instruction_accuracy": 0.8908,
+  "n": 300,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 0.6429,
+      "n": 14
+    },
+    "change_case:english_capital": {
+      "acc": 1.0,
+      "n": 16
+    },
+    "change_case:english_lowercase": {
+      "acc": 0.9524,
+      "n": 21
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.5714,
+      "n": 21
+    },
+    "combination:two_responses": {
+      "acc": 0.9286,
+      "n": 14
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.9167,
+      "n": 12
+    },
+    "detectable_content:postscript": {
+      "acc": 0.9,
+      "n": 10
+    },
+    "detectable_format:constrained_response": {
+      "acc": 0.8571,
+      "n": 7
+    },
+    "detectable_format:json_format": {
+      "acc": 0.8333,
+      "n": 12
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 0.8571,
+      "n": 7
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 0.9286,
+      "n": 14
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 1.0,
+      "n": 25
+    },
+    "detectable_format:title": {
+      "acc": 1.0,
+      "n": 20
+    },
+    "keywords:existence": {
+      "acc": 1.0,
+      "n": 23
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.963,
+      "n": 27
+    },
+    "keywords:frequency": {
+      "acc": 0.9615,
+      "n": 26
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.8235,
+      "n": 17
+    },
+    "language:response_language": {
+      "acc": 1.0,
+      "n": 17
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 1.0,
+      "n": 7
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.1538,
+      "n": 13
+    },
+    "length_constraints:number_sentences": {
+      "acc": 0.9,
+      "n": 30
+    },
+    "length_constraints:number_words": {
+      "acc": 0.8462,
+      "n": 26
+    },
+    "punctuation:no_comma": {
+      "acc": 1.0,
+      "n": 39
+    },
+    "startend:end_checker": {
+      "acc": 0.8824,
+      "n": 17
+    },
+    "startend:quotation": {
+      "acc": 0.913,
+      "n": 23
+    }
+  },
+  "model": "gemma-4-e4b",
+  "benchmark": "ifeval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-e4b/gemma-4-E4B-it-Q4_K_M.gguf",
+  "run_ts": 1786270916,
+  "perf": {
+    "prefill_tps": 272.35,
+    "decode_tps": 28.79,
+    "ttft_ms": 102.28,
+    "mean_prompt_tokens": 53.89,
+    "mean_completion_tokens": 263.68,
+    "total_gen_tokens": 79105,
+    "model_load_s": 4.0,
+    "gguf_mb": 5335.3,
+    "peak_vram_mb": 26739.0
+  }
+}

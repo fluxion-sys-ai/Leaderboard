@@ -76,15 +76,18 @@ import json,os,glob,sys
 m=sys.argv[1]
 def out(r): return str(r.get('output') or '')
 T=E=0
+COUNTED="ifeval jsonschemabench gsm8k aime2026 mmlu_pro zebralogic gpqa_diamond livecodebench humaneval cruxeval babilong ruler writing bfcl".split()
 for f in glob.glob(f'results/raw/{m}/*.jsonl'):
     if 'clawd' in f: continue
     rows=[json.loads(l) for l in open(f)]; T+=len(rows); E+=sum(1 for r in rows if not out(r).strip())
 pe=100*E/T if T else 100
+have={os.path.basename(f)[:-5] for f in glob.glob(f'results/scored/{m}/*.json')}
+missing=[b for b in COUNTED if b not in have]   # COMPLETENESS gate: never un-hide a partial grid
 h=json.load(open('configs/hidden_models.json'))
-if pe<15 and m in h:
-    del h[m]; json.dump(h,open('configs/hidden_models.json','w'),indent=1); print(f"{m} UN-HIDDEN (empty {pe:.0f}%)")
+if pe<15 and not missing and m in h:
+    del h[m]; json.dump(h,open('configs/hidden_models.json','w'),indent=1); print(f"{m} UN-HIDDEN (empty {pe:.0f}%, 14/14 counted)")
 else:
-    print(f"{m} kept hidden (empty {pe:.0f}%)")
+    print(f"{m} kept hidden (empty {pe:.0f}%, missing={missing})")
 PY
   python3 judge_writing.py >> "$L" 2>&1; python3 judge_simpleqa.py >> "$L" 2>&1
   python3 -m src.report.build_leaderboard >> "$L" 2>&1

@@ -1,0 +1,34 @@
+{
+  "metric": "accuracy",
+  "score": 0.8598,
+  "n": 164,
+  "passed": 141,
+  "ci95": [
+    0.7983,
+    0.9047
+  ],
+  "failure_breakdown": {
+    "error:nonzero_exit": 4,
+    "fail": 18,
+    "error:TypeError: Value after * must be an iterable, not float": 1
+  },
+  "model": "gemma-4-e4b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-e4b/gemma-4-E4B-it-Q4_K_M.gguf",
+  "run_ts": 1786285499,
+  "perf": {
+    "prefill_tps": 20.98,
+    "decode_tps": 27.63,
+    "ttft_ms": 47.88,
+    "mean_prompt_tokens": 169.84,
+    "mean_completion_tokens": 213.64,
+    "total_gen_tokens": 35037,
+    "model_load_s": 4.0,
+    "gguf_mb": 5335.3,
+    "peak_vram_mb": 26739.0
+  }
+}

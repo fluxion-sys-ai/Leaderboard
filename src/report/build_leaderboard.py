@@ -149,6 +149,38 @@ def heat(v):
     return f"background:rgba({rgb[0]},{rgb[1]},{rgb[2]},.88);color:#0b0e13;font-weight:600"
 
 
+def heat_rgb(v):
+    """Same warm-red→amber→green palette as heat(), but returns a bare rgb() for SVG fills."""
+    if v is None:
+        return "var(--bd)"
+    stops = [(0.0, (194, 94, 94)), (0.5, (217, 164, 94)), (1.0, (78, 201, 143))]
+    for (a, ca), (b, cb) in zip(stops, stops[1:]):
+        if v <= b:
+            t = (v - a) / (b - a) if b > a else 0
+            rgb = tuple(round(ca[i] + t * (cb[i] - ca[i])) for i in range(3)); break
+    else:
+        rgb = stops[-1][1]
+    return f"rgb({rgb[0]},{rgb[1]},{rgb[2]})"
+
+
+def _dim_barchart(items):
+    """Horizontal bar chart for a dimension/bench: items = [(name, val_0_100), ...] pre-sorted desc.
+    Mirrors the table ranking so table-left / chart-right read as one unit. Hover shows exact value."""
+    items = [(n, v) for n, v in items if v is not None]
+    if not items:
+        return "<div class='mut' style='padding:20px'>no data</div>"
+    n = len(items); rowh = 15; pl = 128; barw = 150; W = pl + barw + 34; H = n * rowh + 10
+    P = [f'<svg viewBox="0 0 {W} {H}" class="dimbar" preserveAspectRatio="xMinYMin meet">']
+    for i, (name, v) in enumerate(items):
+        y = 8 + i * rowh; nm = name if len(name) <= 20 else name[:19] + "…"
+        P.append(f'<text x="{pl-5}" y="{y+3.5:.0f}" text-anchor="end" fill="var(--mut)" font-size="9">{html.escape(nm)}</text>')
+        P.append(f'<rect x="{pl}" y="{y-3:.0f}" width="{barw}" height="10" rx="2" fill="var(--s2)"/>')
+        P.append(f'<rect x="{pl}" y="{y-3:.0f}" width="{max(2, v/100*barw):.0f}" height="10" rx="2" fill="{heat_rgb(v/100)}"><title>{html.escape(name)}: {v:.1f}</title></rect>')
+        P.append(f'<text x="{pl+barw+4}" y="{y+3.5:.0f}" fill="var(--tx)" font-size="9" font-weight="600">{v:.1f}</text>')
+    P.append('</svg>')
+    return "".join(P)
+
+
 EXCLUDED = {
     "nanbeige4.2-3b": "broken — b9892 can't load arch 'nanbeige'.",
 }
@@ -282,12 +314,15 @@ def _dim_tables(rows):
         if t == "Agentic":
             nb, bt = _single_bench_table(rows, "bfcl", "BFCL", "BFCL — tool-use, single call", "dAb")
             npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp")
+            def _ranked_pairs(key):
+                vals = [(n, score_of(r, key)) for n, r, s in rows]
+                return sorted([(n, v * 100) for n, v in vals if v is not None], key=lambda x: -x[1])
             out.append(
                 f'<h3 class="dimh">Agentic<span class="mut"> · BFCL &amp; PinchBench shown separately — PinchBench isn\'t run on every model</span></h3>'
-                f'<div class="sbs">'
-                f'<div class="sbs-col"><div class="sbs-h">BFCL<span class="mut"> · {nb} models</span></div><div class="scroll">{bt}</div></div>'
-                f'<div class="sbs-col"><div class="sbs-h">PinchBench<span class="mut"> · {npb} models</span></div><div class="scroll">{pt}</div></div>'
-                f'</div>')
+                f'<div class="dimrow"><div class="dtab scroll"><div class="sbs-h">BFCL<span class="mut"> · {nb} models</span></div>{bt}</div>'
+                f'<div class="dchart">{_dim_barchart(_ranked_pairs("bfcl"))}</div></div>'
+                f'<div class="dimrow"><div class="dtab scroll"><div class="sbs-h">PinchBench<span class="mut"> · {npb} models</span></div>{pt}</div>'
+                f'<div class="dchart">{_dim_barchart(_ranked_pairs("pinchbench"))}</div></div>')
             continue
         head = "".join(th_sort(sh, lbl) for _k, sh, lbl, _tt in members)
         ranked = sorted(rows, key=lambda r: (dim_avg(r[1], t) is not None, dim_avg(r[1], t) or -1), reverse=True)
@@ -297,13 +332,16 @@ def _dim_tables(rows):
                         + "".join(sc(score_of(row, k), name, k) for k, *_ in members)
                         + av(dim_avg(row, t), "av big") + "</tr>")
         plural = "s" if len(members) > 1 else ""
+        table = (f'<table id="d{i}"><thead><tr><th class="rk">#</th>'
+                 f'<th class="ml so" onclick="sortT(this)">Model</th>'
+                 f'<th class="sz so" onclick="sortT(this)">Size</th>{head}'
+                 f'<th class="av so" onclick="sortT(this)" title="{t} average — click to sort">Avg</th>'
+                 f'</tr></thead><tbody>{"".join(body)}</tbody></table>')
+        chart = _dim_barchart([(name, dim_avg(row, t)) for name, row, size in ranked])
         out.append(
             f'<h3 class="dimh">{t}<span class="mut"> · {len(members)} benchmark{plural} · ranked by avg</span></h3>'
-            f'<div class="scroll"><table id="d{i}"><thead><tr><th class="rk">#</th>'
-            f'<th class="ml so" onclick="sortT(this)">Model</th>'
-            f'<th class="sz so" onclick="sortT(this)">Size</th>{head}'
-            f'<th class="av so" onclick="sortT(this)" title="{t} average — click to sort">Avg</th>'
-            f'</tr></thead><tbody>{"".join(body)}</tbody></table></div>')
+            f'<div class="dimrow"><div class="dtab scroll">{table}</div>'
+            f'<div class="dchart">{chart}</div></div>')
     return "".join(out)
 
 
@@ -468,6 +506,10 @@ nav{display:flex;gap:6px;margin-bottom:14px}
 [data-theme=light] .tab.on{color:#fff}
 .view{display:none}.view.on{display:block}
 .dimh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:22px 0 8px}
+.dimrow{display:flex;gap:16px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap}
+.dtab{flex:2 1 460px;min-width:0}
+.dchart{flex:1 1 340px;min-width:280px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:10px 8px;align-self:stretch}
+.dimbar{width:100%;height:auto;display:block}
 .dimh:first-child{margin-top:4px}
 .scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:11px;background:var(--s1)}
 table{border-collapse:separate;border-spacing:0;width:100%;white-space:nowrap}

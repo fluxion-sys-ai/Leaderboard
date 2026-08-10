@@ -26,7 +26,7 @@ M,REPO=sys.argv[1],sys.argv[2]
 DIMS=[("ifeval","I"),("jsonschemabench","I"),("gsm8k","R"),("mmlu_pro","R"),("aime2026","R"),
 ("zebralogic","R"),("gpqa_diamond","R"),("livecodebench","C"),("humaneval","C"),("cruxeval","C"),
 ("babilong","L"),("ruler","L"),("writing","W"),("bfcl","A")]
-EXCL={"gemma-4-12b","nanbeige4.2-3b"}
+EXCL={"nanbeige4.2-3b"}
 def wavg(m):
     row={}
     for f in glob.glob(f"{REPO}/results/scored/{m}/*.json"):

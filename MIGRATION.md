@@ -4,6 +4,34 @@ Everything you need is in **this repo** + the **public model weights** (auto-dow
 skill repo**. Repo payload is ~82 MB; the ~108 GB of GGUF weights are **not** stored here — they stream
 from Hugging Face on first run.
 
+## 📦 State at hand-off (2026-08-10 17:18 UTC / 10:18 AM PT) — READ FIRST
+**Board: 25 models, all clean, live at 25.** The full run is essentially DONE — all grids complete, agentic
+(BFCL+PinchBench) coverage nearly complete. Everything published is in GitHub (`results/scored` + `results/raw`
+are tracked), so **git clone on the new box restores all finished work** — you only resume what's mid-flight.
+
+**Mid-flight when you move** (these detached `/tmp/*.sh` runs will die with the old box — RESUME on the new one):
+- `pinch_batch2` — PinchBench for **tess-4-9b (running), llama-3.1-8b, llama-3.2-3b, phi-4-mini** (post-deadline coverage)
+- `granite_pinch` — PinchBench for **granite-4.1-30b** (was deadline-dropped; OOM→64K fallback)
+- To resume on the new box: `for m in tess-4-9b llama-3.1-8b-instruct llama-3.2-3b phi-4-mini-instruct granite-4.1-30b; do FORCE_PINCH=1 bash scripts/pinchbench_run.sh $m && python3 import_pinchbench.py; done` then rebuild+push. (Check which already landed first — some may have committed before you moved.)
+- `overnight_watch` + `judge_daemon` — safety/judge daemons; not needed once runs are done.
+
+**PinchBench exclusions (5, agentic=BFCL-only, DON'T re-run expecting a fix — they're harness bugs):**
+exaone-4.5-33b (transcript name-mangling), gemma-2-9b-it (8K overflow), glm-4-9b-0414 + mistral-nemo-12b
+(tool-parse), qwen3-8b (stale). Listed in `STALE_PINCHBENCH` in `src/report/build_leaderboard.py`.
+
+## ⚠️ Hard-won gotchas (bit us this weekend — bake into any new automation)
+1. **Transcript-not-found bug** — PinchBench mangles agent names with dots (`exaone-4.5`→`4-5`) → can't match
+   transcripts → all tasks skipped → fake 0.005. Guard: if a pinch log has many "Transcript not found", DISCARD it.
+2. **False auto-exclusion** — a single below-random MCQ cell mid-run adds a model to `results/excluded.txt` and
+   silently drops it from the board (this hid gemma-4-26b, a #3 model, for hours). Check `results/excluded.txt`.
+3. **Completeness gate** — only un-hide a model with ALL 14 counted grid benches present (empty% alone let an
+   incomplete gemma-4-e4b onto the board). See the un-hide logic in `scripts/orchestration/fill_batch.sh`.
+4. **128K clamp-guard** (in `pinchbench_run.sh`) — reads live `/props n_ctx`, SKIPS if <100K. Trust it; if a model
+   isn't in the CTX case list it silently defaults to 32K, so ADD new models to that `case` before pinching.
+5. **Server-count zombies** — count `llama-server` EXCLUDING `<defunct>` or you get false "solo-GPU broken" alerts.
+6. **pgrep self-kill** — a `kill $(pgrep -f "bash /tmp/x.sh")` also matches YOUR shell if its command line contains
+   that string. Kill by exact PID (`ps -eo pid,cmd | awk '$2=="bash" && $3=="/tmp/x.sh"{print $1}'`).
+
 ## What lives where
 | Component | Size | How it moves |
 |---|---|---|
@@ -57,9 +85,14 @@ The interactive `leaderboard.html` is published via **GitHub Pages** from **`doc
 
 ## Orchestration (unattended runs)
 `scripts/orchestration/` holds the detached "waiter" scripts. They chain **solo-GPU** (one model at a time),
-each waiting on the prior via `ps`-grep, and self-delete GGUFs to save disk. See
-`scripts/orchestration/README.md` for the current pipeline vs. historical scripts.
-⚠️ They hardcode absolute paths (`/tmp/*.sh`, `/home/ubuntu/...`) — **update those for the new host** before reusing.
+each waiting on the prior via `ps`-grep, and self-delete GGUFs to save disk. Current-era scripts:
+- `fill_batch.sh` — new models: preflight → mmlu_pro smoke-gate → auto `no_think`/`max_tokens` → full grid → un-hide (14/14 gate) → push
+- `pinch_batch.sh` / `pinch_batch2.sh` / `granite_pinch.sh` — add PinchBench (128K, clamp-guarded, OOM→64K, transcript-bug guard)
+- `overnight_watch.sh` — watchdog: audit numbers, re-hide incomplete/contaminated, reap zombies, stall-recovery, auto-push
+- `nemotron_rerun.sh`, `gemma_e4b.sh`, `lfm_tess.sh`, … (+ `archive/` of historical). See `scripts/orchestration/README.md`.
+⚠️ They hardcode absolute paths (`/tmp/*.sh`, `/home/ubuntu/...`, `LLAMACPP_BIN`) — **update those for the new host**.
+⚠️ The `/tmp/*.sh` copies are the *running* instances; the `scripts/orchestration/` copies are the tracked source.
+Author commits as `aliixh <aliixhuang@gmail.com>` — **never add a Claude co-author trailer** (standing rule).
 
 ## Universal run specs (this snapshot)
 `NVIDIA A100-SXM4-40GB · Q4_K_M GGUF · llama.cpp b9892 · greedy (temp 0) · grid n_ctx 20K ·

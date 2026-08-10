@@ -27,7 +27,7 @@ say "GPU free -> pinch batch"
 
 for M in $MODELS; do
   remain=$(( (DEADLINE - $(date +%s)) / 60 ))
-  if [ "$remain" -lt 120 ]; then say "!! FLAG: only ${remain}min to 8AM deadline -> SKIP $M and rest (they stay BFCL-only, honest). Not risking a partial."; break; fi
+  if [ "$remain" -lt 180 ]; then say "!! FLAG: only ${remain}min left (<3h) to 8AM deadline -> SKIP $M and rest (they stay BFCL-only, honest). Not risking a partial."; break; fi
   FREE=$(df --output=avail -BG /home/ubuntu | tail -1 | tr -dc '0-9')
   [ "${FREE:-0}" -lt 30 ] && { say "!! FLAG: ${FREE}G disk -> STOP"; break; }
   say "=== $M pinch === (${remain}min to deadline, ${FREE}G free)"

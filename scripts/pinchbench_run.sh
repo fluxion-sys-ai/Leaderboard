@@ -106,6 +106,9 @@ case "$MODEL" in
   # added to PinchBench (had BFCL but no PinchBench). phi=128K-native; ornith clamps to its
   # own max if <128K (llama.cpp caps, no error) — run at native, don't force YaRN.
   ornith-1.0-9b|phi-4-mini-instruct) CTX=131072 ;;
+  # post-deadline pinch wave (2026-08-10): all 128K-native — xlam/llama-3.x are Llama-3.1/3.2 128K,
+  # tess is Qwen3.5-9B (256K, plain -c 131072 loads 128K). clamp-guard catches any that don't take.
+  llama-xlam-2-8b-fc|tess-4-9b|llama-3.1-8b-instruct|llama-3.2-3b) CTX=131072 ;;
   # tool-parse rerun models — 128K too (nemo 128K-native; glm clamps to its max if lower).
   # NOTE: their low score is tool-parse, NOT context — 128K is for consistency, not the fix.
   mistral-nemo-12b|glm-4-9b-0414) CTX=131072 ;;

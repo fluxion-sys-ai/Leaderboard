@@ -1,0 +1,67 @@
+{
+  "metric": "accuracy",
+  "score": 0.7778,
+  "n": 90,
+  "passed": 70,
+  "ci95": [
+    0.6815,
+    0.8513
+  ],
+  "by_category": {
+    "cwe": {
+      "score": 0.0,
+      "n": 8
+    },
+    "fwe": {
+      "score": 0.8571,
+      "n": 7
+    },
+    "niah_multikey_1": {
+      "score": 1.0,
+      "n": 8
+    },
+    "niah_multikey_2": {
+      "score": 0.9,
+      "n": 10
+    },
+    "niah_multikey_3": {
+      "score": 1.0,
+      "n": 6
+    },
+    "niah_multiquery": {
+      "score": 0.8571,
+      "n": 7
+    },
+    "niah_multivalue": {
+      "score": 0.7143,
+      "n": 7
+    },
+    "niah_single_1": {
+      "score": 1.0,
+      "n": 8
+    },
+    "niah_single_2": {
+      "score": 1.0,
+      "n": 6
+    },
+    "niah_single_3": {
+      "score": 1.0,
+      "n": 5
+    },
+    "qa_1": {
+      "score": 0.2857,
+      "n": 7
+    },
+    "qa_2": {
+      "score": 0.6667,
+      "n": 6
+    },
+    "vt": {
+      "score": 1.0,
+      "n": 5
+    }
+  },
+  "failure_breakdown": {
+    "missing_needle": 20
+  }
+}

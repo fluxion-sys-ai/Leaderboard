@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.68,
+  "n": 300,
+  "passed": 204,
+  "ci95": [
+    0.6252,
+    0.7302
+  ],
+  "by_category": {
+    "Github_easy": {
+      "score": 0.8133,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.52,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.7733,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.6133,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "schema violation": 76,
+    "no json found": 5,
+    "invalid json": 15
+  },
+  "model": "qwen3.5-4b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-4b/Qwen3.5-4B-Q4_K_M.gguf",
+  "run_ts": 1786328966,
+  "perf": {
+    "prefill_tps": 3467.88,
+    "decode_tps": 145.71,
+    "ttft_ms": 129.13,
+    "mean_prompt_tokens": 1024.36,
+    "mean_completion_tokens": 266.17,
+    "total_gen_tokens": 79852,
+    "model_load_s": 4.0,
+    "gguf_mb": 2740.9,
+    "peak_vram_mb": 3702.0
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "metric": "accuracy",
+  "score": 0.6429,
+  "n": 280,
+  "passed": 180,
+  "ci95": [
+    0.5851,
+    0.6967
+  ],
+  "by_category": {
+    "biology": {
+      "score": 0.85,
+      "n": 20
+    },
+    "business": {
+      "score": 0.75,
+      "n": 20
+    },
+    "chemistry": {
+      "score": 0.8,
+      "n": 20
+    },
+    "computer science": {
+      "score": 0.7,
+      "n": 20
+    },
+    "economics": {
+      "score": 0.55,
+      "n": 20
+    },
+    "engineering": {
+      "score": 0.4,
+      "n": 20
+    },
+    "health": {
+      "score": 0.55,
+      "n": 20
+    },
+    "history": {
+      "score": 0.5,
+      "n": 20
+    },
+    "law": {
+      "score": 0.45,
+      "n": 20
+    },
+    "math": {
+      "score": 0.75,
+      "n": 20
+    },
+    "other": {
+      "score": 0.65,
+      "n": 20
+    },
+    "philosophy": {
+      "score": 0.65,
+      "n": 20
+    },
+    "physics": {
+      "score": 0.7,
+      "n": 20
+    },
+    "psychology": {
+      "score": 0.7,
+      "n": 20
+    }
+  },
+  "failure_breakdown": {
+    "wrong_answer": 100
+  },
+  "model": "qwen3.5-4b",
+  "benchmark": "mmlu_pro",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-4b/Qwen3.5-4B-Q4_K_M.gguf",
+  "run_ts": 1786328203,
+  "perf": {
+    "prefill_tps": 2144.6,
+    "decode_tps": 144.33,
+    "ttft_ms": 90.37,
+    "mean_prompt_tokens": 227.54,
+    "mean_completion_tokens": 1044.74,
+    "total_gen_tokens": 292526,
+    "model_load_s": 4.0,
+    "gguf_mb": 2740.9,
+    "peak_vram_mb": 3702.0
+  }
+}

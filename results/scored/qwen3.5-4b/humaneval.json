@@ -1,0 +1,36 @@
+{
+  "metric": "accuracy",
+  "score": 0.7378,
+  "n": 164,
+  "passed": 121,
+  "ci95": [
+    0.6656,
+    0.7991
+  ],
+  "failure_breakdown": {
+    "fail": 36,
+    "error:nonzero_exit": 4,
+    "error:SyntaxError: invalid syntax": 1,
+    "error:IndexError: list index out of range": 1,
+    "error:TypeError: type complex doesn't define __round__ method": 1
+  },
+  "model": "qwen3.5-4b",
+  "benchmark": "humaneval",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/qwen3.5-4b/Qwen3.5-4B-Q4_K_M.gguf",
+  "run_ts": 1786329356,
+  "perf": {
+    "prefill_tps": 1737.0,
+    "decode_tps": 145.71,
+    "ttft_ms": 87.39,
+    "mean_prompt_tokens": 168.99,
+    "mean_completion_tokens": 264.49,
+    "total_gen_tokens": 43377,
+    "model_load_s": 4.0,
+    "gguf_mb": 2740.9,
+    "peak_vram_mb": 3702.0
+  }
+}

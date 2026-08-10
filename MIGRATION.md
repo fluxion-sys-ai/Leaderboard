@@ -4,20 +4,35 @@ Everything you need is in **this repo** + the **public model weights** (auto-dow
 skill repo**. Repo payload is ~82 MB; the ~108 GB of GGUF weights are **not** stored here — they stream
 from Hugging Face on first run.
 
-## 📦 State at hand-off (2026-08-10 17:18 UTC / 10:18 AM PT) — READ FIRST
-**Board: 25 models, all clean, live at 25.** The full run is essentially DONE — all grids complete, agentic
-(BFCL+PinchBench) coverage nearly complete. Everything published is in GitHub (`results/scored` + `results/raw`
+## 📦 State at hand-off (updated 2026-08-10 22:35 UTC / 3:35 PM PT) — READ FIRST
+**Board: 25 models, all clean, live at 25.** The full run is DONE — all grids complete, agentic
+(BFCL+PinchBench) coverage all-but-4. Everything published is in GitHub (`results/scored` + `results/raw`
 are tracked), so **git clone on the new box restores all finished work** — you only resume what's mid-flight.
+Leaderboard now also has: per-dimension bar charts (table-left/chart-right) + corrected caveats footer.
 
-**Mid-flight when you move** (these detached `/tmp/*.sh` runs will die with the old box — RESUME on the new one):
-- `pinch_batch2` — PinchBench for **tess-4-9b (running), llama-3.1-8b, llama-3.2-3b, phi-4-mini** (post-deadline coverage)
-- `granite_pinch` — PinchBench for **granite-4.1-30b** (was deadline-dropped; OOM→64K fallback)
-- To resume on the new box: `for m in tess-4-9b llama-3.1-8b-instruct llama-3.2-3b phi-4-mini-instruct granite-4.1-30b; do FORCE_PINCH=1 bash scripts/pinchbench_run.sh $m && python3 import_pinchbench.py; done` then rebuild+push. (Check which already landed first — some may have committed before you moved.)
-- `overnight_watch` + `judge_daemon` — safety/judge daemons; not needed once runs are done.
+**Mid-flight (finishing on the OLD box as of this write — RESUME only what hasn't committed):**
+- ✅ **tess-4-9b** pinch DONE (0.41, pushed)
+- ⏳ `pinch_batch2` — **llama-3.1-8b (running) → llama-3.2-3b → phi-4-mini** still to land
+- ⏳ `granite_pinch` — **granite-4.1-30b** (last; OOM→64K fallback)
+- **Resume on new box** (skip any that already committed — check `results/scored/<m>/pinchbench.json`):
+  `for m in llama-3.1-8b-instruct llama-3.2-3b phi-4-mini-instruct granite-4.1-30b; do FORCE_PINCH=1 bash scripts/pinchbench_run.sh $m && python3 import_pinchbench.py; done && python3 -m src.report.build_leaderboard && cp leaderboard.html docs/index.html && git commit -am "pinch: remaining" && git push`
 
 **PinchBench exclusions (5, agentic=BFCL-only, DON'T re-run expecting a fix — they're harness bugs):**
 exaone-4.5-33b (transcript name-mangling), gemma-2-9b-it (8K overflow), glm-4-9b-0414 + mistral-nemo-12b
 (tool-parse), qwen3-8b (stale). Listed in `STALE_PINCHBENCH` in `src/report/build_leaderboard.py`.
+
+## 🆕 New-host setup gotchas (hit during the 2026-08-10 GCP migration)
+- **Home path differs.** New box user is `aliixh` → repo at `~/edge-intelligence-benchmark` (NOT `/home/ubuntu`).
+  The scripts hardcode `/home/ubuntu`. Fix once: `grep -rl '/home/ubuntu' scripts/ | xargs sed -i "s#/home/ubuntu#$HOME#g"`
+  (and update `LLAMACPP_BIN` to wherever you build llama.cpp).
+- **pip: `externally-managed-environment`** (Ubuntu 24.04 / Python 3.12, PEP 668). Dedicated box → override:
+  `python3 -m pip install --break-system-packages -r requirements.txt` (keeps scripts working; they call system `python3`).
+- **npm global: `EACCES`** on `/usr/lib/node_modules`. Use sudo: `sudo npm install -g @anthropic-ai/claude-code`
+  (and `sudo npm install -g openclaw@latest` if you want OpenClaw). Node 18+ via `nodesource setup_22.x`.
+- **GPU quota, not stockout.** A100-**40GB** = you have quota (retry zones if "none available"); A100-**80GB** =
+  quota is `0` by default → needs a quota-increase request + approval. 40GB runs the whole benchmark fine (64K-pinch
+  fallback on dense-30B only); 80GB is nicer (128K pinch, no OOM) but slower to get. Update the `Machine` label in
+  `score_specs.json` if you change card — scores are GPU-independent (greedy decoding), so numbers don't change.
 
 ## ⚠️ Hard-won gotchas (bit us this weekend — bake into any new automation)
 1. **Transcript-not-found bug** — PinchBench mangles agent names with dots (`exaone-4.5`→`4-5`) → can't match

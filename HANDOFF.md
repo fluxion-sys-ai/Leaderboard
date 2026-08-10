@@ -45,6 +45,9 @@ A benchmark of ~22 small models (3B–35B, Q4_K_M GGUF) for an edge-model capabi
 deadline was HIT — 3 top-model pinches (devstral 0.21, gemma-4-12b 0.24, gemma-4-26b **0.80**) landed before it;
 granite was honestly deadline-dropped by the 3h-guard. Newest models since Sat: gemma-4-26b-a4b (#3, 78.3),
 granite-4.1-30b (#6), nemotron-3-nano-30b (fixed via no_think, #~11), devstral-small-2-24b, qwen3.5-4b.
+- **Update 2026-08-10 22:35:** tess pinch DONE (0.41); llama-3.1-8b running, then llama-3.2/phi-4-mini/granite. New-host
+  setup gotchas (Ubuntu 24.04 pip, npm sudo, /home path, A100-80GB quota) are in MIGRATION.md. Leaderboard gained
+  per-dimension bar charts + a corrected caveats footer.
 - **Mid-flight (will die on the server move — resume on new box):** `pinch_batch2` (tess/llama-3.1/llama-3.2/
   phi-4-mini pinch) + `granite_pinch`. Resume cmd + full details in **MIGRATION.md → State at hand-off**.
 - **Hidden (couldn't be cleaned):** deepseek-r1-distill, lfm2.5-8b-a1b, gemma-4-e4b (13/15 incomplete), nanbeige (arch load-fail).

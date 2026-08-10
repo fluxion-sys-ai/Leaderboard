@@ -1,16 +1,16 @@
 {
   "metric": "accuracy",
-  "score": 0.7195,
+  "score": 0.7256,
   "n": 164,
-  "passed": 118,
+  "passed": 119,
   "ci95": [
-    0.6463,
-    0.7826
+    0.6527,
+    0.7881
   ],
   "failure_breakdown": {
     "fail": 34,
     "error:NameError: name 'is_palindrome' is not defined. Did you mean: 'make_palindrome'?": 1,
-    "error:nonzero_exit": 3,
+    "error:nonzero_exit": 2,
     "error:TypeError: Value after * must be an iterable, not float": 1,
     "error:ValueError: invalid literal for int() with base 10: 'oranges'": 1,
     "error:TypeError: int() argument must be a string, a bytes-like object or a real number": 1,

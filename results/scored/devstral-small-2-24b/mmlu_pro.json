@@ -1,0 +1,91 @@
+{
+  "metric": "accuracy",
+  "score": 0.625,
+  "n": 280,
+  "passed": 175,
+  "ci95": [
+    0.567,
+    0.6797
+  ],
+  "by_category": {
+    "biology": {
+      "score": 0.85,
+      "n": 20
+    },
+    "business": {
+      "score": 0.65,
+      "n": 20
+    },
+    "chemistry": {
+      "score": 0.85,
+      "n": 20
+    },
+    "computer science": {
+      "score": 0.9,
+      "n": 20
+    },
+    "economics": {
+      "score": 0.6,
+      "n": 20
+    },
+    "engineering": {
+      "score": 0.35,
+      "n": 20
+    },
+    "health": {
+      "score": 0.55,
+      "n": 20
+    },
+    "history": {
+      "score": 0.55,
+      "n": 20
+    },
+    "law": {
+      "score": 0.35,
+      "n": 20
+    },
+    "math": {
+      "score": 0.75,
+      "n": 20
+    },
+    "other": {
+      "score": 0.75,
+      "n": 20
+    },
+    "philosophy": {
+      "score": 0.5,
+      "n": 20
+    },
+    "physics": {
+      "score": 0.5,
+      "n": 20
+    },
+    "psychology": {
+      "score": 0.6,
+      "n": 20
+    }
+  },
+  "failure_breakdown": {
+    "wrong_answer": 95,
+    "no_answer_parsed": 10
+  },
+  "model": "devstral-small-2-24b",
+  "benchmark": "mmlu_pro",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/devstral-small-2-24b/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf",
+  "run_ts": 1786309611,
+  "perf": {
+    "prefill_tps": 1159.94,
+    "decode_tps": 57.35,
+    "ttft_ms": 151.64,
+    "mean_prompt_tokens": 766.27,
+    "mean_completion_tokens": 521.91,
+    "total_gen_tokens": 146136,
+    "model_load_s": 6.7,
+    "gguf_mb": 14334.4,
+    "peak_vram_mb": 16876.0
+  }
+}

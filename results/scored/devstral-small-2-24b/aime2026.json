@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.1333,
+  "n": 30,
+  "passed": 4,
+  "ci95": [
+    0.0531,
+    0.2968
+  ],
+  "failure_breakdown": {
+    "wrong_answer": 26
+  },
+  "model": "devstral-small-2-24b",
+  "benchmark": "aime2026",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/devstral-small-2-24b/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf",
+  "run_ts": 1786315776,
+  "perf": {
+    "prefill_tps": 905.91,
+    "decode_tps": 56.37,
+    "ttft_ms": 158.5,
+    "mean_prompt_tokens": 695.5,
+    "mean_completion_tokens": 2881.53,
+    "total_gen_tokens": 86446,
+    "model_load_s": 6.7,
+    "gguf_mb": 14334.4,
+    "peak_vram_mb": 16894.0
+  }
+}

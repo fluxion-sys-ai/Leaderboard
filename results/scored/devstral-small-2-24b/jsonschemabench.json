@@ -1,0 +1,52 @@
+{
+  "metric": "accuracy",
+  "score": 0.78,
+  "n": 300,
+  "passed": 234,
+  "ci95": [
+    0.7297,
+    0.8232
+  ],
+  "by_category": {
+    "Github_easy": {
+      "score": 0.88,
+      "n": 75
+    },
+    "Github_hard": {
+      "score": 0.7067,
+      "n": 75
+    },
+    "Github_medium": {
+      "score": 0.8533,
+      "n": 75
+    },
+    "Github_trivial": {
+      "score": 0.68,
+      "n": 75
+    }
+  },
+  "failure_breakdown": {
+    "schema violation": 36,
+    "invalid json": 20,
+    "no json found": 10
+  },
+  "model": "devstral-small-2-24b",
+  "benchmark": "jsonschemabench",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 20480,
+  "temperature": 0.0,
+  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/devstral-small-2-24b/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf",
+  "run_ts": 1786310878,
+  "perf": {
+    "prefill_tps": 1556.79,
+    "decode_tps": 57.87,
+    "ttft_ms": 227.43,
+    "mean_prompt_tokens": 1447.48,
+    "mean_completion_tokens": 173.36,
+    "total_gen_tokens": 52009,
+    "model_load_s": 6.7,
+    "gguf_mb": 14334.4,
+    "peak_vram_mb": 16876.0
+  }
+}

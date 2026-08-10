@@ -479,8 +479,8 @@ def build() -> str:
 <span class="lg" style="{heat(0.9)}">high</span>
 <span class="mut">· shade per cell, not comparable across columns · · = no score (excluded from averages) · <span class="flag">⚑</span> = per-model caveat below</span>
 </div>
-<div class="notes"><div class="nh"><span class="flag">⚑</span> Known per-model caveats (score understated by a documented artifact):</div>
-{"".join(f'<div class="fn"><b>{html.escape(m)}</b> — {html.escape(t)}</div>' for m, t in NOTES.items())}</div></div>
+<div class="notes"><div class="nh"><span class="flag">⚑</span> Known per-model caveats — the documented reason behind a low or unusual score: either a harness/context artifact that <i>understates</i> the model, or a <i>genuine</i> limitation. Each is noted so no number is mysterious.</div>
+{"".join(f'<div class="fn"><b>{html.escape(m)}</b> — {html.escape(t)}</div>' for m, t in NOTES.items() if m not in HIDDEN and m not in EXCLUDED)}</div></div>
 <script>{JS}</script></body></html>"""
 
 

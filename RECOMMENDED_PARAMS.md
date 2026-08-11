@@ -19,22 +19,33 @@ four active benchmarks are **agentic/reasoning** tasks → each model uses its *
 per-benchmark params are the *same* for a given model across all 4 (only the Muse Glimmer *reasoning-strength* and the
 MMMU *vision input* differ). Numbers below are each model's thinking-mode recommendation.
 
-| Benchmark (category) | Muse Glimmer 30B | Gemma-4-31B | Qwen3.6-27B | Qwen3.6-35B-A3B |
-|---|---|---|---|---|
-| **PinchBench** (multi-turn agentic) | temp 1.0 · top_p 0.95 · top_k 64 · **reasoning=xhigh** | temp 1.0 · top_p 0.95 · top_k 64 · **think ON** | temp 1.0 · top_p 0.95 · top_k 20 · min_p 0 · presence 0 | temp 1.0 · top_p 0.95 · top_k 20 · min_p 0 · presence 1.5 |
-| **Gaia2** (general agentic) | 1.0 / 0.95 / 64 · **reasoning=xhigh** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 (thinking-general) | 1.0 / 0.95 / 20 · presence 1.5 |
-| **MMMU Pro** (multimodal reasoning) ⚠️vision | 1.0 / 0.95 / 64 · **reasoning=high** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 (thinking-general) | 1.0 / 0.95 / 20 · presence 1.5 |
-| **AgentDojo** (agentic security) | 1.0 / 0.95 / 64 · **reasoning=high** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 (thinking-general) | 1.0 / 0.95 / 20 · presence 1.5 |
+Qwen 27B and 35B-A3B use **identical** recommended params (per Unsloth) → shown as one column.
 
-**Per-benchmark notes:**
-- **Muse Glimmer** — ONE sampling set (1.0/0.95/64) everywhere; only the **Reasoning strength** (system prompt
-  `Reasoning strength: <high|xhigh>`) changes: **xhigh** for the heaviest agentic (PinchBench, Gaia2), **high** for
-  MMMU/AgentDojo. Card says use high/xhigh for coding/agentic/complex.
-- **Gemma-4-31B** — one default (1.0/0.95/64) across all four, **thinking ON** (`<|think|>`) since all are reasoning/agentic.
-- **Qwen3.6-27B / 35B-A3B** — use **thinking-general** (temp 1.0) for all four. *(Their `coding` variant is temp 0.6 — but
-  these are agentic/multimodal, not pure code-gen, so thinking-general applies. 35B-A3B carries presence_penalty 1.5.)*
-- **MMMU Pro needs image input** — all 4 models are multimodal, so all can be scored; needs a vision path in the harness.
-- ⚠️ Qwen warns **never greedy** in thinking mode → temp must stay ≥0.6. Reproducibility: temp>0 → multi-sample + average.
+| Benchmark (category) | Muse Glimmer 30B | Gemma-4-31B | Qwen3.6-27B & 35B-A3B |
+|---|---|---|---|
+| **PinchBench** (multi-turn agentic) | temp 1.0 · top_p 0.95 · top_k 64 · **reasoning=xhigh** | temp 1.0 · top_p 0.95 · top_k 64 · **think ON** | temp 1.0 · top_p 0.95 · top_k 20 · min_p 0 · **presence 1.5** ⚠ |
+| **Gaia2** (general agentic) | 1.0 / 0.95 / 64 · **reasoning=xhigh** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 · min_p 0 · presence 1.5 ⚠ |
+| **MMMU Pro** (multimodal reasoning) 👁vision | 1.0 / 0.95 / 64 · **reasoning=high** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 · min_p 0 · presence 1.5 ⚠ |
+| **AgentDojo** (agentic security) | 1.0 / 0.95 / 64 · **reasoning=high** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 · min_p 0 · presence 1.5 ⚠ |
+
+**Sources (verified live 2026-08-11):** Muse Glimmer → [HF model card](https://huggingface.co/meta-models/Muse-Glimmer-30B) +
+[NVIDIA NIM](https://docs.api.nvidia.com/nim/reference/meta-muse-glimmer-30b) (1.0/0.95/64, reasoning high/xhigh for agentic/coding).
+Gemma-4-31B → [NVIDIA build card](https://build.nvidia.com/google/gemma-4-31b-it/modelcard) + [Ollama](https://ollama.com/library/gemma4:31b) (partner-recommended 1.0/0.95/64).
+Qwen3.6 → [HF Qwen3.6-35B-A3B card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) + [Unsloth docs](https://unsloth.ai/docs/models/qwen3.6).
+
+**Notes — what's vendor-stated vs. my inference (so you can audit):**
+- ✅ **Vendor-stated (verified):** the per-mode numbers — Muse 1.0/0.95/64, Gemma 1.0/0.95/64, Qwen thinking-general
+  1.0/0.95/20. These are straight off the cards above.
+- ⚠️ **MY inference (NOT vendor-stated):** *which mode maps to which benchmark.* No vendor publishes per-benchmark params.
+  I mapped all 4 to each model's **thinking/agentic mode** because all 4 are agentic/reasoning tasks. That's a judgment call
+  — reasonable, but mine. (Muse reasoning-strength xhigh-vs-high split is likewise my read of "use high/xhigh for agentic.")
+- ⚠️ **Qwen `presence_penalty` — sources CONFLICT.** Official Qwen HF card says **1.5** for thinking-general; Unsloth says
+  **0.0** (they agree it's 0.0 for coding, 1.5 for non-thinking/instruct). Table uses the **official card's 1.5**; if you see
+  repetition/language-mixing, drop to 0.0. This is a knob to pick, not a settled default. *(Qwen's own repo has a discussion
+  literally titled "Inconsistent parameters recommendation.")*
+- **Qwen `coding` variant (temp 0.6):** exists, but these 4 are agentic/multimodal, not pure code-gen → thinking-general (1.0).
+- ⚠️ Qwen: **never greedy** in thinking mode (temp ≥0.6). **MMMU Pro needs image input** — all 4 are multimodal; needs a vision path.
+- Reproducibility: temp>0 is stochastic → sample N times + average for trustworthy numbers.
 
 ---
 

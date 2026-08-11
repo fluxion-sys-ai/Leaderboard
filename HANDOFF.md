@@ -103,6 +103,23 @@ Each phase copies the fresh `leaderboard.html` → `docs/index.html`; a `git pus
 20480, temp 0, max_tokens 1024) · `benchmarks.yaml` (sample size, max_tokens) · `score_specs.json` (universal
 block + per-score ◆ overrides, shown on the site) · `hidden_models.json` (hidden models + auto-un-hide).
 
+## 🔭 NEXT — planned work (added 2026-08-11)
+**1. Frontier-30B comparison tab (NEW, separate from the greedy board).** Compare **Muse Glimmer 30B** (Meta, released
+   Aug 10 — agentic, 29.6B dense, 131K ctx, GGUF out) vs **Qwen3.6-27B · Qwen3.6-35B-A3B (=qwen3.5-35b-a3b) · Gemma-4-31B**
+   on **SWE-bench Verified · TerminalBench 2.1 · AIME 2026 · IFBench**.
+   - **Run at VENDOR-RECOMMENDED sampling, NOT greedy** — full per-model/per-task params + validation plan in
+     **`RECOMMENDED_PARAMS.md`**. (Muse Glimmer & Gemma use one set; only Qwen changes per task.)
+   - **Validate at FULL precision (BF16) against published numbers FIRST** (Muse Glimmer card: IFBench 77.0, AIME 94.7),
+     THEN continue. BF16 30B ≈ ~60GB → needs the **A100-80GB** (quota-gated) — won't fit 40GB.
+   - **Phase 1 (feasible now):** AIME 2026 (have it) + IFBench (IFEval-style, moderate build). **Phase 2 (heavy):**
+     SWE-bench Verified + TerminalBench 2.1 = Docker envs + agent scaffold; 30B models bunch low on SWE-bench.
+   - Keep this a SEPARATE tab — don't merge recommended-sampling results into the reproducible greedy board.
+**2. LiveCodeBench truncation fix (main board).** Measured: **30–64% of livecodebench outputs hit the 1536 max_tokens cap
+   → truncated → Coding scores understated** across most models (humaneval/cruxeval are clean). Raise livecodebench
+   `max_tokens` to ~4096–8192 and re-run just that bench. Targeted ~1-bench redo; materially lifts the Coding dimension.
+**3. Reviewer methodology note.** Board uses fixed greedy (temp 0) for reproducibility + apples-to-apples; recommended
+   sampling would need multi-sample averaging (variance) + breaks comparability. Document the trade in the board footer.
+
 ## Open items when you arrive
 - **Qwen3.8-27B is landing the week of Aug 10, 2026** (open-weight; coding + long-horizon agentic focus — squarely
   our axis). Direct successor to qwen3.6-27b (our #2). When the GGUF appears, queue it with the nemotron gated

@@ -1,10 +1,12 @@
 """Model-runner registry: name (from models.yaml) -> ModelRunner subclass."""
 from .base import ModelRunner, GenResult
 from .llamacpp_runner import LlamaCppRunner
+from .openrouter_runner import OpenRouterRunner
 
 RUNNERS = {
     "llamacpp": LlamaCppRunner,
-    # "vllm": VllmRunner,   # add later for the full-precision ceiling comparison
+    "openrouter": OpenRouterRunner,   # full-precision (bf16) ceiling over the API — frontier-30B tab
+    # "vllm": VllmRunner,   # local full-precision alternative (needs an 80GB card)
 }
 
 

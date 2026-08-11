@@ -7,8 +7,8 @@ precision (BF16)** against the vendors' published numbers before trusting the co
 
 > ⚠️ All params below are **vendor/community-reported** (HF cards, NVIDIA NIM, Unsloth docs, 2026-08-11) — treat
 > as starting points, not gospel. Sources noted per model.
-> ⚠️ "The 31B Qwen" isn't a real SKU — there is no Qwen-31B. Closest = **Qwen3.6-35B-A3B** (MoE, ~3B active),
-> which is what you already have as `qwen3.5-35b-a3b`. Confirm if you meant the upcoming Qwen3.8-27B instead.
+> ✅ Comparison set (confirmed 2026-08-11): **Muse Glimmer 30B · Qwen3.6-27B · Qwen3.6-35B-A3B · Gemma-4-31B.**
+> The "35B" = `qwen3.5-35b-a3b` already on the board (MoE, ~3B active). (No Qwen-31B SKU exists.)
 
 ---
 

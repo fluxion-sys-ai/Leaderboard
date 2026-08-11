@@ -211,3 +211,11 @@ models:
     file: '*Q4_K_M.gguf'
   no_think: true
   max_tokens_mult: 2
+- name: muse-glimmer-30b
+  role: "Muse-Glimmer-30B (Aug 2026) \u2014 Meta, 29.6B dense + vision (run TEXT-ONLY); REASONING model, strength set via reasoning_effort (template normalises Effort->Strength), pin low for greedy board or it dumps think-tokens. NOTE: no plain Q4_K_M ships \u2192 using Unsloth dynamic UD-Q4_K_XL (\u25c6 off-standard quant, flag on board). Smoke arch+think before trusting."
+  gguf:
+    repo: unsloth/Muse-Glimmer-30B-GGUF
+    file: '*UD-Q4_K_XL.gguf'
+  template_kwargs:
+    reasoning_effort: low
+  max_tokens_mult: 2

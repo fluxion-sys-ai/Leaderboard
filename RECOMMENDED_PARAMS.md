@@ -1,14 +1,42 @@
 # RECOMMENDED_PARAMS.md — vendor sampling params + full-precision validation plan
 
 **Purpose:** for the new **frontier-30B comparison tab** — Muse Glimmer 30B (Meta) vs Qwen3.6-27B vs
-Qwen3.6-35B-A3B vs Gemma-4-31B, on **SWE-bench Verified · TerminalBench 2.1 · AIME 2026 · IFBench** — we run
-each model at its **vendor-recommended sampling** (NOT the main board's fixed greedy), and **validate at FULL
-precision (BF16)** against the vendors' published numbers before trusting the comparison.
+Qwen3.6-35B-A3B vs Gemma-4-31B — we run each model at its **vendor-recommended sampling** (NOT the main board's
+fixed greedy), and **validate at FULL precision (BF16)** against the vendors' published numbers before trusting.
+**Active benchmark set (2026-08-11): PinchBench · Gaia2 · MMMU Pro · AgentDojo** (params matrix directly below).
+The AIME/IFBench/SWE/TerminalBench tables lower down are kept as general per-model reference.
 
 > ⚠️ All params below are **vendor/community-reported** (HF cards, NVIDIA NIM, Unsloth docs, 2026-08-11) — treat
 > as starting points, not gospel. Sources noted per model.
 > ✅ Comparison set (confirmed 2026-08-11): **Muse Glimmer 30B · Qwen3.6-27B · Qwen3.6-35B-A3B · Gemma-4-31B.**
 > The "35B" = `qwen3.5-35b-a3b` already on the board (MoE, ~3B active). (No Qwen-31B SKU exists.)
+
+---
+
+## ⭐ ACTIVE SET (2026-08-11): params per benchmark × model — PinchBench · Gaia2 · MMMU Pro · AgentDojo
+**Key research finding:** vendors publish params **per MODE** (thinking / instruct / coding), NOT per benchmark. All
+four active benchmarks are **agentic/reasoning** tasks → each model uses its **thinking/agentic-mode** set. So the
+per-benchmark params are the *same* for a given model across all 4 (only the Muse Glimmer *reasoning-strength* and the
+MMMU *vision input* differ). Numbers below are each model's thinking-mode recommendation.
+
+| Benchmark (category) | Muse Glimmer 30B | Gemma-4-31B | Qwen3.6-27B | Qwen3.6-35B-A3B |
+|---|---|---|---|---|
+| **PinchBench** (multi-turn agentic) | temp 1.0 · top_p 0.95 · top_k 64 · **reasoning=xhigh** | temp 1.0 · top_p 0.95 · top_k 64 · **think ON** | temp 1.0 · top_p 0.95 · top_k 20 · min_p 0 · presence 0 | temp 1.0 · top_p 0.95 · top_k 20 · min_p 0 · presence 1.5 |
+| **Gaia2** (general agentic) | 1.0 / 0.95 / 64 · **reasoning=xhigh** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 (thinking-general) | 1.0 / 0.95 / 20 · presence 1.5 |
+| **MMMU Pro** (multimodal reasoning) ⚠️vision | 1.0 / 0.95 / 64 · **reasoning=high** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 (thinking-general) | 1.0 / 0.95 / 20 · presence 1.5 |
+| **AgentDojo** (agentic security) | 1.0 / 0.95 / 64 · **reasoning=high** | 1.0 / 0.95 / 64 · think ON | 1.0 / 0.95 / 20 (thinking-general) | 1.0 / 0.95 / 20 · presence 1.5 |
+
+**Per-benchmark notes:**
+- **Muse Glimmer** — ONE sampling set (1.0/0.95/64) everywhere; only the **Reasoning strength** (system prompt
+  `Reasoning strength: <high|xhigh>`) changes: **xhigh** for the heaviest agentic (PinchBench, Gaia2), **high** for
+  MMMU/AgentDojo. Card says use high/xhigh for coding/agentic/complex.
+- **Gemma-4-31B** — one default (1.0/0.95/64) across all four, **thinking ON** (`<|think|>`) since all are reasoning/agentic.
+- **Qwen3.6-27B / 35B-A3B** — use **thinking-general** (temp 1.0) for all four. *(Their `coding` variant is temp 0.6 — but
+  these are agentic/multimodal, not pure code-gen, so thinking-general applies. 35B-A3B carries presence_penalty 1.5.)*
+- **MMMU Pro needs image input** — all 4 models are multimodal, so all can be scored; needs a vision path in the harness.
+- ⚠️ Qwen warns **never greedy** in thinking mode → temp must stay ≥0.6. Reproducibility: temp>0 → multi-sample + average.
+
+---
 
 ---
 

@@ -6,6 +6,10 @@ filled to **2** (added 6). Meta's own 3-model scores are shown as **validation t
 
 > Source: Muse Glimmer 30B model card (Meta, 2026-08-10). ⚠️ vendor numbers — validate at full precision before trusting.
 
+> 🟢 **ACTIVE now (2026-08-11):** building **PinchBench · Gaia2 · MMMU Pro · AgentDojo** first (one per category type;
+> PinchBench we already have). Per-model recommended params for these four are in **`RECOMMENDED_PARAMS.md` → ⭐ ACTIVE SET**.
+> The rest of the 10 below stay on the roadmap.
+
 | # | Category | Benchmark | Status | Muse Glimmer | Gemma-4-31B | Qwen3.6-27B |
 |--:|---|---|---|--:|--:|--:|
 | 1 | **Reasoning / General** | **AIME 2026** | ✅ have | 94.7 | 89.2 | 94.1 |

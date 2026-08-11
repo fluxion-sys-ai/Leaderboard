@@ -57,9 +57,10 @@ models:
       allow_fallbacks: true             # safe — fallbacks are also bf16
 
   # ---- Qwen3.6-27B — fp8 CEILING (no bf16 on OpenRouter) ----------------------
-  # Thinking-general recipe. presence_penalty: card=1.5 vs Unsloth=0.0 → default to
-  # card 1.5; drop to 0.0 if you see repetition/language-mixing. NEVER greedy in
-  # thinking mode. PinchBench-as-coding knob: temp 0.6 (thinking-coding) if desired.
+  # Thinking-general recipe. presence_penalty: the OFFICIAL Qwen3.6-27B card lists
+  # thinking-general = 0.0 (verified live 2026-08-11, HF Qwen/Qwen3.6-27B). NOTE the
+  # 27B and 35B-A3B cards DIFFER here (35B-A3B = 1.5); they are NOT identical recipes.
+  # NEVER greedy in thinking mode. PinchBench-as-coding knob: temp 0.6 if desired.
   - name: qwen3.6-27b-full
     model_slug: qwen/qwen3.6-27b
     precision: fp8                       # NOT full precision — flag on the tab
@@ -68,7 +69,7 @@ models:
     top_p: 0.95
     top_k: 20
     min_p: 0
-    presence_penalty: 1.5
+    presence_penalty: 0.0                # per official 27B card (was 1.5 — corrected)
     provider:
       quantizations: ["fp8"]
       allow_fallbacks: true

@@ -175,14 +175,19 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", nargs="*", help="subset of model names (default: all)")
     ap.add_argument("--benchmarks", nargs="*", help="subset of benchmark names (default: all)")
+    ap.add_argument("--models-config", default="configs/models.yaml",
+                    help="models YAML to load (default: the greedy board; use "
+                         "configs/models_full.yaml for the frontier full-precision tab)")
+    ap.add_argument("--benchmarks-config", default="configs/benchmarks.yaml",
+                    help="benchmarks YAML to load (default: the main set)")
     ap.add_argument("--limit", type=int, help="cap tasks per benchmark (for smoke runs)")
     ap.add_argument("--spec", action="store_true",
                     help="speculative-decoding pass: attach each model's draft, "
                          "collect per-position acceptance; writes to results/spec/")
     args = ap.parse_args()
 
-    mcfg = load_yaml(REPO_ROOT / "configs" / "models.yaml")
-    bcfg = load_yaml(REPO_ROOT / "configs" / "benchmarks.yaml")
+    mcfg = load_yaml(REPO_ROOT / args.models_config)
+    bcfg = load_yaml(REPO_ROOT / args.benchmarks_config)
     defaults = mcfg.get("defaults", {})
 
     seed = bcfg.get("seed", 42)
@@ -196,13 +201,18 @@ def main() -> int:
         # A failing model must NOT kill the whole run — log it and move on.
         try:
             cfg = {**defaults, **m}                     # per-model overrides win
+            # API-backed models (e.g. the OpenRouter frontier tab) have no local
+            # weights: skip the GGUF fetch and don't require a `quant`.
+            is_api = cfg.get("runner") == "openrouter" or "gguf" not in m
             if args.spec:
-                if not m.get("draft_gguf"):             # no compatible drafter → skip
+                if is_api or not m.get("draft_gguf"):   # no local drafter → skip
                     log(f"skip {m['name']}: no draft_gguf (no vocab-compatible drafter)")
                     continue
                 cfg["draft"] = ensure_gguf(f"{m['name']}_draft", m["draft_gguf"])
-            cfg["gguf_path"] = ensure_gguf(m["name"], m["gguf"])
-            log(f"model: {m['name']}  ({cfg['quant']}){'  +spec' if args.spec else ''}")
+            if not is_api:
+                cfg["gguf_path"] = ensure_gguf(m["name"], m["gguf"])
+            label = cfg.get("quant") or cfg.get("precision_label") or cfg.get("runner", "?")
+            log(f"model: {m['name']}  ({label}){'  +spec' if args.spec else ''}")
             with get_runner(cfg["runner"], m["name"], cfg) as runner:
                 for b in benches:
                     # Likewise: a broken benchmark skips its cell, never the run.

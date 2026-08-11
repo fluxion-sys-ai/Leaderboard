@@ -26,13 +26,14 @@ recipes, then (B) which recipe each benchmark pulls.
 **Gemma-4-31B** — one partner-recommended set: `temp 1.0 · top_p 0.95 · top_k 64`, thinking toggled via `<|think|>`.
 → [NVIDIA build card](https://build.nvidia.com/google/gemma-4-31b-it/modelcard) + [Ollama](https://ollama.com/library/gemma4:31b)
 
-**Qwen3.6-27B & 35B-A3B** (identical recipes per Unsloth) — three tuned modes:
+**Qwen3.6-27B & 35B-A3B** — near-identical, but they **DIFFER on thinking-general `presence_penalty`** (verified against each model's own HF card, 2026-08-11):
 | Qwen mode | temp | top_p | top_k | min_p | presence_penalty |
 |---|--:|--:|--:|--:|--:|
-| Thinking, general | 1.0 | 0.95 | 20 | 0 | **1.5** ⚠ (Unsloth: 0.0) |
+| Thinking, general | 1.0 | 0.95 | 20 | 0 | **27B → 0.0 · 35B-A3B → 1.5** |
 | Thinking, coding | 0.6 | 0.95 | 20 | 0 | 0.0 |
 | Non-thinking (instruct) | 0.7 | 0.80 | 20 | 0 | 1.5 |
-→ [HF Qwen3.6-35B-A3B card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) + [Unsloth docs](https://unsloth.ai/docs/models/qwen3.6)
+→ [HF Qwen3.6-27B card](https://huggingface.co/Qwen/Qwen3.6-27B) · [HF Qwen3.6-35B-A3B card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) · [Unsloth docs](https://unsloth.ai/docs/models/qwen3.6)
+> Note: **35B-A3B** thinking-general `presence_penalty` = **1.5 per its HF card** (Unsloth says 0.0 — contested; keeping the card's 1.5). **27B** = **0.0** on both its card and Unsloth. (Earlier revs of this doc wrongly merged both at 1.5.)
 
 ### B) Which recipe each benchmark pulls
 | Benchmark (category) | Muse Glimmer | Gemma-4-31B | Qwen (both) |
@@ -48,8 +49,9 @@ recipes, then (B) which recipe each benchmark pulls.
 - For **Muse & Gemma** the tuned defaults are single-recipe, so these 4 don't diverge (Muse only shifts reasoning-strength
   xhigh↔high). For **Qwen**, all 4 land in **Thinking-general** — the one exception worth your call is **PinchBench**, which
   has coding subtasks: use Thinking-coding (temp 0.6, presence 0) if you'd rather treat it as code. **Your call.**
-- ⚠️ **Qwen `presence_penalty` conflict:** official card **1.5** vs Unsloth **0.0** for thinking-general (both agree coding=0.0,
-  instruct=1.5). Defaulting to card's **1.5**; drop to 0.0 if you see repetition/language-mixing.
+- ⚠️ **Qwen `presence_penalty` differs BY MODEL (thinking-general):** the **27B card = 0.0**, the **35B-A3B card = 1.5** (both cards
+  verified 2026-08-11; both agree coding=0.0, instruct=1.5). Unsloth lists 0.0 for both — for 35B-A3B that's contested, and we keep the
+  card's 1.5. So: **27B → 0.0, 35B-A3B → 1.5** (matches `models_full.yaml`).
 - ⚠️ Qwen: **never greedy** in thinking mode (temp ≥0.6). **MMMU Pro needs image input** — all 4 are multimodal; needs a vision path.
 - Reproducibility: temp>0 is stochastic → sample N times + average.
 

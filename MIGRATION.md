@@ -89,6 +89,65 @@ The interactive `leaderboard.html` is published via **GitHub Pages** from **`doc
 - **Visibility:** the repo is **public**, so the Pages site is **public-by-link** (anyone with the URL — company *and* everyone else). A `<meta name="robots" content="noindex">` is baked into the dashboard so it won't hit search engines, but that is NOT access control. Company-only requires **GitHub Enterprise Cloud** + a private/internal repo + Pages visibility = Private. For a quick unlisted alternative: a **secret Gist** served via `gist.githack.com`.
 - **Custom domain (optional):** leave blank to use the `github.io` URL; to brand it, enter a subdomain you own and add a DNS `CNAME` → `fluxion-sys-ai.github.io`.
 
+## 🌐 Full-precision runs via OpenRouter (no local GPU) — for the frontier-30B comparison tab
+**Goal:** run the models at FULL precision (bf16) to validate against published numbers *before* the Q4_K_M local runs,
+so the Q4-vs-full gap is isolated. Problem: a 30B in bf16 ≈ ~60 GB → won't fit the 40GB card (and the 80GB quota is 0).
+**Solution the reviewer meant:** don't host the full model yourself — call it over the **OpenRouter API**. OpenRouter
+runs the full-precision weights on *its* providers' servers; you just send prompts and get completions. That's why it
+"fits" — the weights never touch your GPU. It's an **OpenAI-compatible** endpoint, and we already use it for the judge
+(`judge_writing.py` / `judge_simpleqa.py` → `https://openrouter.ai/api/v1/chat/completions`, key in `.openrouter_key`).
+
+### ⚠️ THE CATCH — precision is per-provider; pin it or you're not running "full precision" (verified live 2026-08-11)
+OpenRouter routes to many providers, and **most serve quantized (fp8/fp4) endpoints**, not bf16. If you don't pin it you
+may benchmark an fp8 endpoint and think it's full precision — which invalidates the whole "validate vs published" point.
+What's actually available for our 4 models:
+
+| Model | OpenRouter slug | bf16 (full) available? | Best/pinned provider |
+|---|---|---|---|
+| Muse Glimmer 30B | `meta/muse-glimmer-30b` | ✅ yes | **DeepInfra (bf16)** |
+| Gemma-4-31B | `google/gemma-4-31b-it` | ✅ yes | **OpenInference / CoreWeave / Venice / Novita (bf16)** — NB DeepInfra/Chutes are fp4! |
+| Qwen3.6-27B | `qwen/qwen3.6-27b` | ❌ **NO bf16** — fp8 only | fp8 (Chutes/DeepInfra/…) is the ceiling |
+| Qwen3.6-35B-A3B | `qwen/qwen3.6-35b-a3b` | ❌ **NO bf16** — fp8 only | fp8 (DeepInfra/Venice/…) is the ceiling |
+
+➡️ **Honest limitation:** true full-precision validation is only possible for **Muse Glimmer + Gemma-4-31B**. For **both
+Qwen models the best OpenRouter offers is fp8** — close to bf16 (usually <1 pt on benchmarks) but NOT "full". Note that
+gap when comparing Qwen to its published numbers, or run Qwen bf16 elsewhere (vLLM on an 80GB card) if you need exact.
+
+### Pin precision + provider (the routing knobs — verified against OpenRouter docs)
+Add a `provider` block to the request body:
+```json
+{
+  "model": "meta/muse-glimmer-30b",
+  "messages": [...],
+  "temperature": 1.0, "top_p": 0.95, "top_k": 64,
+  "provider": {
+    "quantizations": ["bf16"],      // only route to bf16 endpoints
+    "order": ["DeepInfra"],          // pin the exact provider (reproducibility)
+    "allow_fallbacks": false         // fail rather than silently drop to fp8
+  }
+}
+```
+`quantizations` filters precision, `order` pins the provider, `allow_fallbacks:false` stops it silently rerouting.
+
+### Wire it into the harness (small code task — the slot already exists)
+The runner registry `src/models/__init__.py` has a commented `# "vllm": ... # add later for the full-precision ceiling`.
+Do the same for OpenRouter:
+1. Add `src/models/openrouter_runner.py` — an `OpenRouterRunner(ModelRunner)` whose `.generate(messages, max_tokens)`
+   POSTs to `https://openrouter.ai/api/v1/chat/completions` (copy the request shape from `judge_writing.py`), passing
+   `temperature/top_p/top_k` from cfg and the `provider` block above. Stub the local-only fields (`peak_vram_mb=None`,
+   `gguf_bytes=0`, `load_seconds=0`) since nothing loads locally.
+2. Register it: `RUNNERS = {"llamacpp": LlamaCppRunner, "openrouter": OpenRouterRunner}`.
+3. In a **separate** models file (e.g. `configs/models_full.yaml`) give each model `runner: openrouter`, a `model_slug`,
+   its recommended (non-greedy) params from `RECOMMENDED_PARAMS.md`, and the `provider` block. Keep this OFF the main
+   greedy board — it's the separate comparison tab.
+
+### Cost + reproducibility (be upfront)
+- **Cost:** pay-per-token. The bf16 endpoints are cheap (~$0.08–0.35 per 1M input tokens for these); a full benchmark
+  pass is a few M tokens → order of a few dollars per model. Confirm before big sweeps.
+- **Reproducibility:** API models can change under you; provider routing is non-deterministic unless pinned (`order` +
+  `allow_fallbacks:false`). Also these run at **recommended params (temp>0)**, so single runs wobble → sample N + average.
+- **Params support:** `top_k` isn't honored by every provider; if a provider ignores it, note it (another reason to pin).
+
 ## The knobs (`configs/`)
 - **`models.yaml`** — per-model: `gguf` (repo + quant, default Q4_K_M), `no_think` (reasoning models → direct mode),
   `template_kwargs.reasoning_effort` (gpt-oss: low/medium/high), `max_tokens_mult` (2–4; too low truncates CoT → empty).

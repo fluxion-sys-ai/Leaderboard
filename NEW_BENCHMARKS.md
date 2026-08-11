@@ -1,62 +1,41 @@
-# NEW_BENCHMARKS.md — benchmark expansion picks (from Meta Muse Glimmer's eval categories)
+# NEW_BENCHMARKS.md — frontier-30B comparison benchmark set (5 categories × 2 each)
 
-Source: **Muse Glimmer 30B model card** (Meta, 2026-08-10, HF `meta-models/Muse-Glimmer-30B`). ⚠️ vendor-reported.
-Meta evaluates in **5 categories**. Below: what we already cover, and **2 recommended additions per category** — chosen
-from the benchmarks we DON'T have, favoring standard/respected + discriminating-for-30B. Feasibility flagged honestly.
+Fresh comparison project (**Muse Glimmer 30B · Qwen3.6-27B · Qwen3.6-35B-A3B · Gemma-4-31B**), organized around the
+**5 capability categories** Meta uses on the Muse Glimmer card. You already have **4 benchmarks**; each category is
+filled to **2** (added 6). Meta's own 3-model scores are shown as **validation targets** (vendor-reported).
 
-> Meta's headline: Muse Glimmer-30B (high reasoning) vs Gemma4-31B (thinking) vs Qwen3.6-27B (thinking).
+> Source: Muse Glimmer 30B model card (Meta, 2026-08-10). ⚠️ vendor numbers — validate at full precision before trusting.
 
----
+| # | Category | Benchmark | Status | Muse Glimmer | Gemma-4-31B | Qwen3.6-27B |
+|--:|---|---|---|--:|--:|--:|
+| 1 | **Reasoning / General** | **AIME 2026** | ✅ have | 94.7 | 89.2 | 94.1 |
+| 2 | | **IFBench** | ✅ have | 77.0 | 76.0 | 70.8 |
+| 3 | **Agentic Coding** | **SWE-Bench Verified** | ✅ have | 76.0 | 66.6 | 77.2 |
+| 4 | | **TerminalBench 2.1** | ✅ have | 51.7 | 43.4 | 60.7 |
+| 5 | **General Agentic** | **Gaia2** | ➕ add | 43.3 | 36.4 | 40.0 |
+| 6 | | **τ3-Bench** (τ3-Banking) | ➕ add | 23.5 | 15.1 | 16.7 |
+| 7 | **Multimodal** | **MMMU Pro** | ➕ add | 74 | 73 | 75 |
+| 8 | | **Charxiv Reasoning** | ➕ add | 78.8 | 77.7 | 78.4 |
+| 9 | **Security / Privacy** | **AgentDojo** (Siren) | ➕ add | ASR↓ 28.4 / util 94.2 | 25.6 / 90.8 | 40.3 / 92.7 |
+| 10 | | **CI Memories** | ➕ add | viol↓ 26.4 / cov 64.8 | 12.1 / 53.0 | 53.4 / 66.9 |
 
-## Category 1 — General Capabilities & Reasoning
-**We have:** AIME 2026 ✓, GPQA Diamond ✓ (also IFEval, MMLU-Pro, ZebraLogic, GSM8K).
-**Meta's set:** IFBench, AIME 2026, GPQA Diamond, HLE Text, AA-LCR, Beam128K.
-**➕ 2 picks to add:**
-1. **IFBench** — instruction-following, successor to IFEval (verifiable constraints). *Feasible* (IFEval-style checker). Muse 77.0 / Gemma 76.0 / Qwen 70.8.
-2. **AA-LCR** (Artificial Analysis Long-Context Reasoning) — reasoning *over* long context (beyond retrieval). *Moderate.* Muse 80.0 / Gemma 68.3 / Qwen 73.3.
-*(HLE-Text is the buzzy one but brutal — 30B models bunch at ~22% → low discrimination; skip for now.)*
+**= 10 benchmarks, 5 categories, 2 each.**
 
-## Category 2 — Agentic Coding
-**We have:** LiveCodeBench, HumanEval+, CruxEval (code gen / reasoning), BFCL (tool-use).
-**Meta's set:** SWE-Bench Pro, SWE-Bench Verified, TerminalBench 2.1, SciCode.
-**➕ 2 picks to add:**
-1. **SWE-Bench Verified** — THE standard real-repo issue-fixing agent bench. *HEAVY* (per-task Docker envs + agent scaffold). Muse 76.0 / Gemma 66.6 / Qwen 77.2.
-2. **TerminalBench 2.1** — agentic terminal tasks (with terminus2 scaffold). *HEAVY* (sandboxed terminal harness). Muse 51.7 / Gemma 43.4 / Qwen 60.7.
-*(SciCode is the lighter alternative if SWE/Terminal are too much — scientific code, no full-agent scaffold.)*
+## Why these 6 additions
+- **Gaia2** — the standard general-assistant agentic benchmark (multi-step + tools). **τ3-Bench** — standard tool-agent /
+  workflow bench (tau-bench family). *(Chose over OSWorld-Verified, which needs a full desktop VM — heaviest.)*
+- **MMMU Pro** — the standard multimodal reasoning bench. **Charxiv Reasoning** — chart/figure reading (agent-relevant).
+  ⚠️ Only scores multimodal models (Muse Glimmer, Gemma-4); text-only models N/A.
+- **AgentDojo** — prompt-injection / attack-resistance for tool agents. **CI Memories** — contextual-integrity privacy
+  (agent leaking memory it shouldn't). *(These are the only 2 in Meta's Security category, so both are the picks.)*
 
-## Category 3 — General Agentic (end-to-end task completion)
-**We have:** PinchBench (116-task multi-turn agent), BFCL (function-calling).
-**Meta's set:** MCP-Atlas, DeepSearch QA, τ3-Bench, WildClawBench, GDPVal, Gaia2, SkillsBench, OSWorld-Verified.
-**➕ 2 picks to add:**
-1. **Gaia2** — the standard general-assistant agentic benchmark (multi-step, tools, real tasks). *HEAVY* (agent harness). Muse 43.3 / Gemma 36.4 / Qwen 40.0.
-2. **τ3-Bench** (tau-bench family, e.g. τ3-Banking) — standard tool-agent / customer-workflow bench. *HEAVY.* Muse 23.5 / Gemma 15.1 / Qwen 16.7.
-*(OSWorld-Verified is excellent but needs a full desktop VM — heaviest of all; defer.)*
-
-## Category 4 — Multimodal  ⚠️ only applies to multimodal models (Muse Glimmer, Gemma-4; most of our board is text-only)
-**We have:** none.
-**Meta's set:** Charxiv Reasoning, ScreenSpot Pro, OmniDocBench v1.5, MMMU Pro.
-**➕ 2 picks to add:**
-1. **MMMU Pro** — the standard multimodal reasoning benchmark. *NEW vision pipeline needed.* Muse 74 / Gemma 73 / Qwen 75.
-2. **Charxiv Reasoning** — chart/figure understanding (very agent-relevant: reading dashboards). Muse 78.8 / Gemma 77.7 / Qwen 78.4.
-*(Adds a whole image-input path to the harness + only scores the multimodal models — treat as its own sub-track.)*
-
-## Category 5 — Security & Privacy (agentic safety)
-**We have:** none.
-**Meta's set:** CI Memories, Siren AgentDojo. *(only 2 → both are the picks)*
-**➕ 2 picks to add:**
-1. **AgentDojo** (Siren) — prompt-injection / attack-resistance for tool agents (Attack-Success-Rate ↓ + Utility). *Moderate-HEAVY* (adversarial agent harness). Muse ASR 28.4 / util 94.2.
-2. **CI Memories** — contextual-integrity privacy (does the agent leak memory it shouldn't). Muse violation 26.4 / coverage 64.8.
-
----
-
-## Suggested implementation priority (feasibility × value)
-| Tier | Benchmarks | Why |
+## Feasibility (honest — most need infra we don't have yet)
+| Tier | Benchmarks | Note |
 |---|---|---|
-| **1 — do first (feasible now)** | **IFBench**, **SciCode**, **AA-LCR** | verifiable / code / long-ctx — no heavy agent scaffold; discriminating for 30B |
-| **2 — heavy but high-value** | **SWE-Bench Verified**, **TerminalBench 2.1**, **Gaia2** | the marquee agentic benches; need Docker + agent scaffolds (weeks) |
-| **3 — new sub-tracks** | **MMMU Pro** + **Charxiv** (multimodal), **AgentDojo** + **CI Memories** (security) | need whole new pipelines (vision / adversarial); niche coverage |
-| defer | τ3-Bench, OSWorld-Verified, HLE, SWE-Bench Pro | heaviest or least-discriminating for this tier |
+| **Feasible-ish first** | IFBench | verifiable checker, no agent scaffold |
+| **Heavy (Docker + agent scaffold)** | SWE-Bench Verified, TerminalBench 2.1, Gaia2, τ3-Bench | multi-week harness build; also need the A100-80GB for BF16 |
+| **New pipelines** | MMMU Pro, Charxiv (vision input) · AgentDojo, CI Memories (adversarial harness) | whole new sub-tracks |
 
-**Note:** all agentic/coding/multimodal benches above need infra we don't have yet (Docker task envs, agent scaffolds,
-vision input). This is a real multi-week roadmap, not a config edit. Recommend building **Tier 1 first** (IFBench +
-SciCode + AA-LCR — the feasible, discriminating ones), then the heavy agentic set once the 80GB GPU is sorted.
+## Run config
+Vendor-recommended sampling per model/task (NOT greedy) — see **`RECOMMENDED_PARAMS.md`**. Validate at **full precision
+(BF16)** against the target columns above before trusting; BF16 30B ≈ ~60 GB → needs the **A100-80GB**.

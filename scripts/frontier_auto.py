@@ -58,7 +58,7 @@ BROKEN_FLOORS = {"mmlu_pro": 0.10}
 # flagged for AI diagnosis (not a hard skip — could be a genuinely weak model).
 EXPECTED = {
     "ifeval":   {"low": 0.45, "note": "frontier instruction-following ~0.7-0.9; <0.45 usually truncation/format"},
-    "aime2026": {"low": 0.03, "note": "olympiad math is hard; near-0 with 0 tokens = empty-channel/credit, not skill"},
+    "aime2026": {"low": 0.15, "note": "frontier reasoning models clear ~0.4+; <0.15 usually reasoning-truncation (answer lost after max_tokens), not skill"},
 }
 
 _SERVED_RE = re.compile(r"served by '([^']+)'")

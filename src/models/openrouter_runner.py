@@ -34,7 +34,7 @@ ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 # answer is lost and the task scores 0. Floor the budget for reasoning models so
 # the answer survives. max_tokens is headroom, NOT a sampling param -> recommended
 # sampling stays untouched.
-REASONING_MIN_TOKENS = 16384
+REASONING_MIN_TOKENS = 32768
 # Same secret the judges read (gitignored). Resolved at _start, never at import,
 # so importing the registry never requires the key (llamacpp runs must not break
 # just because .openrouter_key is absent).

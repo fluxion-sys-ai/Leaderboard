@@ -462,25 +462,14 @@ def _frontier_tab() -> str:
         ("Gemma-4-31B", "gemma-4-31b-full", "gemma-4-31b", "gemma", ""),
     ]
 
-    def _reward(o):
-        if isinstance(o, dict):
-            for k in ("avg_reward", "average_reward", "reward", "mean_reward", "score"):
-                if isinstance(o.get(k), (int, float)):
-                    return o[k]
-            for v in o.values():
-                r = _reward(v)
-                if r is not None:
-                    return r
-        elif isinstance(o, list):
-            for v in o:
-                r = _reward(v)
-                if r is not None:
-                    return r
-        return None
-
     def _tau3(key):
+        # τ³ score = mean of per-simulation reward_info.reward across all tasks.
+        # Missing file / no valid sims → None (renders as '·' = pending, not a fake 0.0).
         try:
-            return _reward(json.load(open(REPO_ROOT / "results" / "tau3_banking" / key / "results.json")))
+            d = json.load(open(REPO_ROOT / "results" / "tau3_banking" / key / "results.json"))
+            rs = [s.get("reward_info", {}).get("reward") for s in d.get("simulations", [])
+                  if isinstance(s.get("reward_info", {}).get("reward"), (int, float))]
+            return statistics.mean(rs) if rs else None
         except Exception:
             return None
 

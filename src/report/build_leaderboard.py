@@ -332,8 +332,8 @@ def _dim_tables(rows):
         members = [d for d in DIMENSIONS if d[3] == t]
         # Agentic: BFCL + PinchBench as SEPARATE side-by-side tables (PinchBench not on all models)
         if t == "Agentic":
-            nb, bt = _single_bench_table(rows, "bfcl", "BFCL", "BFCL — tool-use, single call", "dAb", bar=True)
-            npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp", bar=True)
+            nb, bt = _single_bench_table(rows, "bfcl", "BFCL", "BFCL — tool-use, single call", "dAb", bar=False)
+            npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp", bar=False)
             out.append(
                 f'<h3 class="dimh">Agentic<span class="mut"> · BFCL &amp; PinchBench shown separately — PinchBench isn\'t run on every model</span></h3>'
                 f'<div class="dimrow"><div class="dtab scroll"><div class="sbs-h">BFCL<span class="mut"> · {nb} models</span></div>{bt}</div>'
@@ -344,7 +344,7 @@ def _dim_tables(rows):
         body = []
         for j, (name, row, size) in enumerate(ranked, 1):
             body.append("<tr>" + _rk(j) + mlcell(name) + szcell(size)
-                        + "".join(sc(score_of(row, k), name, k, bar=True) for k, *_ in members)
+                        + "".join(sc(score_of(row, k), name, k) for k, *_ in members)
                         + av(dim_avg(row, t), "av big", bar=True) + "</tr>")
         plural = "s" if len(members) > 1 else ""
         table = (f'<table id="d{i}"><thead><tr><th class="rk">#</th>'

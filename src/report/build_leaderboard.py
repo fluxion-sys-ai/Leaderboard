@@ -449,6 +449,70 @@ STALE_PINCHBENCH = {"gemma-2-9b-it", "glm-4-9b-0414", "mistral-nemo-12b",
 # gpt-oss-20b added 2026-08-12: pinch 0.050 is an ARTIFACT — by_category shows ANALYSIS 0.57 (model IS capable) but 7/9 categories collapsed to exactly 0.00 (harmony/reasoning format failing to parse on those task types), not genuine inability. Agentic = BFCL only. (gemma-4-12b 0.239 + nemotron-30b 0.194 were CHECKED and KEPT — real spread across 7-8/9 categories.)
 
 
+def _frontier_tab() -> str:
+    """Frontier tab — Muse Glimmer reproduction: full-precision (OpenRouter) vs Q4 (local),
+    on the recommended-limit benches. Renders whatever is scored so far; '·' = still running."""
+    allc = load_cells()
+    FR = [  # (display, full-precision dir, Q4 dir, tau3 key, footnote)
+        ("Muse Glimmer 30B", "muse-glimmer-30b-full", "muse-glimmer-30b", "muse",
+         "Q4 blocked — llama.cpp doesn't yet implement the muse-glimmer arch"),
+        ("Qwen3.6-27B", "qwen3.6-27b-full", "qwen3.6-27b", "qwen27", ""),
+        ("Qwen3.6-35B-A3B", "qwen3.6-35b-a3b-full", "qwen3.5-35b-a3b", "qwen35",
+         "Q4 row uses the older 3.5-35B GGUF (no 3.6-35B GGUF yet)"),
+        ("Gemma-4-31B", "gemma-4-31b-full", "gemma-4-31b", "gemma", ""),
+    ]
+
+    def _reward(o):
+        if isinstance(o, dict):
+            for k in ("avg_reward", "average_reward", "reward", "mean_reward", "score"):
+                if isinstance(o.get(k), (int, float)):
+                    return o[k]
+            for v in o.values():
+                r = _reward(v)
+                if r is not None:
+                    return r
+        elif isinstance(o, list):
+            for v in o:
+                r = _reward(v)
+                if r is not None:
+                    return r
+        return None
+
+    def _tau3(key):
+        try:
+            return _reward(json.load(open(REPO_ROOT / "results" / "tau3_banking" / key / "results.json")))
+        except Exception:
+            return None
+
+    def cell(v, bar=False):
+        if v is None:
+            return '<td class="sc na" data-v="-1">·</td>'
+        style = heat_bar(v) if bar else heat(v)
+        return f'<td class="{"sc bar" if bar else "sc"}" data-v="{v:.4f}" style="{style}">{v * 100:.1f}</td>'
+
+    head = ('<tr><th class="ml">Model</th>'
+            '<th>IFBench<br><span class="mut">full</span></th><th>IFBench<br><span class="mut">Q4</span></th>'
+            '<th>AIME26<br><span class="mut">full</span></th><th>AIME26<br><span class="mut">Q4</span></th>'
+            '<th>τ³-bank<br><span class="mut">full</span></th></tr>')
+    body = []
+    for disp, full, q4, tkey, note in FR:
+        ft = f' <span class="flag" title="{html.escape(note)}">⚑</span>' if note else ''
+        cf, cq = allc.get(full, {}), allc.get(q4, {})
+        body.append('<tr>'
+                    f'<td class="ml">{disp}{ft}</td>'
+                    + cell(score_of(cf, "ifbench")) + cell(score_of(cq, "ifbench"))
+                    + cell(score_of(cf, "aime2026")) + cell(score_of(cq, "aime2026"))
+                    + cell(_tau3(tkey), bar=True)
+                    + '</tr>')
+    return (
+        '<h3 class="dimh">Frontier — Muse Glimmer reproduction'
+        '<span class="mut"> · full-precision (OpenRouter bf16/fp8) vs Q4 (local) · recommended token limits · scores ×100</span></h3>'
+        f'<table id="vfr"><thead>{head}</thead><tbody>{"".join(body)}</tbody></table>'
+        '<div class="mut" style="margin-top:8px;font-size:11px;white-space:normal;max-width:760px">'
+        '⚑ Muse Q4 blocked (llama.cpp arch). Qwen3.6-35B Q4 uses the older 3.5 GGUF. τ³-banking via tau2-bench (terminus-1). '
+        'SWE-Bench / TerminalBench pending. Cells fill in as runs complete.</div>')
+
+
 def build() -> str:
     cells = {m: r for m, r in load_cells().items() if m not in EXCLUDED and m not in HIDDEN}
     for m in STALE_PINCHBENCH:
@@ -476,9 +540,11 @@ def build() -> str:
 <button class="tab on" data-v="v1" onclick="tab(this)">Benchmarks</button>
 <button class="tab" data-v="v2" onclick="tab(this)">Dimensions</button>
 <button class="tab" data-v="v3" onclick="tab(this)">Averages &amp; charts</button>
+<button class="tab" data-v="v4" onclick="tab(this)">Frontier · full vs Q4</button>
 </nav>
 <div id="v1" class="view on"><div class="scroll">{_bench_table(rows)}</div></div>
 <div id="v2" class="view">{_dim_tables(rows)}</div>
+<div id="v4" class="view"><div class="scroll">{_frontier_tab()}</div></div>
 <div id="v3" class="view">
 <h3 class="dimh">Capability vs size<span class="mut"> · green = best model at its size (not beaten by anything smaller)</span></h3>
 {_pareto_svg(rows)}

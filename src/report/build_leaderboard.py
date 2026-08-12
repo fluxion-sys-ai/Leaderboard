@@ -163,6 +163,23 @@ def heat_rgb(v):
     return f"rgb({rgb[0]},{rgb[1]},{rgb[2]})"
 
 
+def heat_bar(v):
+    """In-cell horizontal data bar: colored fill from 0→v (heat palette), track after.
+    Number is right-aligned (at the cell's edge) by the .bar CSS. v is 0..1."""
+    if v is None:
+        return "background:transparent"
+    stops = [(0.0, (194, 94, 94)), (0.5, (217, 164, 94)), (1.0, (78, 201, 143))]
+    for (a, ca), (b, cb) in zip(stops, stops[1:]):
+        if v <= b:
+            t = (v - a) / (b - a) if b > a else 0
+            rgb = tuple(round(ca[i] + t * (cb[i] - ca[i])) for i in range(3)); break
+    else:
+        rgb = stops[-1][1]
+    pct = max(0.0, min(100.0, v * 100))
+    return (f"background:linear-gradient(90deg,rgba({rgb[0]},{rgb[1]},{rgb[2]},.9) {pct:.1f}%,"
+            f"var(--s2) {pct:.1f}%);color:var(--tx);font-weight:700")
+
+
 def _dim_barchart(items):
     """Horizontal bar chart for a dimension/bench: items = [(name, val_0_100), ...] pre-sorted desc.
     Mirrors the table ranking so table-left / chart-right read as one unit. Hover shows exact value."""
@@ -243,7 +260,7 @@ FINETUNE = {
 
 
 # ── cell renderers (data-v drives client-side sort; -1 sinks blanks) ──
-def sc(v, model=None, key=None):   # 0..1 benchmark score — click shows this score's config
+def sc(v, model=None, key=None, bar=False):   # 0..1 benchmark score — click shows this score's config
     if v is None:
         return '<td class="sc na" data-v="-1">·</td>'
     spec = cell_title(model, key) if (model and key) else ""
@@ -251,11 +268,14 @@ def sc(v, model=None, key=None):   # 0..1 benchmark score — click shows this s
     attrs = (f' title="{html.escape(spec)}" data-spec="{html.escape(spec + over)}"'
              f' data-mk="{html.escape((model or "") + " · " + (key or ""))}" onclick="showSpec(this,event)"') if spec else ""
     badge = ' <sup class="specflag">◆</sup>' if over else ""
-    return f'<td class="sc" data-v="{v:.4f}" style="{heat(v)}"{attrs}>{v:.3f}{badge}</td>'
+    cls, style = ("sc bar", heat_bar(v)) if bar else ("sc", heat(v))
+    return f'<td class="{cls}" data-v="{v:.4f}" style="{style}"{attrs}>{v:.3f}{badge}</td>'
 
-def av(v, cls="av"):   # 0..100 average
-    return f'<td class="{cls}" data-v="{v:.2f}" style="{heat(v/100)}">{v:.1f}</td>' if v is not None \
-        else f'<td class="{cls} na" data-v="-1">·</td>'
+def av(v, cls="av", bar=False):   # 0..100 average
+    if v is None:
+        return f'<td class="{cls} na" data-v="-1">·</td>'
+    style, cls = (heat_bar(v / 100), cls + " bar") if bar else (heat(v / 100), cls)
+    return f'<td class="{cls}" data-v="{v:.2f}" style="{style}">{v:.1f}</td>'
 
 def mlcell(name):
     flag = (f' <span class="flag" title="{html.escape(NOTES[name])}">⚑</span>'
@@ -292,11 +312,11 @@ def _bench_table(rows):
 </thead><tbody>{"".join(body)}</tbody></table>"""
 
 
-def _single_bench_table(rows, key, short, label, tid):
+def _single_bench_table(rows, key, short, label, tid, bar=False):
     """A standalone mini-leaderboard for ONE benchmark — only models that have it, ranked."""
     have = [(n, r, s) for n, r, s in rows if score_of(r, key) is not None]
     have.sort(key=lambda x: -score_of(x[1], key))
-    body = "".join("<tr>" + _rk(i) + mlcell(n) + szcell(s) + sc(score_of(r, key), n, key) + "</tr>"
+    body = "".join("<tr>" + _rk(i) + mlcell(n) + szcell(s) + sc(score_of(r, key), n, key, bar=bar) + "</tr>"
                    for i, (n, r, s) in enumerate(have, 1))
     return (len(have), f'<table id="{tid}"><thead><tr><th class="rk">#</th>'
             f'<th class="ml so" onclick="sortT(this)">Model</th>'
@@ -312,36 +332,29 @@ def _dim_tables(rows):
         members = [d for d in DIMENSIONS if d[3] == t]
         # Agentic: BFCL + PinchBench as SEPARATE side-by-side tables (PinchBench not on all models)
         if t == "Agentic":
-            nb, bt = _single_bench_table(rows, "bfcl", "BFCL", "BFCL — tool-use, single call", "dAb")
-            npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp")
-            def _ranked_pairs(key):
-                vals = [(n, score_of(r, key)) for n, r, s in rows]
-                return sorted([(n, v * 100) for n, v in vals if v is not None], key=lambda x: -x[1])
+            nb, bt = _single_bench_table(rows, "bfcl", "BFCL", "BFCL — tool-use, single call", "dAb", bar=True)
+            npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp", bar=True)
             out.append(
                 f'<h3 class="dimh">Agentic<span class="mut"> · BFCL &amp; PinchBench shown separately — PinchBench isn\'t run on every model</span></h3>'
                 f'<div class="dimrow"><div class="dtab scroll"><div class="sbs-h">BFCL<span class="mut"> · {nb} models</span></div>{bt}</div>'
-                f'<div class="dchart">{_dim_barchart(_ranked_pairs("bfcl"))}</div></div>'
-                f'<div class="dimrow"><div class="dtab scroll"><div class="sbs-h">PinchBench<span class="mut"> · {npb} models</span></div>{pt}</div>'
-                f'<div class="dchart">{_dim_barchart(_ranked_pairs("pinchbench"))}</div></div>')
+                f'<div class="dtab scroll"><div class="sbs-h">PinchBench<span class="mut"> · {npb} models</span></div>{pt}</div></div>')
             continue
         head = "".join(th_sort(sh, lbl) for _k, sh, lbl, _tt in members)
         ranked = sorted(rows, key=lambda r: (dim_avg(r[1], t) is not None, dim_avg(r[1], t) or -1), reverse=True)
         body = []
         for j, (name, row, size) in enumerate(ranked, 1):
             body.append("<tr>" + _rk(j) + mlcell(name) + szcell(size)
-                        + "".join(sc(score_of(row, k), name, k) for k, *_ in members)
-                        + av(dim_avg(row, t), "av big") + "</tr>")
+                        + "".join(sc(score_of(row, k), name, k, bar=True) for k, *_ in members)
+                        + av(dim_avg(row, t), "av big", bar=True) + "</tr>")
         plural = "s" if len(members) > 1 else ""
         table = (f'<table id="d{i}"><thead><tr><th class="rk">#</th>'
                  f'<th class="ml so" onclick="sortT(this)">Model</th>'
                  f'<th class="sz so" onclick="sortT(this)">Size</th>{head}'
                  f'<th class="av so" onclick="sortT(this)" title="{t} average — click to sort">Avg</th>'
                  f'</tr></thead><tbody>{"".join(body)}</tbody></table>')
-        chart = _dim_barchart([(name, dim_avg(row, t)) for name, row, size in ranked])
         out.append(
             f'<h3 class="dimh">{t}<span class="mut"> · {len(members)} benchmark{plural} · ranked by avg</span></h3>'
-            f'<div class="dimrow"><div class="dtab scroll">{table}</div>'
-            f'<div class="dchart">{chart}</div></div>')
+            f'<div class="dimrow"><div class="dtab scroll">{table}</div></div>')
     return "".join(out)
 
 
@@ -507,7 +520,9 @@ nav{display:flex;gap:6px;margin-bottom:14px}
 .view{display:none}.view.on{display:block}
 .dimh{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);margin:22px 0 8px}
 .dimrow{display:flex;gap:16px;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap}
-.dtab{flex:2 1 460px;min-width:0}
+.dtab{flex:1 1 460px;min-width:0}
+/* dimension tab: score/avg cells render as in-cell horizontal data bars (fill ∝ value, number at the edge) */
+.sc.bar,.av.bar{text-align:right;font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .dchart{flex:1 1 340px;min-width:280px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:10px 8px;align-self:stretch}
 .dimbar{width:100%;height:auto;display:block}
 .dimh:first-child{margin-top:4px}

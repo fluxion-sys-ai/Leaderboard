@@ -142,6 +142,14 @@ def gate(model, bench, result, out, allowed):
         return False, f"coverage {cov:.2f} < {COVERAGE_MIN} (API errors dropped tasks)"
     if (result.get("perf", {}) or {}).get("mean_completion_tokens", 0) == 0:
         return False, "mean_completion_tokens == 0 (degenerate/no generation)"
+    # Truncation blind-spot fix: reasoning models can burn the whole token budget
+    # thinking and get cut off (finish_reason=length) with HIGH tokens but EMPTY
+    # content — invisible to the zero-token check above. Catch it directly from
+    # the raw outputs so it trips on the SMOKE, before the full run.
+    er, n = _empty_output_rate(model, bench)
+    if n >= 3 and er > 0.25:
+        return False, (f"truncation: {er:.0%} of {n} outputs EMPTY despite tokens spent "
+                       f"(reasoning cut off before the answer — raise max_tokens headroom)")
     floor = BROKEN_FLOORS.get(bench)
     if floor is not None and result["score"] < floor:
         return False, f"score {result['score']} below random floor {floor} (broken output)"
@@ -152,8 +160,23 @@ def gate(model, bench, result, out, allowed):
     return True, f"score={result['score']} coverage={cov_s} served={served or 'UNVERIFIED-cached'}"
 
 
+def _empty_output_rate(model, bench):
+    """(empty_fraction, n) from the raw generations — the truncation signal."""
+    p = RAW / model / f"{bench}.jsonl"
+    if not p.exists():
+        return 0.0, 0
+    try:
+        recs = [json.loads(l) for l in p.open() if l.strip()]
+    except (OSError, json.JSONDecodeError):
+        return 0.0, 0
+    if not recs:
+        return 0.0, 0
+    empty = sum(1 for r in recs if not (r.get("output") or "").strip())
+    return empty / len(recs), len(recs)
+
+
 def anomaly_check(bench, score):
-    """Is a *sane-looking* full score still weird vs expected? (soft flag)"""
+    """Is a *sane-looking* score still weird vs expected? Run on BOTH smoke and full."""
     exp = EXPECTED.get(bench)
     if exp and score is not None and score < exp["low"]:
         return f"score {score} < expected low {exp['low']} — {exp['note']}"
@@ -193,8 +216,6 @@ def main() -> int:
                 log(f"  smoke: {cell} (limit={args.smoke_limit})")
                 result, out = run_cell(name, bench, args.smoke_limit)
 
-                # --- known param-preserving auto-fixes, then ONE re-smoke ---
-                fixed = None
                 tj = _THINKING_REJECT_RE.search(out)
                 if _BILLING_RE.search(out):
                     write_diagnostic(name, bench, "billing", "402/insufficient credits", out)
@@ -202,14 +223,19 @@ def main() -> int:
                     log(f"  ✗ {cell}: billing/402 — skipping (needs credit top-up)")
                     continue
                 ok, reason = gate(name, bench, result, out, allowed)
-                if not ok and _TRUNCATED_RE.search(out):
-                    # truncation is handled by the runner's reasoning floor; a
-                    # persistent truncation means the floor needs raising -> flag.
-                    fixed = "truncation"
+
+                # TRUNCATION (caught on the SMOKE now): re-smoking won't help — the
+                # token budget needs raising. Hand to the watchdog and skip the full
+                # run entirely, so we never spend a full cell on truncated garbage.
+                if not ok and ("truncation" in reason or _TRUNCATED_RE.search(out)):
+                    log(f"  ✗ SMOKE OFF [{cell}]: {reason} — TRUNCATION, flag for watchdog + skip full")
+                    write_diagnostic(name, bench, "truncation", reason, out)
+                    state["skipped"].append(cell); heartbeat(state)
+                    continue
+
+                # thinking-level reject: the harness remaps it — clear + re-smoke once.
                 if not ok and tj:
-                    fixed = f"thinking:{tj.group(1)}"
-                if not ok and fixed:
-                    log(f"  ↻ auto-fix [{cell}]: {fixed} — clearing cache & re-smoking once")
+                    log(f"  ↻ auto-fix [{cell}]: thinking:{tj.group(1)} — clearing cache & re-smoking")
                     clear_cell_cache(name, bench)
                     result, out = run_cell(name, bench, args.smoke_limit)
                     ok, reason = gate(name, bench, result, out, allowed)

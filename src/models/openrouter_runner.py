@@ -27,6 +27,14 @@ import urllib.request
 from .base import ModelRunner, GenResult
 
 ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+
+# Reasoning models spend thousands of tokens in the reasoning channel before the
+# answer. Benchmark max_tokens are tuned for non-reasoning greedy models (~1-3k)
+# and truncate them mid-reasoning (finish_reason=length, empty content) -> the
+# answer is lost and the task scores 0. Floor the budget for reasoning models so
+# the answer survives. max_tokens is headroom, NOT a sampling param -> recommended
+# sampling stays untouched.
+REASONING_MIN_TOKENS = 16384
 # Same secret the judges read (gitignored). Resolved at _start, never at import,
 # so importing the registry never requires the key (llamacpp runs must not break
 # just because .openrouter_key is absent).
@@ -79,10 +87,11 @@ class OpenRouterRunner(ModelRunner):
 
     # --- generation ------------------------------------------------------------
     def _generate(self, messages: list[dict], max_tokens: int) -> GenResult:
+        effective_max = max(max_tokens, REASONING_MIN_TOKENS)
         body = {
             "model": self.cfg["model_slug"],
             "messages": self._with_reasoning(messages),
-            "max_tokens": max_tokens,
+            "max_tokens": effective_max,
             "usage": {"include": True},   # ask providers to report token counts
         }
         for p in _PASS_PARAMS:
@@ -124,6 +133,14 @@ class OpenRouterRunner(ModelRunner):
 
         choice = (resp.get("choices") or [{}])[0]
         text = (choice.get("message") or {}).get("content") or ""
+        # Truncation guard: if the model ran out of budget mid-reasoning the answer
+        # is cut off (finish_reason=length) and content is short/empty. Surface it
+        # loudly — a run full of these is invalid, not a real low score.
+        finish = choice.get("finish_reason") or choice.get("native_finish_reason")
+        if finish == "length" and len(text.strip()) < 8:
+            print(f"[openrouter] {self.name}: TRUNCATED (finish_reason=length, empty "
+                  f"content at max_tokens={effective_max}) — answer lost to reasoning.",
+                  flush=True)
         usage = resp.get("usage") or {}
         return GenResult(
             text=text,

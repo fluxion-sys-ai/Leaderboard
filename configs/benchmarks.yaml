@@ -20,6 +20,12 @@ benchmarks:
     sample: 300                        # random, of 541 available
     max_tokens: 1280                   # responses can be long-ish; give headroom
 
+  - name: ifbench                      # dimension: Instruction-Following (Ai2, harder successor)
+    dataset: { repo: allenai/IFBench_test, split: train }
+    revision: null
+    sample: null                       # all 300 in the test set
+    max_tokens: 1280
+
   - name: gsm8k                        # dimension: Reasoning (math)
     dataset: { repo: openai/gsm8k, split: test }
     revision: null

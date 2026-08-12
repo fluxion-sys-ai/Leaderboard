@@ -5,6 +5,7 @@ never grows an if/else — it just asks the registry.
 """
 from .base import Benchmark, Task
 from .ifeval import IFEval
+from .ifbench import IFBench
 from .gsm8k import GSM8K
 from .mmlu_pro import MMLUPro
 from .cruxeval import CruxEval
@@ -23,6 +24,7 @@ from .simpleqa import SimpleQA
 
 BENCHMARKS = {
     IFEval.name: IFEval,
+    IFBench.name: IFBench,
     GSM8K.name: GSM8K,
     MMLUPro.name: MMLUPro,
     CruxEval.name: CruxEval,

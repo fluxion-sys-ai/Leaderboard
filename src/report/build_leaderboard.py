@@ -579,7 +579,7 @@ h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em}
 #tg:hover{border-color:var(--acc)}
 .meta{color:var(--mut);font-size:12px;margin:6px 0 18px}
 .mono{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;color:var(--acc);font-size:11.5px}
-nav{display:flex;gap:6px;margin-bottom:14px}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 .tab{background:var(--s1);color:var(--mut);border:1px solid var(--bd);border-radius:9px;padding:8px 16px;font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer}
 .tab:hover{color:var(--tx)}
 .tab.on{background:var(--acc);color:#0a0d12;border-color:var(--acc)}

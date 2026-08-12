@@ -444,8 +444,9 @@ def _bars_html(rows):
 # at 128K. Removing the cell drops them from the PinchBench table AND the Agentic average
 # (which then falls back to BFCL only), so a stale 32K score never counts.
 STALE_PINCHBENCH = {"gemma-2-9b-it", "glm-4-9b-0414", "mistral-nemo-12b",
-                    "qwen3-8b", "exaone-4.5-33b"}   # qwen2.5-7b un-staled 2026-08-07: fresh 128K pinch 0.199 (clamp-guard verified).
+                    "qwen3-8b", "exaone-4.5-33b", "gpt-oss-20b"}   # qwen2.5-7b un-staled 2026-08-07: fresh 128K pinch 0.199 (clamp-guard verified).
 # exaone added 2026-08-09: its pinch 0.005 was the transcript-not-found harness bug (agent name "exaone-4.5"→"4-5" mangling skipped all 116 tasks), not a real score.
+# gpt-oss-20b added 2026-08-12: pinch 0.050 is an ARTIFACT — by_category shows ANALYSIS 0.57 (model IS capable) but 7/9 categories collapsed to exactly 0.00 (harmony/reasoning format failing to parse on those task types), not genuine inability. Agentic = BFCL only. (gemma-4-12b 0.239 + nemotron-30b 0.194 were CHECKED and KEPT — real spread across 7-8/9 categories.)
 
 
 def build() -> str:

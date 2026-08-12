@@ -16,6 +16,9 @@
   },
   "nemotron-3-nano-30b": {
    "pinchbench": "PinchBench ctx 32K (model is 32K-native, not the standard 128K)"
+  },
+  "granite-4.1-30b": {
+   "pinchbench": "PinchBench ctx 64K (128K KV OOMs the 40GB card)"
   }
  }
 }

@@ -18,6 +18,7 @@ This runner is deliberately OFF the greedy board: it's for the separate
 `configs/models_full.yaml` + the comparison tab only.
 """
 from __future__ import annotations
+import http.client
 import json
 import os
 import time
@@ -118,7 +119,7 @@ class OpenRouterRunner(ModelRunner):
                     resp = json.loads(r.read())
                 break
             except (urllib.error.HTTPError, urllib.error.URLError, ConnectionError,
-                    TimeoutError, json.JSONDecodeError):
+                    TimeoutError, json.JSONDecodeError, http.client.IncompleteRead):
                 if attempt == 3:
                     return GenResult(text="", n_tokens=0)
                 time.sleep(3 * (attempt + 1))

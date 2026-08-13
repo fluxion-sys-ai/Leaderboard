@@ -24,7 +24,7 @@ benchmarks:
     dataset: { repo: allenai/IFBench_test, split: train }
     revision: null
     sample: null                       # all 300 in the test set
-    max_tokens: 1280
+    max_tokens: 81920                  # bumped to max-recommended so reasoning models never truncate (Muse over-reasons past 32k on some IFBench prompts)
 
   - name: gsm8k                        # dimension: Reasoning (math)
     dataset: { repo: openai/gsm8k, split: test }
@@ -68,7 +68,7 @@ benchmarks:
     dataset: { repo: MathArena/aime_2026, split: train }
     revision: null
     sample: null                       # all 30 problems
-    max_tokens: 3072                   # olympiad math needs long reasoning
+    max_tokens: 81920                  # RECOMMENDED (Qwen card: competition math). Full-precision uses this; local Q4 capped by n_ctx.
 
   - name: zebralogic                   # dimension: Reasoning (logic puzzles)
     dataset: { repo: WildEval/ZebraLogic, split: test }

@@ -25,7 +25,7 @@ _DRAFT = re.compile(
     r"draft acceptance = ([\d.]+) \(\s*(\d+) accepted /\s*(\d+) generated\), mean len =\s*([\d.]+)")
 
 # Path to the llama.cpp binaries. Override with LLAMACPP_BIN; confirmed at start.
-LLAMACPP_BIN = os.environ.get("LLAMACPP_BIN", "/home/ubuntu/llama.cpp")
+LLAMACPP_BIN = os.environ.get("LLAMACPP_BIN", "/home/aliixh/llama.cpp")
 PORT = int(os.environ.get("LLAMACPP_PORT", "8081"))
 
 
@@ -94,11 +94,17 @@ class LlamaCppRunner(ModelRunner):
         raise TimeoutError(f"llama-server not healthy after {timeout_s}s")
 
     def _generate(self, messages: list[dict], max_tokens: int) -> GenResult:
-        payload = json.dumps({
+        body = {
             "messages": messages,
             "temperature": self.cfg["temperature"],
             "max_tokens": max_tokens,
-        }).encode()
+        }
+        # Forward vendor-recommended sampling knobs WHEN SET (frontier Q4 tab).
+        # The greedy board leaves these unset → payload unchanged (pure greedy).
+        for k in ("top_p", "top_k", "min_p", "presence_penalty"):
+            if self.cfg.get(k) is not None:
+                body[k] = self.cfg[k]
+        payload = json.dumps(body).encode()
         req = urllib.request.Request(
             f"http://127.0.0.1:{PORT}/v1/chat/completions",
             data=payload, headers={"Content-Type": "application/json"},

@@ -48,9 +48,13 @@ models:
     temperature: 1.0
     top_p: 0.95
     top_k: 64
-    # Gemma thinking is toggled via its chat template (<|think|>); if a provider
-    # exposes it as an API param, add it under extra_body without touching code.
-    # extra_body: {}
+    # Gemma-4 is a reasoning model — thinking is ON by default (the greedy board
+    # sets no_think to turn it OFF). The OpenRouter path had NO trigger, so gemma
+    # ran non-thinking (mean 253 tok on IFBench) → invalid low scores. chat_template_kwargs
+    # is NOT honored by these providers; OpenRouter's unified `reasoning` param IS —
+    # verified 2026-08-13: effort=high engaged a 5.3k-char reasoning trace on CoreWeave.
+    extra_body:
+      reasoning: { effort: high }
     provider:
       quantizations: ["bf16"]
       order: ["OpenInference", "CoreWeave", "Novita"]   # all bf16

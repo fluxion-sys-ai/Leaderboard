@@ -456,10 +456,10 @@ def _frontier_tab() -> str:
     FR = [  # (display, full-precision dir, Q4 dir, tau3 key, footnote)
         ("Muse Glimmer 30B", "muse-glimmer-30b-full", "muse-glimmer-30b", "muse",
          "Q4 blocked — llama.cpp doesn't yet implement the muse-glimmer arch"),
-        ("Qwen3.6-27B", "qwen3.6-27b-full", "qwen3.6-27b", "qwen27", ""),
-        ("Qwen3.6-35B-A3B", "qwen3.6-35b-a3b-full", "qwen3.5-35b-a3b", "qwen35",
+        ("Qwen3.6-27B", "qwen3.6-27b-full", "qwen3.6-27b-q4f", "qwen27", ""),
+        ("Qwen3.6-35B-A3B", "qwen3.6-35b-a3b-full", "qwen3.5-35b-a3b-q4f", "qwen35",
          "Q4 row uses the older 3.5-35B GGUF (no 3.6-35B GGUF yet)"),
-        ("Gemma-4-31B", "gemma-4-31b-full", "gemma-4-31b", "gemma", ""),
+        ("Gemma-4-31B", "gemma-4-31b-full", "gemma-4-31b-q4f", "gemma", ""),
     ]
 
     def _tau3(key):
@@ -495,7 +495,7 @@ def _frontier_tab() -> str:
                     + '</tr>')
     return (
         '<h3 class="dimh">Frontier — Muse Glimmer reproduction'
-        '<span class="mut"> · full-precision (OpenRouter bf16/fp8) vs Q4 (local) · recommended token limits · scores ×100</span></h3>'
+        '<span class="mut"> · full-precision (OpenRouter bf16/fp8) vs Q4 (local A100) · both sides at vendor-recommended sampling + thinking ON · scores ×100</span></h3>'
         f'<table id="vfr"><thead>{head}</thead><tbody>{"".join(body)}</tbody></table>'
         '<div class="mut" style="margin-top:8px;font-size:11px;white-space:normal;max-width:760px">'
         '⚑ Muse Q4 blocked (llama.cpp arch). Qwen3.6-35B Q4 uses the older 3.5 GGUF. τ³-banking via tau2-bench (terminus-1). '

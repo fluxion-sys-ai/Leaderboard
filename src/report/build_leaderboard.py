@@ -502,18 +502,19 @@ def _frontier_tab() -> str:
 
     # ── Table 1: full-precision (OpenRouter). τ³ is full-precision only, so it lives here. ──
     full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
-                 '<th>τ³-bank</th></tr>')
+                 '<th>PinchBench</th><th>τ³-bank</th></tr>')
     full_body = []
     for disp, full, q4, tkey, note in FR:
         cf = allc.get(full, {})
         full_body.append('<tr>'
                          f'<td class="ml">{disp}</td>'
                          + cell(score_of(cf, "ifbench")) + cell(score_of(cf, "aime2026"))
+                         + cell(score_of(cf, "pinchbench_clawd"))
                          + tau3_cell(_tau3(tkey))
                          + '</tr>')
 
-    # ── Table 2: Q4-local (A100). IFBench + AIME only (no Q4 τ³). ──
-    q4_head = '<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th></tr>'
+    # ── Table 2: Q4-local (A100). IFBench + AIME + PinchBench (no Q4 τ³). ──
+    q4_head = '<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th><th>PinchBench</th></tr>'
     q4_body = []
     for disp, full, q4, tkey, note in FR:
         ft = f' <span class="flag" title="{html.escape(note)}">⚑</span>' if note else ''
@@ -521,6 +522,7 @@ def _frontier_tab() -> str:
         q4_body.append('<tr>'
                        f'<td class="ml">{disp}{ft}</td>'
                        + cell(score_of(cq, "ifbench")) + cell(score_of(cq, "aime2026"))
+                       + cell(score_of(cq, "pinchbench_clawd"))
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

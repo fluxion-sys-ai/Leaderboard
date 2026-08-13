@@ -76,12 +76,19 @@ per each model's own card — they are NOT the same recipe.
   · `--max-concurrency 2` (score-neutral) · `--retrieval-config qwen_embeddings` · user-sim `deepseek-chat-v3.1` temp 0.
 - **No Q4 τ³** currently (would require pointing the tau2 agent at the local llama-server).
 
-## 6. PARKED — SWE-bench Verified & TerminalBench (params for when wired; NOT running)
+### PinchBench-Clawd (hirundo-io/pinchbench-clawd-single-turn) — full + Q4
+- Single-turn agentic tool-calling; `per_type: 5` → **104 tasks/model** (stratified across 23 types).
+- Thinking ON, §2 sampling. **max_tokens: benchmarks.yaml says 1024 but that's for the greedy board** — the
+  frontier runs floor it to **32,768**: full-precision via the OpenRouter runner's `REASONING_MIN`, Q4 via a matching
+  floor added to the llama.cpp runner (only when `enable_thinking` — greedy board untouched). Answers are short
+  (single tool call) so this is just headroom, not forced long generation.
+
+## 6. PARKED — SWE-bench Lite & TerminalBench (params for when wired; NOT running)
 | Benchmark | Muse | Gemma | Qwen (both) |
 |---|---|---|---|
-| **SWE-bench Verified** (agentic coding) | reasoning **xhigh** | think ON, temp 1.0 (community 1.5 for code — off-rec, skip) | thinking-**coding**: temp **0.6**, top_p 0.95, top_k 20, presence 0.0 |
+| **SWE-bench Lite** (agentic coding · 300 tasks) | reasoning **xhigh** | think ON, temp 1.0 (community 1.5 for code — off-rec, skip) | thinking-**coding**: temp **0.6**, top_p 0.95, top_k 20, presence 0.0 |
 | **TerminalBench** (agentic) | reasoning **high** | think ON, temp 1.0 | thinking-general: temp 1.0 (as §2) |
-- SWE = Agentless pipeline (localize→repair→validate) + Docker; TerminalBench = `terminus-2` agent + Docker,
+- SWE = Agentless pipeline (localize→repair→validate) + Docker on **SWE-bench Lite** (`princeton-nlp/SWE-bench_Lite`, 300 tasks — chosen over Verified/full: lighter, tractable for 30B); TerminalBench = `terminus-2` agent + Docker,
   dataset `terminal-bench-core==0.1.1`.
 - ⚠️ **TerminalBench param limitation:** the `terminus-2` agent only plumbs **`temperature`** to the model (set to
   `1.0` via `--agent-kwarg`, its default is 0.7). It does **NOT** forward top_p/top_k/min_p/presence or a reasoning

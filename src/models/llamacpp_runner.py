@@ -94,6 +94,11 @@ class LlamaCppRunner(ModelRunner):
         raise TimeoutError(f"llama-server not healthy after {timeout_s}s")
 
     def _generate(self, messages: list[dict], max_tokens: int) -> GenResult:
+        # Thinking models need a floor so a small per-benchmark cap (e.g. pinchbench's
+        # 1024) doesn't truncate mid-reasoning. Only applies when thinking is ON
+        # (frontier Q4: template_kwargs.enable_thinking) — greedy/no_think is untouched.
+        if max_tokens and (self.cfg.get("template_kwargs") or {}).get("enable_thinking"):
+            max_tokens = max(max_tokens, 32768)
         body = {
             "messages": messages,
             "temperature": self.cfg["temperature"],

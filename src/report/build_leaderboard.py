@@ -463,21 +463,42 @@ def _frontier_tab() -> str:
     ]
 
     def _tau3(key):
-        # τ³ score = mean of per-simulation reward_info.reward across all tasks.
-        # Missing file / no valid sims → None (renders as '·' = pending, not a fake 0.0).
-        try:
-            d = json.load(open(REPO_ROOT / "results" / "tau3_banking" / key / "results.json"))
-            rs = [s.get("reward_info", {}).get("reward") for s in d.get("simulations", [])
-                  if isinstance(s.get("reward_info", {}).get("reward"), (int, float))]
-            return statistics.mean(rs) if rs else None
-        except Exception:
-            return None
+        # Returns (score, is_bad). Prefer the CORRECTED run (97 tasks, max_steps 100,
+        # full sampling+thinking) once it has enough sims; otherwise fall back to the
+        # OLD wrong-param run (20 tasks, max_steps 40) — shown but FLAGGED invalid (✗).
+        def rd(p):
+            try:
+                d = json.load(open(p))
+                rs = [s.get("reward_info", {}).get("reward") for s in d.get("simulations", [])
+                      if isinstance(s.get("reward_info", {}).get("reward"), (int, float))]
+                return (statistics.mean(rs), len(rs)) if rs else None
+            except Exception:
+                return None
+        new = rd(REPO_ROOT / "results" / "tau3_banking" / key / "results.json")
+        if new and new[1] >= 90:                       # corrected full run complete → trust it
+            return (new[0], False)
+        old = rd(REPO_ROOT / "results" / "_tau3_20task40step_backup" / key / "results.json")
+        if old:
+            return (old[0], True)                      # wrong-param run → flag ✗
+        return (None, False)
 
     def cell(v, bar=False):
         if v is None:
             return '<td class="sc na" data-v="-1">·</td>'
         style = heat_bar(v) if bar else heat(v)
         return f'<td class="{"sc bar" if bar else "sc"}" data-v="{v:.4f}" style="{style}">{v * 100:.1f}</td>'
+
+    def tau3_cell(res):
+        v, bad = res
+        if v is None:
+            return '<td class="sc na" data-v="-1">·</td>'
+        if bad:  # wrong-param run: struck-through + ✗ + tooltip, no heat-bar (it's invalid)
+            return ('<td class="sc" data-v="-1" title="INVALID — ran with wrong params '
+                    '(max_steps 40 not 100, only 20 of 97 tasks, missing top_k/min_p and Muse/Gemma '
+                    'thinking). Corrected run in progress; this cell auto-updates when it finishes.">'
+                    f'<span style="text-decoration:line-through;opacity:.5">{v * 100:.1f}</span> '
+                    '<span class="flag">✗</span></td>')
+        return f'<td class="sc bar" data-v="{v:.4f}" style="{heat_bar(v)}">{v * 100:.1f}</td>'
 
     # ── Table 1: full-precision (OpenRouter). τ³ is full-precision only, so it lives here. ──
     full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
@@ -488,7 +509,7 @@ def _frontier_tab() -> str:
         full_body.append('<tr>'
                          f'<td class="ml">{disp}</td>'
                          + cell(score_of(cf, "ifbench")) + cell(score_of(cf, "aime2026"))
-                         + cell(_tau3(tkey), bar=True)
+                         + tau3_cell(_tau3(tkey))
                          + '</tr>')
 
     # ── Table 2: Q4-local (A100). IFBench + AIME only (no Q4 τ³). ──

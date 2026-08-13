@@ -479,27 +479,37 @@ def _frontier_tab() -> str:
         style = heat_bar(v) if bar else heat(v)
         return f'<td class="{"sc bar" if bar else "sc"}" data-v="{v:.4f}" style="{style}">{v * 100:.1f}</td>'
 
-    head = ('<tr><th class="ml">Model</th>'
-            '<th>IFBench<br><span class="mut">full</span></th><th>IFBench<br><span class="mut">Q4</span></th>'
-            '<th>AIME26<br><span class="mut">full</span></th><th>AIME26<br><span class="mut">Q4</span></th>'
-            '<th>τ³-bank<br><span class="mut">full</span></th></tr>')
-    body = []
+    # ── Table 1: full-precision (OpenRouter). τ³ is full-precision only, so it lives here. ──
+    full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
+                 '<th>τ³-bank</th></tr>')
+    full_body = []
+    for disp, full, q4, tkey, note in FR:
+        cf = allc.get(full, {})
+        full_body.append('<tr>'
+                         f'<td class="ml">{disp}</td>'
+                         + cell(score_of(cf, "ifbench")) + cell(score_of(cf, "aime2026"))
+                         + cell(_tau3(tkey), bar=True)
+                         + '</tr>')
+
+    # ── Table 2: Q4-local (A100). IFBench + AIME only (no Q4 τ³). ──
+    q4_head = '<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th></tr>'
+    q4_body = []
     for disp, full, q4, tkey, note in FR:
         ft = f' <span class="flag" title="{html.escape(note)}">⚑</span>' if note else ''
-        cf, cq = allc.get(full, {}), allc.get(q4, {})
-        body.append('<tr>'
-                    f'<td class="ml">{disp}{ft}</td>'
-                    + cell(score_of(cf, "ifbench")) + cell(score_of(cq, "ifbench"))
-                    + cell(score_of(cf, "aime2026")) + cell(score_of(cq, "aime2026"))
-                    + cell(_tau3(tkey), bar=True)
-                    + '</tr>')
+        cq = allc.get(q4, {})
+        q4_body.append('<tr>'
+                       f'<td class="ml">{disp}{ft}</td>'
+                       + cell(score_of(cq, "ifbench")) + cell(score_of(cq, "aime2026"))
+                       + '</tr>')
+
+    sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'
     return (
         '<h3 class="dimh">Frontier — Muse Glimmer reproduction'
-        '<span class="mut"> · full-precision (OpenRouter bf16/fp8) vs Q4 (local A100) · both sides at vendor-recommended sampling + thinking ON · scores ×100</span></h3>'
-        f'<table id="vfr"><thead>{head}</thead><tbody>{"".join(body)}</tbody></table>'
-        '<div class="mut" style="margin-top:8px;font-size:11px;white-space:normal;max-width:760px">'
-        '⚑ Muse Q4 blocked (llama.cpp arch). Qwen3.6-35B Q4 uses the older 3.5 GGUF. τ³-banking via tau2-bench (terminus-1). '
-        'SWE-Bench / TerminalBench pending. Cells fill in as runs complete.</div>')
+        '<span class="mut"> · vendor-recommended sampling + thinking ON · scores ×100</span></h3>'
+        f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
+        f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
+        f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
+        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>')
 
 
 def build() -> str:

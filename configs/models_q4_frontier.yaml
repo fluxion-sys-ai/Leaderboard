@@ -1,0 +1,59 @@
+# models_q4_frontier.yaml — the Q4-LOCAL half of the frontier comparison tab.
+#
+# SEPARATE from BOTH the greedy board (models.yaml) AND the full-precision tab
+# (models_full.yaml). These are the same 30B-class models the frontier tab pairs
+# against OpenRouter full-precision, but run LOCALLY at Q4_K_M on the A100 with
+# VENDOR-RECOMMENDED sampling + THINKING ON — NOT greedy/no-think.
+#
+# Why distinct names (`*-q4f`, not the greedy-board `gemma-4-31b`): the greedy
+# board runs EVERY model greedy (temp 0, no_think) for reproducibility. Reusing
+# those model names would overwrite the greedy board's cells with temp>0/thinking
+# output and corrupt it. New names → own results dirs → nothing collides.
+#
+# GGUFs are the ALREADY-DOWNLOADED greedy-board weights (gguf.local), so there is
+# NO re-download — identical bytes, different sampling. n_ctx 40960 (proven to fit
+# the 40GB A100 for these Q4 30B models; bump only if smoke shows CoT truncation).
+
+defaults:
+  runner: llamacpp
+  quant: Q4_K_M
+  n_ctx: 98304              # raised 40960→98304: holds the full 81920 max-rec output + prompt.
+                            # VRAM allows it (only 19/40 GB used at 40960); qwen full AIME hit
+                            # 65k tok, so 40960 WOULD have truncated qwen Q4 AIME. gemma-q4f
+                            # already finished under 14k tok so its scores are unaffected.
+  temperature: 1.0          # recommended (all three cards); NOT greedy
+  max_tokens: 1024          # benchmarks.yaml raises this per-benchmark (ifbench/aime = 81920)
+  max_tokens_mult: 2        # reasoning headroom (capped by n_ctx in practice)
+
+models:
+  # ---- Gemma-4-31B — recommended sampling + thinking ON ----------------------
+  - name: gemma-4-31b-q4f
+    role: "Gemma-4-31B Q4_K_M — frontier tab, recommended params (temp 1.0 / top_p 0.95 / top_k 64) + thinking ON"
+    gguf:
+      local: /home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/gemma-4-31b/gemma-4-31B-it-Q4_K_M.gguf
+    top_p: 0.95
+    top_k: 64
+    template_kwargs: { enable_thinking: true }
+
+  # ---- Qwen3.6-27B — thinking-general recipe (presence 0.0) ------------------
+  - name: qwen3.6-27b-q4f
+    role: "Qwen3.6-27B Q4_K_M — frontier tab, recommended params (temp 1.0 / top_p 0.95 / top_k 20 / min_p 0 / presence 0.0) + thinking ON"
+    gguf:
+      local: /home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/qwen3.6-27b/Qwen3.6-27B-Q4_K_M.gguf
+    top_p: 0.95
+    top_k: 20
+    min_p: 0
+    presence_penalty: 0.0
+    template_kwargs: { enable_thinking: true }
+
+  # ---- Qwen3.5-35B-A3B — thinking recipe (presence 1.5) ----------------------
+  # (Q4 stand-in for 3.6-35B-A3B — no 3.6-35B GGUF yet; flagged on the tab.)
+  - name: qwen3.5-35b-a3b-q4f
+    role: "Qwen3.5-35B-A3B Q4_K_M — frontier tab, recommended params (temp 1.0 / top_p 0.95 / top_k 20 / min_p 0 / presence 1.5) + thinking ON"
+    gguf:
+      local: /home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/qwen3.5-35b-a3b/Qwen_Qwen3.5-35B-A3B-Q4_K_M.gguf
+    top_p: 0.95
+    top_k: 20
+    min_p: 0
+    presence_penalty: 1.5
+    template_kwargs: { enable_thinking: true }

@@ -133,7 +133,15 @@ class OpenRouterRunner(ModelRunner):
         self._audit_provider(resp)     # surface served provider + any param warnings
 
         choice = (resp.get("choices") or [{}])[0]
-        text = (choice.get("message") or {}).get("content") or ""
+        msg = choice.get("message") or {}
+        text = msg.get("content") or ""
+        # Reasoning-model fallback: some providers (e.g. DeepInfra Muse) put the WHOLE
+        # response in a separate `reasoning`/`reasoning_content` field and leave `content`
+        # empty — the model reasons then ends its turn without a content answer. Reading
+        # only `content` scored those 0 (pinchbench: 96/104 empty). When content is blank,
+        # fall back to the reasoning channel so the scorer sees the model's actual output.
+        if not text.strip():
+            text = msg.get("reasoning") or msg.get("reasoning_content") or ""
         # Truncation guard: if the model ran out of budget mid-reasoning the answer
         # is cut off (finish_reason=length) and content is short/empty. Surface it
         # loudly — a run full of these is invalid, not a real low score.

@@ -482,6 +482,14 @@ def _frontier_tab() -> str:
             return (old[0], True)                      # wrong-param run → flag ✗
         return (None, False)
 
+    def _terminal(key):
+        # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy. Full-precision only.
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
+            return d.get("accuracy")
+        except Exception:
+            return None
+
     def cell(v, bar=False):
         if v is None:
             return '<td class="sc na" data-v="-1">·</td>'
@@ -502,7 +510,8 @@ def _frontier_tab() -> str:
 
     # ── Table 1: full-precision (OpenRouter). τ³ is full-precision only, so it lives here. ──
     full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
-                 '<th>PinchBench</th><th>τ³-bank</th></tr>')
+                 '<th>PinchBench</th><th>τ³-bank</th><th>Terminal</th>'
+                 '<th>SWE-Lite<br><span class="mut">soon</span></th></tr>')
     full_body = []
     for disp, full, q4, tkey, note in FR:
         cf = allc.get(full, {})
@@ -511,6 +520,8 @@ def _frontier_tab() -> str:
                          + cell(score_of(cf, "ifbench")) + cell(score_of(cf, "aime2026"))
                          + cell(score_of(cf, "pinchbench_clawd"))
                          + tau3_cell(_tau3(tkey))
+                         + cell(_terminal(tkey))
+                         + cell(None)                  # SWE-bench Lite: not wired yet
                          + '</tr>')
 
     # ── Table 2: Q4-local (A100). IFBench + AIME + PinchBench (no Q4 τ³). ──

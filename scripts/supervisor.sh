@@ -16,7 +16,9 @@ export IFBENCH_DIR=/home/aliixh/IFBench
 OR_FULL=(muse-glimmer-30b-full gemma-4-31b-full qwen3.6-27b-full qwen3.6-35b-a3b-full)
 Q4_MODELS=(gemma-4-31b-q4f qwen3.6-27b-q4f qwen3.5-35b-a3b-q4f)
 BENCHES=(ifbench aime2026 pinchbench_clawd)
-STALL_SECS=2400            # 40 min with no new raw output on the GPU track → restart it
+STALL_SECS=5400            # 90 min. A single Q4 task can reason to the full n_ctx (98304 tok
+                           # ≈ 40 min at Q4 speed) on hard prompts — a 40-min guard killed it
+                           # mid-task and looped forever at the same index. 90 min lets it finish.
 
 log(){ echo "[$(date +'%F %T')] $*"; }
 scored(){ [ -f "results/scored/$1/$2.json" ]; }

@@ -533,8 +533,9 @@ def _frontier_tab() -> str:
         q4_body.append('<tr>'
                        f'<td class="ml">{disp}{ft}</td>'
                        + cell(score_of(cq, "ifbench")) + cell(score_of(cq, "aime2026"))
-                       # real PinchBench: the Q4 GGUF IS the greedy-board model, which already ran it
-                       + cell(score_of(allc.get(q4[:-4] if q4.endswith("-q4f") else q4, {}), "pinchbench"))
+                       # real PinchBench at RECOMMENDED params — the greedy board's numbers were
+                       # temp0+no_think (NOT rec), so they're pulled; this reads the rec-params redo.
+                       + cell(score_of(cq, "pinchbench"))
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

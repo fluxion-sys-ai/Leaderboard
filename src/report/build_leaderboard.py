@@ -518,7 +518,7 @@ def _frontier_tab() -> str:
         full_body.append('<tr>'
                          f'<td class="ml">{disp}</td>'
                          + cell(score_of(cf, "ifbench")) + cell(score_of(cf, "aime2026"))
-                         + cell(score_of(cf, "pinchbench_clawd"))
+                         + cell(score_of(cf, "pinchbench"))   # real PinchBench (local-GPU agent); full-precision N/A until API-agent wired
                          + tau3_cell(_tau3(tkey))
                          + cell(_terminal(tkey))
                          + cell(None)                  # SWE-bench Lite: not wired yet
@@ -533,7 +533,8 @@ def _frontier_tab() -> str:
         q4_body.append('<tr>'
                        f'<td class="ml">{disp}{ft}</td>'
                        + cell(score_of(cq, "ifbench")) + cell(score_of(cq, "aime2026"))
-                       + cell(score_of(cq, "pinchbench_clawd"))
+                       # real PinchBench: the Q4 GGUF IS the greedy-board model, which already ran it
+                       + cell(score_of(allc.get(q4[:-4] if q4.endswith("-q4f") else q4, {}), "pinchbench"))
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

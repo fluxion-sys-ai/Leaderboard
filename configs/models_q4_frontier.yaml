@@ -26,6 +26,18 @@ defaults:
   max_tokens_mult: 2        # reasoning headroom (capped by n_ctx in practice)
 
 models:
+  # ---- Muse Glimmer 30B — ◆ runs on llama.cpp b10433 (b9892 lacks the muse-glimmer arch) ----
+  # UNBLOCKED 2026-08-14: built b10433 with CUDA; it loads the Muse GGUF (b9892 couldn't).
+  # Run it with LLAMACPP_BIN=/home/aliixh/llama.cpp/llama.cpp-b10433/build/bin. thinking ON via
+  # reasoning_effort (Muse's mechanism). Flag its row ◆ "newer llama.cpp" on the board.
+  - name: muse-glimmer-30b-q4f
+    role: "Muse Glimmer 30B Q4 (UD-Q4_K_XL) — frontier tab, recommended params + thinking ON. ◆ b10433"
+    gguf:
+      local: /home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/muse-glimmer-30b/Muse-Glimmer-30B-UD-Q4_K_XL.gguf
+    top_p: 0.95
+    top_k: 64
+    template_kwargs: { reasoning_effort: high }
+
   # ---- Gemma-4-31B — recommended sampling + thinking ON ----------------------
   - name: gemma-4-31b-q4f
     role: "Gemma-4-31B Q4_K_M — frontier tab, recommended params (temp 1.0 / top_p 0.95 / top_k 64) + thinking ON"
@@ -40,6 +52,21 @@ models:
     role: "Qwen3.6-27B Q4_K_M — frontier tab, recommended params (temp 1.0 / top_p 0.95 / top_k 20 / min_p 0 / presence 0.0) + thinking ON"
     gguf:
       local: /home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/qwen3.6-27b/Qwen3.6-27B-Q4_K_M.gguf
+    top_p: 0.95
+    top_k: 20
+    min_p: 0
+    presence_penalty: 0.0
+    template_kwargs: { enable_thinking: true }
+
+  # ---- Qwen3.8-27B — NEW (Aug 2026), Q4-ONLY (not on OpenRouter yet) ----------
+  # Standard Q4_K_M from the official ggml-org repo. qwen3_5-family arch (same as
+  # qwen3.6-27b which already runs on b9892). Qwen thinking-general recipe (presence 0.0,
+  # like the 27B dense). Full-precision N/A until OpenRouter serves the 27B — flag on the tab.
+  - name: qwen3.8-27b-q4f
+    role: "Qwen3.8-27B Q4_K_M — NEW model, Q4-only (no OpenRouter full-precision yet), thinking ON"
+    gguf:
+      repo: ggml-org/Qwen3.8-27B-GGUF
+      file: '*Q4_K_M.gguf'
     top_p: 0.95
     top_k: 20
     min_p: 0

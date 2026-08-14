@@ -15,7 +15,7 @@ export IFBENCH_DIR=/home/aliixh/IFBench
 
 OR_FULL=(muse-glimmer-30b-full gemma-4-31b-full qwen3.6-27b-full qwen3.6-35b-a3b-full)
 Q4_MODELS=(gemma-4-31b-q4f qwen3.6-27b-q4f qwen3.5-35b-a3b-q4f)
-BENCHES=(ifbench aime2026 pinchbench_clawd)
+BENCHES=(ifbench aime2026)
 STALL_SECS=5400            # 90 min. A single Q4 task can reason to the full n_ctx (98304 tok
                            # ≈ 40 min at Q4 speed) on hard prompts — a 40-min guard killed it
                            # mid-task and looped forever at the same index. 90 min lets it finish.
@@ -31,7 +31,7 @@ q4_running(){ pgrep -f "models_q4_frontier.yaml" >/dev/null; }
 start_or(){
   log "OR: (re)launching full-precision track (resumes from cache)"
   nohup python3 run_benchmark.py --models-config configs/models_full.yaml \
-    --benchmarks ifbench aime2026 pinchbench_clawd >> /tmp/track_or_direct.log 2>&1 &
+    --benchmarks ifbench aime2026 >> /tmp/track_or_direct.log 2>&1 &
 }
 start_q4(){
   log "GPU: (re)launching Q4-frontier track (resumes from cache)"
@@ -42,7 +42,7 @@ start_q4(){
     for m in '"${Q4_MODELS[*]}"'; do
       echo "[$(date +%T)] GPU: Q4-frontier $m starting"
       python3 run_benchmark.py --models-config configs/models_q4_frontier.yaml \
-        --models "$m" --benchmarks ifbench aime2026 pinchbench_clawd
+        --models "$m" --benchmarks ifbench aime2026
       echo "[$(date +%T)] GPU: Q4-frontier $m DONE"
     done
     echo "[$(date +%T)] GPU: Q4-frontier queue complete"

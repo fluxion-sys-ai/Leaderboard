@@ -12,7 +12,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-2-9b-it/gemma-2-9b-it-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/edge-intelligence-benchmark/models/gemma-2-9b-it/gemma-2-9b-it-Q4_K_M.gguf",
   "run_ts": 1785206990,
   "perf": {
     "prefill_tps": 878.75,

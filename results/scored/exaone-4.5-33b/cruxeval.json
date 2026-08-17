@@ -16,7 +16,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/exaone-4.5-33b/EXAONE-4.5-33B-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/edge-intelligence-benchmark/models/exaone-4.5-33b/EXAONE-4.5-33B-Q4_K_M.gguf",
   "run_ts": 1785964900,
   "perf": {
     "prefill_tps": 379.02,

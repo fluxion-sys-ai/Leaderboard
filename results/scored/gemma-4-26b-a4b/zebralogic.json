@@ -119,7 +119,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/gemma-4-26b-a4b/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/edge-intelligence-benchmark/models/gemma-4-26b-a4b/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf",
   "run_ts": 1786263071,
   "perf": {
     "prefill_tps": 2823.1,

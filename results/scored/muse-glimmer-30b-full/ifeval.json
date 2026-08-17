@@ -1,0 +1,132 @@
+{
+  "metric": "ifeval_strict_accuracy",
+  "score": 0.9233,
+  "ci95": [
+    0.8876,
+    0.9484
+  ],
+  "instruction_accuracy": 0.9498,
+  "n": 300,
+  "coverage": 1.0,
+  "by_instruction_type": {
+    "change_case:capital_word_frequency": {
+      "acc": 1.0,
+      "n": 14
+    },
+    "change_case:english_capital": {
+      "acc": 0.875,
+      "n": 16
+    },
+    "change_case:english_lowercase": {
+      "acc": 1.0,
+      "n": 21
+    },
+    "combination:repeat_prompt": {
+      "acc": 0.9524,
+      "n": 21
+    },
+    "combination:two_responses": {
+      "acc": 1.0,
+      "n": 14
+    },
+    "detectable_content:number_placeholders": {
+      "acc": 0.9167,
+      "n": 12
+    },
+    "detectable_content:postscript": {
+      "acc": 1.0,
+      "n": 10
+    },
+    "detectable_format:constrained_response": {
+      "acc": 0.4286,
+      "n": 7
+    },
+    "detectable_format:json_format": {
+      "acc": 0.8333,
+      "n": 12
+    },
+    "detectable_format:multiple_sections": {
+      "acc": 1.0,
+      "n": 7
+    },
+    "detectable_format:number_bullet_lists": {
+      "acc": 1.0,
+      "n": 14
+    },
+    "detectable_format:number_highlighted_sections": {
+      "acc": 1.0,
+      "n": 25
+    },
+    "detectable_format:title": {
+      "acc": 1.0,
+      "n": 20
+    },
+    "keywords:existence": {
+      "acc": 1.0,
+      "n": 23
+    },
+    "keywords:forbidden_words": {
+      "acc": 0.9259,
+      "n": 27
+    },
+    "keywords:frequency": {
+      "acc": 1.0,
+      "n": 26
+    },
+    "keywords:letter_frequency": {
+      "acc": 0.9412,
+      "n": 17
+    },
+    "language:response_language": {
+      "acc": 1.0,
+      "n": 17
+    },
+    "length_constraints:nth_paragraph_first_word": {
+      "acc": 1.0,
+      "n": 7
+    },
+    "length_constraints:number_paragraphs": {
+      "acc": 0.4615,
+      "n": 13
+    },
+    "length_constraints:number_sentences": {
+      "acc": 1.0,
+      "n": 30
+    },
+    "length_constraints:number_words": {
+      "acc": 1.0,
+      "n": 26
+    },
+    "punctuation:no_comma": {
+      "acc": 0.9487,
+      "n": 39
+    },
+    "startend:end_checker": {
+      "acc": 0.9412,
+      "n": 17
+    },
+    "startend:quotation": {
+      "acc": 1.0,
+      "n": 23
+    }
+  },
+  "model": "muse-glimmer-30b-full",
+  "benchmark": "ifeval",
+  "quant": null,
+  "runner": "openrouter",
+  "n_ctx": null,
+  "temperature": 1.0,
+  "gguf_path": null,
+  "run_ts": 1786524428,
+  "perf": {
+    "prefill_tps": 0.0,
+    "decode_tps": 0.0,
+    "ttft_ms": 0.0,
+    "mean_prompt_tokens": 78.83,
+    "mean_completion_tokens": 1530.45,
+    "total_gen_tokens": 459135,
+    "model_load_s": 0.0,
+    "gguf_mb": 0.0,
+    "peak_vram_mb": null
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.9333,
+  "n": 30,
+  "passed": 28,
+  "ci95": [
+    0.7868,
+    0.9815
+  ],
+  "failure_breakdown": {
+    "wrong_answer": 2
+  },
+  "model": "qwen3.5-35b-a3b-q4f",
+  "benchmark": "aime2026",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 98304,
+  "temperature": 1.0,
+  "gguf_path": "/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/qwen3.5-35b-a3b/Qwen_Qwen3.5-35B-A3B-Q4_K_M.gguf",
+  "run_ts": 1786771811,
+  "perf": {
+    "prefill_tps": 956.1,
+    "decode_tps": 86.81,
+    "ttft_ms": 142.62,
+    "mean_prompt_tokens": 153.43,
+    "mean_completion_tokens": 32640.83,
+    "total_gen_tokens": 979225,
+    "model_load_s": 54.1,
+    "gguf_mb": 22285.1,
+    "peak_vram_mb": 24253.0
+  }
+}

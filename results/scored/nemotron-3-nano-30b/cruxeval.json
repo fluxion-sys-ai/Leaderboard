@@ -16,7 +16,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/nemotron-3-nano-30b/NVIDIA-Nemotron-3-Nano-30B-A3B-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/edge-intelligence-benchmark/models/nemotron-3-nano-30b/NVIDIA-Nemotron-3-Nano-30B-A3B-Q4_K_M.gguf",
   "run_ts": 1786242007,
   "perf": {
     "prefill_tps": 514.48,

@@ -8,7 +8,7 @@
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO"
-export IFBENCH_DIR=/home/aliixh/ifbench
+export IFBENCH_DIR=/home/aliixh/IFBench   # NOTE: case-sensitive; lowercase path breaks the IFBench verifier import -> silent 0.0
 [ -f .hf_token ] && export HF_TOKEN="$(cat .hf_token)"
 LOG=/tmp/gpu_queue_ext.log
 log(){ echo "[$(date +'%F %T')] $*" | tee -a "$LOG"; }

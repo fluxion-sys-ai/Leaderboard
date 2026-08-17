@@ -12,7 +12,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf",
   "run_ts": 1785202326,
   "perf": {
     "prefill_tps": 4964.49,

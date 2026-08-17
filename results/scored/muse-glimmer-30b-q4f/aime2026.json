@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.8667,
+  "n": 30,
+  "passed": 26,
+  "ci95": [
+    0.7032,
+    0.9469
+  ],
+  "failure_breakdown": {
+    "wrong_answer": 4
+  },
+  "model": "muse-glimmer-30b-q4f",
+  "benchmark": "aime2026",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 98304,
+  "temperature": 1.0,
+  "gguf_path": "/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/muse-glimmer-30b/Muse-Glimmer-30B-UD-Q4_K_XL.gguf",
+  "run_ts": 1786801225,
+  "perf": {
+    "prefill_tps": 705.62,
+    "decode_tps": 51.51,
+    "ttft_ms": 196.9,
+    "mean_prompt_tokens": 189.33,
+    "mean_completion_tokens": 9024.67,
+    "total_gen_tokens": 270740,
+    "model_load_s": 8.1,
+    "gguf_mb": 15878.2,
+    "peak_vram_mb": 16744.0
+  }
+}

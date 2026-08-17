@@ -32,7 +32,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/glm-4-9b-0414/THUDM_GLM-4-9B-0414-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/edge-intelligence-benchmark/models/glm-4-9b-0414/THUDM_GLM-4-9B-0414-Q4_K_M.gguf",
   "run_ts": 1785262710,
   "perf": {
     "prefill_tps": 3421.34,

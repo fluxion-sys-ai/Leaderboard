@@ -18,7 +18,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/granite-4.1-8b/granite-4.1-8b-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/edge-intelligence-benchmark/models/granite-4.1-8b/granite-4.1-8b-Q4_K_M.gguf",
   "run_ts": 1785387902,
   "perf": {
     "prefill_tps": 1816.03,

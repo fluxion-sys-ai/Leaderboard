@@ -31,7 +31,7 @@
   "runner": "llamacpp",
   "n_ctx": 20480,
   "temperature": 0.0,
-  "gguf_path": "/home/ubuntu/edge-intelligence-benchmark/models/devstral-small-2-24b/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf",
+  "gguf_path": "/home/aliixh/edge-intelligence-benchmark/models/devstral-small-2-24b/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf",
   "run_ts": 1786324354,
   "perf": {
     "prefill_tps": 1215.46,

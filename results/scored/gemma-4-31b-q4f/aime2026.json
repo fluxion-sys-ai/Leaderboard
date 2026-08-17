@@ -1,0 +1,32 @@
+{
+  "metric": "accuracy",
+  "score": 0.9,
+  "n": 30,
+  "passed": 27,
+  "ci95": [
+    0.7438,
+    0.9654
+  ],
+  "failure_breakdown": {
+    "wrong_answer": 3
+  },
+  "model": "gemma-4-31b-q4f",
+  "benchmark": "aime2026",
+  "quant": "Q4_K_M",
+  "runner": "llamacpp",
+  "n_ctx": 98304,
+  "temperature": 1.0,
+  "gguf_path": "/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/models/gemma-4-31b/gemma-4-31B-it-Q4_K_M.gguf",
+  "run_ts": 1786672560,
+  "perf": {
+    "prefill_tps": 540.15,
+    "decode_tps": 38.84,
+    "ttft_ms": 279.45,
+    "mean_prompt_tokens": 155.63,
+    "mean_completion_tokens": 7655.03,
+    "total_gen_tokens": 229651,
+    "model_load_s": 8.0,
+    "gguf_mb": 18323.7,
+    "peak_vram_mb": 29512.0
+  }
+}

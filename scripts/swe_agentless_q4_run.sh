@@ -17,7 +17,7 @@ case "$KEY" in
   qwen27) M=qwen3.6-27b-q4f;      TKW='{"enable_thinking":true}';   BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
   qwen35) M=qwen3.5-35b-a3b-q4f;  TKW='{"enable_thinking":true}';   BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
   qwen38) M=qwen3.8-27b-q4f;      TKW='{"enable_thinking":true}';   BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
-  muse)   M=muse-glimmer-30b-q4f; TKW='{"reasoning_effort":"high"}'; BIN=/home/aliixh/llama.cpp/llama.cpp-b10433/build/bin ;;
+  muse)   M=muse-glimmer-30b-q4f; TKW='{"reasoning_effort":"xhigh"}'; BIN=/home/aliixh/llama.cpp/llama.cpp-b10433/build/bin ;;
   *) echo "unknown model key: $KEY"; exit 2 ;;
 esac
 

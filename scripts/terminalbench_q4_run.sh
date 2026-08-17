@@ -32,7 +32,9 @@ echo "[tb-q4] $KEY ($M) gguf=$GGUF bin=$(basename $BIN) sampling=$SAMP thinking=
 SLOG=/tmp/tb_q4_${KEY}_server.log
 PIDF=/tmp/tb_q4_${KEY}_server.pid
 start_server(){
-  "$BIN/llama-server" -m "$GGUF" -c 65536 --parallel 2 -ngl 999 \
+  # --parallel 1 (full 98304 ctx to ONE request — terminal prompts hit ~33k tokens and a
+  # split 2-slot 32768 ctx overflowed) + n_ctx 98304 (proven on the Q4 grid to fit the A100).
+  "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 1 -ngl 999 \
     --chat-template-kwargs "$TKW" $SAMP \
     --host 127.0.0.1 --port $PORT --no-webui >>"$SLOG" 2>&1 &
   echo $! > "$PIDF"
@@ -69,5 +71,5 @@ tb run \
   "${NARG[@]}" \
   --output-path "$OUT" \
   --run-id "$KEY" \
-  --n-concurrent 2 \
+  --n-concurrent 1 \
   --cleanup

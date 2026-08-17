@@ -483,9 +483,17 @@ def _frontier_tab() -> str:
         return (None, False)
 
     def _terminal(key):
-        # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy. Full-precision only.
+        # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy. Full-precision.
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
+            return d.get("accuracy")
+        except Exception:
+            return None
+
+    def _terminal_q4(key):
+        # TerminalBench Q4-local (terminus-2 vs local llama-server) accuracy.
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
             return d.get("accuracy")
         except Exception:
             return None
@@ -511,7 +519,7 @@ def _frontier_tab() -> str:
     # ── Table 1: full-precision (OpenRouter). τ³ is full-precision only, so it lives here. ──
     full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
                  '<th>PinchBench</th><th>τ³-bank</th><th>Terminal</th>'
-                 '<th>SWE-Lite<br><span class="mut">soon</span></th></tr>')
+                 '<th>SWE-Lite</th></tr>')
     full_body = []
     for disp, full, q4, tkey, note in FR:
         cf = allc.get(full, {})
@@ -521,11 +529,12 @@ def _frontier_tab() -> str:
                          + cell(score_of(cf, "pinchbench"))   # real PinchBench (local-GPU agent); full-precision N/A until API-agent wired
                          + tau3_cell(_tau3(tkey))
                          + cell(_terminal(tkey))
-                         + cell(None)                  # SWE-bench Lite: not wired yet
+                         + cell(score_of(cf, "swebench_lite"))   # SWE-bench Lite (Agentless, strat-50)
                          + '</tr>')
 
     # ── Table 2: Q4-local (A100). IFBench + AIME + PinchBench (no Q4 τ³). ──
-    q4_head = '<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th><th>PinchBench</th></tr>'
+    q4_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th><th>PinchBench</th>'
+               '<th>Terminal</th><th>SWE-Lite</th></tr>')
     q4_body = []
     for disp, full, q4, tkey, note in FR:
         ft = f' <span class="flag" title="{html.escape(note)}">⚑</span>' if note else ''
@@ -536,6 +545,8 @@ def _frontier_tab() -> str:
                        # real PinchBench at RECOMMENDED params — the greedy board's numbers were
                        # temp0+no_think (NOT rec), so they're pulled; this reads the rec-params redo.
                        + cell(score_of(cq, "pinchbench"))
+                       + cell(_terminal_q4(tkey))
+                       + cell(score_of(cq, "swebench_lite"))
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

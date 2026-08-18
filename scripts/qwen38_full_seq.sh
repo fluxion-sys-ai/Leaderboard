@@ -63,22 +63,22 @@ PY
   fi
 fi
 
-# --- 2/3 Terminal (thinking ON via TB_MODEL_PARAMS chat_template_kwargs) ---
-if [ ! -f "results/terminalbench_q4/../terminalbench/qwen38full/qwen38full/results.json" ]; then
+# --- 2/3 SWE-Lite (thinking ON via Agentless extra_body) ---
+if [ ! -f "results/scored/$FN/swebench_lite.json" ]; then
+  log "2/3 SWE full-fp8 (strat50)"
+  SWE_API_BASE="http://127.0.0.1:$PORT/v1" SWE_API_KEY="sk-local" SWE_PRECISION="full" \
+    bash scripts/swe_agentless_run.sh qwen38 --subset strat50 >>"$REPO/logs_swe_full_qwen38.log" 2>&1 || log "  swe errored"
+fi
+
+# --- 3/3 Terminal (LAST — the slow one; thinking ON via TB_MODEL_PARAMS) ---
+if [ ! -f "results/terminalbench/qwen38full/qwen38full/results.json" ]; then
   export PATH="$HOME/.local/bin:$PATH"
   export TB_MODEL_PARAMS='{"top_p":0.95,"extra_body":{"top_k":20,"min_p":0,"presence_penalty":0.0,"chat_template_kwargs":{"enable_thinking":true}}}'
   OUT="$REPO/results/terminalbench/qwen38full"; mkdir -p "$OUT"
-  log "2/3 Terminal full-fp8"
+  log "3/3 Terminal full-fp8"
   tb run --dataset terminal-bench-core==0.1.1 --agent terminus-2 --agent-kwarg temperature=1.0 \
     --model openai/edge-qwen38-full --output-path "$OUT" --run-id qwen38full \
     --n-concurrent 2 --global-agent-timeout-sec 2400 --cleanup >>"$REPO/logs_tb_full_qwen38.log" 2>&1 || log "  terminal errored"
-fi
-
-# --- 3/3 SWE-Lite (thinking ON via Agentless extra_body) ---
-if [ ! -f "results/scored/$FN/swebench_lite.json" ]; then
-  log "3/3 SWE full-fp8 (strat50)"
-  SWE_API_BASE="http://127.0.0.1:$PORT/v1" SWE_API_KEY="sk-local" SWE_PRECISION="full" \
-    bash scripts/swe_agentless_run.sh qwen38 --subset strat50 >>"$REPO/logs_swe_full_qwen38.log" 2>&1 || log "  swe errored"
 fi
 
 free_gpu

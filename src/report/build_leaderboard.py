@@ -454,11 +454,13 @@ def _frontier_tab() -> str:
     on the recommended-limit benches. Renders whatever is scored so far; '·' = still running."""
     allc = load_cells()
     FR = [  # (display, full-precision dir, Q4 dir, tau3 key, footnote)
-        ("Muse Glimmer 30B", "muse-glimmer-30b-full", "muse-glimmer-30b", "muse",
-         "Q4 blocked — llama.cpp doesn't yet implement the muse-glimmer arch"),
+        ("Muse Glimmer 30B", "muse-glimmer-30b-full", "muse-glimmer-30b-q4f", "muse",
+         "Q4 runs on a newer llama.cpp build (b10433) that implements the muse-glimmer arch"),
         ("Qwen3.6-27B", "qwen3.6-27b-full", "qwen3.6-27b-q4f", "qwen27", ""),
         ("Qwen3.6-35B-A3B", "qwen3.6-35b-a3b-full", "qwen3.5-35b-a3b-q4f", "qwen35",
          "Q4 row uses the older 3.5-35B GGUF (no 3.6-35B GGUF yet)"),
+        ("Qwen3.8-27B", "qwen3.8-27b-full", "qwen3.8-27b-q4f", "qwen38",
+         "NEW (Aug 2026); full-precision = self-hosted fp8 via vLLM (not on OpenRouter)"),
         ("Gemma-4-31B", "gemma-4-31b-full", "gemma-4-31b-q4f", "gemma", ""),
     ]
 

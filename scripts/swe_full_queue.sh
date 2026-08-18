@@ -10,6 +10,7 @@ log(){ echo "[$(date +'%F %T')] $*"; }
 declare -A FULLNAME=( [muse]=muse-glimmer-30b [qwen27]=qwen3.6-27b [qwen35]=qwen3.6-35b-a3b [gemma]=gemma-4-31b )
 
 if [ ! -f .SWE_PIPELINE_OK ]; then log "SWE pipeline not verified yet (.SWE_PIPELINE_OK absent) — exiting; will be relaunched once smoke passes."; exit 0; fi
+until [ -f .QWEN38_DONE ]; do sleep 120; done
 log "swe_full_queue up — stratified-50 on muse/qwen27/qwen35/gemma (OpenRouter)."
 for m in muse qwen27 qwen35 gemma; do
   fn=${FULLNAME[$m]}

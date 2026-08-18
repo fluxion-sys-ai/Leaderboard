@@ -58,6 +58,8 @@ export OPENAI_API_KEY="sk-local"
 export TB_MODEL_PARAMS='{"top_p":0.95}'
 
 OUT="$REPO/results/terminalbench_q4/$KEY"
+# stale-dir guard: tb refuses to run if the run dir exists without a lock file
+[ -d "$OUT/$KEY" ] && [ ! -f "$OUT/$KEY/tb.lock" ] && rm -rf "$OUT/$KEY"
 mkdir -p "$OUT"
 NARG=(); [ -n "$NTASKS" ] && NARG=(--n-tasks "$NTASKS")
 

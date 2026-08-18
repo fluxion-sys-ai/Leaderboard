@@ -1,16 +1,20 @@
 #!/bin/bash
-# WEEKEND unattended automation. Loops forever:
-#   1. imports any newly-finished full-precision PinchBench → results/scored/<model>-full/pinchbench.json
-#   2. rebuilds the board + pushes to GitHub (so the live leaderboard stays current)
-#   3. CREDIT GUARD: if OpenRouter credits drop below $20, kills the PAID (OpenRouter) runs so
-#      they don't hard-fail/spin — the GPU/Q4 work (free) keeps going. Writes a STOP flag.
-# Detached, low-cost (a rebuild + a git push every 20 min). Safe to run alongside the supervisor.
+# Board auto-refresh loop — HANG-PROOF. Every 10 min: import pinch -> rebuild -> commit+push.
+# Root-cause fixes (why the board stalled 15h before):
+#   - a git push with NO timeout can block forever -> `timeout` on every git op.
+#   - a killed git op leaves a stale .git/index.lock that hangs the next op -> cleaned each pass.
+#   - logs went to /tmp (reaped) -> logs to $REPO/logs_board.log, + a .board_heartbeat file so a
+#     stall is detectable (heartbeat stops updating).
+#   - push errors were sent to /dev/null (invisible) -> captured to the log.
+# Also: CREDIT GUARD (kills paid OpenRouter runs < $20). Detached; watchdog-respawnable.
 set -u
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO" || exit 1
 KEYFILE="$REPO/.openrouter_key"
 STOP_FLAG="$REPO/.PAID_STOPPED"
-log(){ echo "[$(date +'%F %T')] $*"; }
+LOG="$REPO/logs_board.log"
+log(){ echo "[$(date +'%F %T')] $*" >> "$LOG"; }
+git_c(){ git -c user.name="aliixh" -c user.email="aliixhuang@gmail.com" "$@"; }
 
 import_pinch(){
 python3 - <<'PY' 2>/dev/null
@@ -29,28 +33,29 @@ for f in glob.glob('/home/aliixh/pinchbench-skill/results/*.json'):
         json.dump({'score':round(sum(c['score'] for c in cs.values())/tm,4),'metric':'pinchbench_pct','benchmark':'pinchbench'},open(f'results/scored/{mdl}/pinchbench.json','w'))
 PY
 }
-
 credits(){
-  curl -s -H "Authorization: Bearer $(cat "$KEYFILE")" https://openrouter.ai/api/v1/credits 2>/dev/null \
+  timeout 30 curl -s -H "Authorization: Bearer $(cat "$KEYFILE")" https://openrouter.ai/api/v1/credits 2>/dev/null \
    | python3 -c 'import json,sys;d=json.load(sys.stdin)["data"];print(round(d["total_credits"]-d["total_usage"],2))' 2>/dev/null
 }
 
-log "weekend_auto up (pid $$)"
+log "weekend_auto up (pid $$) — hang-proof, 10min loop"
 while true; do
+  date +%s > "$REPO/.board_heartbeat"                      # liveness marker
+  find .git -name 'index.lock' -mmin +2 -delete 2>/dev/null  # clear stale git lock
   import_pinch
-  python3 -m src.report.build_leaderboard >/dev/null 2>&1 && cp leaderboard.html docs/index.html
+  timeout 180 python3 -m src.report.build_leaderboard >/dev/null 2>&1 && cp leaderboard.html docs/index.html 2>/dev/null
   if ! git diff --quiet docs/index.html 2>/dev/null; then
-    git add docs/index.html leaderboard.html results/scored/*/pinchbench.json 2>/dev/null
-    git -c user.name="aliixh" -c user.email="aliixhuang@gmail.com" commit -q -m "leaderboard: auto-refresh (weekend)" 2>/dev/null
-    git push origin main -q 2>/dev/null && log "board pushed"
+    timeout 30 git add docs/index.html leaderboard.html results/scored/*/pinchbench.json results/scored/*/swebench_lite.json 2>/dev/null
+    timeout 30 git_c commit -q -m "leaderboard: auto-refresh" 2>/dev/null
+    if timeout 90 git push origin main -q 2>>"$LOG"; then log "board pushed"; else log "PUSH FAILED/timed-out (will retry next pass)"; fi
   fi
   C=$(credits)
   if [ -n "$C" ] && python3 -c "import sys;sys.exit(0 if float('$C')<20 else 1)" 2>/dev/null; then
     if [ ! -f "$STOP_FLAG" ]; then
       log "CREDIT GUARD: \$$C < \$20 — killing PAID (OpenRouter) runs; GPU/Q4 continues."
       touch "$STOP_FLAG"
-      for pid in $(ps -eo pid,args | grep -E "pinchbench_full_run|benchmark.py|run_benchmark.py --models-config configs/models_full" | grep -v grep | awk '{print $1}'); do kill -9 $pid 2>/dev/null; done
+      for pid in $(ps -eo pid,args | grep -E "pinchbench_full_run|benchmark.py --model (openrouter|meta|qwen|google)|swe_agentless_run|run_benchmark.py --models-config configs/models_full" | grep -v grep | awk '{print $1}'); do kill -9 $pid 2>/dev/null; done
     fi
   fi
-  sleep 1200   # 20 min
+  sleep 600   # 10 min
 done

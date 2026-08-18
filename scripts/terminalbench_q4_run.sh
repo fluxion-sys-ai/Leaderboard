@@ -40,14 +40,21 @@ start_server(){
   echo $! > "$PIDF"
 }
 start_server
-# keepalive: restart the server if it dies during the run
-( while true; do
+# keepalive: restart the server only after 3 consecutive health failures (~45s) — avoids
+# false-restarts when the server is merely busy generating (a transient slow /health).
+( fails=0; while true; do
     sleep 15
-    curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 || {
-      echo "[$(date +%T)] [keepalive] server down -> restarting" >> "$SLOG"
-      kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null
-      start_server
-    }
+    if timeout 8 curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; then
+      fails=0
+    else
+      fails=$((fails+1))
+      if [ "$fails" -ge 3 ]; then
+        echo "[$(date +%T)] [keepalive] server down (3x) -> restarting" >> "$SLOG"
+        kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null
+        start_server
+        fails=0
+      fi
+    fi
   done ) &
 MON=$!
 trap 'kill $MON 2>/dev/null; kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; rm -f "$PIDF"' EXIT

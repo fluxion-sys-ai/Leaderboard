@@ -104,8 +104,11 @@ class OpenRouterRunner(ModelRunner):
             body.update(self.cfg["extra_body"])            # per-model API knobs, no code change
 
         payload = json.dumps(body).encode()
+        # base_url override: point at a local OpenAI-compatible server (e.g. vLLM for the
+        # self-hosted Qwen3.8 fp8) instead of OpenRouter. Key is unused locally but harmless.
+        _endpoint = (self.cfg["base_url"].rstrip("/") + "/chat/completions") if self.cfg.get("base_url") else ENDPOINT
         req = urllib.request.Request(
-            ENDPOINT, data=payload,
+            _endpoint, data=payload,
             headers={"Authorization": "Bearer " + self._key, "Content-Type": "application/json"},
         )
         # Resilient like the llamacpp runner: a transient API error must not kill

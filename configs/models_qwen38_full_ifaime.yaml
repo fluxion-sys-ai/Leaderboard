@@ -1,0 +1,18 @@
+# Qwen3.8-27B FULL-precision (fp8) IFBench + AIME via the local vLLM server (:8081), using the
+# openrouter runner's base_url override. Qwen thinking-general rec params. LOWEST priority — runs
+# dead-last after all agentic work, per user's request.
+defaults:
+  runner: openrouter
+  temperature: 1.0
+  max_tokens: 1024
+  max_tokens_mult: 2
+models:
+  - name: qwen3.8-27b-full
+    runner: openrouter
+    model_slug: edge-qwen38-full
+    base_url: http://127.0.0.1:8081/v1
+    top_p: 0.95
+    top_k: 20
+    min_p: 0
+    presence_penalty: 0.0
+    extra_body: { chat_template_kwargs: { enable_thinking: true } }

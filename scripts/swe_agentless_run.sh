@@ -215,32 +215,36 @@ $PY -m swebench.harness.run_evaluation \
     --max_workers "$EVAL_WORKERS" \
     --report_dir "$REPORT_DIR" || echo "WARN: harness returned non-zero (some instances may be unresolved)"
 
-# report file is <model_name_or_path>.<run_id>.json (model_name_or_path == 'agentless').
-# swebench 3.0.15 writes it to the CWD (ignores --report_dir), so look there first.
-REPORT="$REPO/agentless.$RUN_ID.json"
-[ -f "$REPORT" ] || REPORT="$REPORT_DIR/agentless.$RUN_ID.json"
-[ -f "$REPORT" ] || REPORT="agentless.$RUN_ID.json"
+# report file is <model_name_or_path>.<run_id>.json. swebench 3.0.15 writes it to its CWD
+# (== $AGENTLESS here, since we cd'd there). Search robustly across likely dirs, newest first.
+REPORT=$(ls -t "$AGENTLESS/agentless.$RUN_ID.json" "$REPO/agentless.$RUN_ID.json" \
+              "$REPORT_DIR/agentless.$RUN_ID.json" "$AGENTLESS"/agentless.*"$RUN_ID"*.json 2>/dev/null | head -1)
+[ -z "$REPORT" ] && REPORT="__MISSING__"
+echo "[swe] report resolved to: $REPORT"
 
-# --- 6. normalize -> scored json ---
+# --- 6. normalize -> scored json (or ERROR marker if the eval produced no report) ---
 SCORED="$SCORED_DIR/swebench_lite.json"
 $PY - "$REPORT" "$SCORED" "$N" <<'PYEOF'
 import json, sys, os
 report_path, scored_path, n = sys.argv[1], sys.argv[2], int(sys.argv[3])
-resolved = 0
-total = n   # denominator = instances we actually ran, NOT report's full-dataset count
-detail = {}
-if os.path.exists(report_path):
-    with open(report_path) as f:
-        rep = json.load(f)
-    resolved = rep.get("resolved_instances", len(rep.get("resolved_ids", [])))
-    detail = {
-        "resolved_ids": rep.get("resolved_ids", []),
-        "unresolved_ids": rep.get("unresolved_ids", []),
-        "error_ids": rep.get("error_ids", []),
-        "completed_ids": rep.get("completed_ids", []),
-    }
-else:
-    print("WARN: no report file at", report_path)
+if not os.path.exists(report_path):
+    # DO NOT write a false 0 — the Docker eval crashed/produced no report. Mark errored so the
+    # board shows pending (·) and the run can be retried, instead of polluting with a fake 0.
+    err = scored_path.replace("swebench_lite.json", "swebench_lite.ERROR")
+    os.makedirs(os.path.dirname(scored_path), exist_ok=True)
+    open(err, "w").write(f"eval produced no report (path {report_path}); not scoring as 0\n")
+    print("ERROR: no report -> wrote", err, "and did NOT write a false-0 scored json")
+    sys.exit(3)
+with open(report_path) as f:
+    rep = json.load(f)
+resolved = rep.get("resolved_instances", len(rep.get("resolved_ids", [])))
+total = n
+detail = {
+    "resolved_ids": rep.get("resolved_ids", []),
+    "unresolved_ids": rep.get("unresolved_ids", []),
+    "error_ids": rep.get("error_ids", []),
+    "completed_ids": rep.get("completed_ids", []),
+}
 score = (resolved / total) if total else 0.0
 out = {
     "score": score,

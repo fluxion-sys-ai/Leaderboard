@@ -17,7 +17,8 @@ until ! pgrep -f 'run_benchmark.py|models_q4_frontier' >/dev/null; do sleep 60; 
 
 # ---- Phase 1: TerminalBench Q4 (all 5) ----
 for m in "${MODELS[@]}"; do
-  if [ -f "results/terminalbench_q4/$m/$m/results.json" ]; then log "TB Q4 $m already done — skip"; continue; fi
+  TBF="results/terminalbench_q4/$m/$m/results.json"
+  if [ -f "$TBF" ] && [ "$(python3 -c "import json;d=json.load(open('"'"'$TBF'"'"'));print(d['"'"'n_resolved'"'"']+d['"'"'n_unresolved'"'"'])" 2>/dev/null || echo 0)" -ge 80 ]; then log "TB Q4 $m already done — skip"; continue; fi
   free_gpu; sleep 3
   log "TB Q4 $m FULL starting"
   bash scripts/terminalbench_q4_run.sh "$m" >>"/tmp/tb_q4_${m}.log" 2>&1 || log "TB Q4 $m errored"

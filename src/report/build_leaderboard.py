@@ -486,6 +486,7 @@ def _frontier_tab() -> str:
         # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy. Full-precision.
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < 80: return None  # hide partials
             return d.get("accuracy")
         except Exception:
             return None
@@ -494,6 +495,7 @@ def _frontier_tab() -> str:
         # TerminalBench Q4-local (terminus-2 vs local llama-server) accuracy.
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < 80: return None  # hide partials until complete
             return d.get("accuracy")
         except Exception:
             return None

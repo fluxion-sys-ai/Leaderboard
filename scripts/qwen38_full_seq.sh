@@ -31,24 +31,36 @@ log "vLLM up (fp8, :$PORT). Qwen3.8 full-precision served as edge-qwen38-full."
 export OPENAI_API_BASE="http://127.0.0.1:$PORT/v1" OPENAI_API_KEY="sk-local"
 export OPENROUTER_API_KEY="$(cat "$REPO/.openrouter_key")"   # deepseek judge for pinch
 
-# --- 1/3 PinchBench (no_think via chat_template_kwargs enable_thinking=false in the request) ---
+# --- 1/3 PinchBench (no_think + rec sampling FORCED via the vllmfull provider params) ---
 if [ ! -f "results/scored/$FN/pinchbench.json" ]; then
   cd /home/aliixh/pinchbench-skill
+  # SMOKE 3 tasks: if all-zero, vLLM no_think isn't taking effect (thinking-ON zeroes pinch) -> flag+skip
+  S3=$(head -3 "$REPO/configs/pinchbench_tasks.txt" | paste -sd,)
+  log "1/3 Pinch full-fp8 SMOKE (vllmfull/qwen38, no_think forced)"
+  uv run scripts/benchmark.py --model vllmfull/qwen38 --thinking off \
+    --judge openrouter/deepseek/deepseek-chat-v3.1 --suite "$S3" >/tmp/pb_full_qwen38_smoke.log 2>&1 || true
+  cd "$REPO"
+  SNZ=$(grep -E 'Task task.*: [0-9.]+/1.0' /tmp/pb_full_qwen38_smoke.log 2>/dev/null | grep -cvE ': 0.0/' || echo 0)
+  if [ "${SNZ:-0}" -lt 1 ]; then
+    log "  Pinch full-fp8 SMOKE all-zero -> vLLM no_think likely not applied. SKIPPING full (needs a look)."
+  else
+  cd /home/aliixh/pinchbench-skill
   SUITE=$(paste -sd, "$REPO/configs/pinchbench_tasks.txt")
-  log "1/3 Pinch full-fp8 (edgelocal/edge-qwen38-full, --thinking off)"
-  uv run scripts/benchmark.py --model edgelocal/edge-qwen38-full --thinking off \
+  log "  Pinch full-fp8 FULL (vllmfull/qwen38)"
+  uv run scripts/benchmark.py --model vllmfull/qwen38 --thinking off \
     --judge openrouter/deepseek/deepseek-chat-v3.1 --suite "$SUITE" >>"$REPO/logs_pb_full_qwen38.log" 2>&1 || log "  pinch errored"
   cd "$REPO"
   python3 - <<'PY' 2>/dev/null || true
 import json,glob,os
 for f in sorted(glob.glob('/home/aliixh/pinchbench-skill/results/*.json'),key=os.path.getmtime,reverse=True):
     d=json.load(open(f))
-    if 'edge-qwen38-full' in (d.get('model') or ''):
+    if 'vllmfull-qwen38' in (d.get('model') or '') or 'qwen38' in (d.get('model') or ''):
         cs=d.get('category_scores') or {};tm=sum(c['max_score'] for c in cs.values())
         if tm>=115:
             os.makedirs('results/scored/qwen3.8-27b-full',exist_ok=True)
             json.dump({'score':round(sum(c['score'] for c in cs.values())/tm,4),'metric':'pinchbench_pct','benchmark':'pinchbench'},open('results/scored/qwen3.8-27b-full/pinchbench.json','w'));print('imported');break
 PY
+  fi
 fi
 
 # --- 2/3 Terminal (thinking ON via TB_MODEL_PARAMS chat_template_kwargs) ---

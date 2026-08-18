@@ -55,7 +55,7 @@ done
 # per-model reasoning/thinking + top_p/top_k/precision live in extra_body (FRONTIER_SPEC §6).
 case "$KEY" in
   muse)   MODEL="meta/muse-glimmer-30b"
-          EXTRA='{"top_p":0.95,"top_k":64,"reasoning":{"effort":"xhigh"},"provider":{"quantizations":["bf16"]}}'
+          EXTRA='{"top_p":0.95,"top_k":64,"reasoning":{"effort":"xhigh"},"provider":{"order":["Parasail"],"quantizations":["bf16"],"allow_fallbacks":true}}'
           FULLNAME="muse-glimmer-30b" ;;
   qwen27) MODEL="qwen/qwen3.6-27b"
           EXTRA='{"top_p":0.95,"top_k":20,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
@@ -143,8 +143,10 @@ for id in "${IDS[@]}"; do
   $PY agentless/fl/localize.py --file_level \
       --output_folder "$LOC/file_level" \
       --model "$MODEL" --backend openai \
-      --target_id "$id" --num_threads 1 --skip_existing || exit 1
+      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance"
 done
+
+[ -f "$LOC/file_level/loc_outputs.jsonl" ] || : > "$LOC/file_level/loc_outputs.jsonl"
 
 # --- 2. related-element localization ---
 for id in "${IDS[@]}"; do
@@ -153,8 +155,10 @@ for id in "${IDS[@]}"; do
       --model "$MODEL" --backend openai \
       --top_n 3 --compress \
       --start_file "$LOC/file_level/loc_outputs.jsonl" \
-      --target_id "$id" --num_threads 1 --skip_existing || exit 1
+      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance"
 done
+
+[ -f "$LOC/related/loc_outputs.jsonl" ] || : > "$LOC/related/loc_outputs.jsonl"
 
 # --- 3. line-level (edit location) localization ---
 for id in "${IDS[@]}"; do
@@ -163,7 +167,7 @@ for id in "${IDS[@]}"; do
       --model "$MODEL" --backend openai \
       --top_n 3 --compress --temperature 0.0 --num_samples 1 \
       --start_file "$LOC/related/loc_outputs.jsonl" \
-      --target_id "$id" --num_threads 1 --skip_existing || exit 1
+      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance"
 done
 
 # --- 3a-fix: Agentless merge() expects found_edit_locs to be a LIST of per-sample dicts

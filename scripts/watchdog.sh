@@ -36,6 +36,8 @@ done_agentic(){
 }
 done_openrouter(){ sc qwen3.8-27b-full pinchbench && sc qwen3.8-27b-full swebench_lite \
                    && [ -f results/terminalbench/qwen38/qwen38/results.json ]; }   # NO ifbench/aime per user
+term_done_full(){ local p="results/terminalbench/$1/$1/results.json"; [ -f "$p" ] && [ "$(python3 -c "import json;d=json.load(open('$p'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge 80 ]; }
+done_full_terminal(){ for k in muse qwen27 qwen35 gemma; do term_done_full "$k" || return 1; done; }
 
 log "watchdog up (pid $$) — 5-min loop, GPU-mutex respawn."
 while true; do
@@ -45,6 +47,7 @@ while true; do
   alive weekend_auto || spawn weekend_auto
   if ! alive swe_full_queue        && ! done_swe_full;  then spawn swe_full_queue;        fi
   if ! alive qwen38_full_openrouter && ! done_openrouter; then spawn qwen38_full_openrouter; fi
+  if ! alive full_terminal_queue    && ! done_full_terminal; then spawn full_terminal_queue;    fi
 
   # 2) GPU: only the Q4 queue remains (qwen38-full is on OpenRouter now). Respawn ONLY when the GPU
   # is idle, not paused, no GPU worker alive, and Q4 isn't already complete. The obsolete vLLM chain

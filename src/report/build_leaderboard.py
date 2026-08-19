@@ -564,10 +564,13 @@ def _frontier_tab() -> str:
 
 
 def build() -> str:
-    # Full-precision frontier models (`*-full`) belong ONLY to the Frontier tab (which reads raw
-    # cells directly), not the main Benchmarks/Dimensions/Averages tabs.
+    # Frontier reproductions (`*-full` = OpenRouter full/fp8, `*-q4f` = local Q4) run at
+    # VENDOR-DEFAULT params and belong ONLY to the Frontier tab (which reads raw cells
+    # directly). The main Benchmarks/Dimensions/Averages tabs are the EQUAL-PARAMS greedy
+    # board — keep the two apart so a model isn't double-listed under two param regimes.
     cells = {m: r for m, r in load_cells().items()
-             if m not in EXCLUDED and m not in HIDDEN and not m.endswith("-full")}
+             if m not in EXCLUDED and m not in HIDDEN
+             and not m.endswith("-full") and not m.endswith("-q4f")}
     for m in STALE_PINCHBENCH:
         if m in cells:
             cells[m].pop("pinchbench", None)

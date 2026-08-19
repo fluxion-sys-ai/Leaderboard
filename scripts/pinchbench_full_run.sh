@@ -16,6 +16,11 @@ case "$KEY" in
   qwen38) MODEL="openrouter/qwen/qwen3.8-27b" ;;
   *) echo "unknown key: $KEY"; exit 2 ;;
 esac
+# qwen3.8-FIRST phase: while this flag exists, ONLY qwen38 pinch runs; the other 4 are deferred so
+# qwen3.8 can finish its full pipeline (pinch->terminal->swe) before them. other4_pinch_queue clears it.
+if [ "$KEY" != "qwen38" ] && [ -f "$REPO/.QWEN38_ONLY_PHASE" ]; then
+  echo "[pb-full] .QWEN38_ONLY_PHASE set — deferring $KEY (qwen3.8 pipeline runs first)"; exit 0
+fi
 export OPENROUTER_API_KEY="$(cat "$REPO/.openrouter_key")"
 # Inject per-model VENDOR-REC sampling (top_p/top_k/min_p/presence) + precision pin: lib_agent.py
 # reads this config, matches --model's slug, and packages the sampling into the agent's provider

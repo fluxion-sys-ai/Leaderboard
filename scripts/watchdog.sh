@@ -27,7 +27,15 @@ term_done(){ local p="results/terminalbench_q4/$1/$1/results.json"; [ -f "$p" ] 
 done_swe_full(){ sc muse-glimmer-30b-full swebench_lite && sc qwen3.6-27b-full swebench_lite && sc qwen3.6-35b-a3b-full swebench_lite && sc gemma-4-31b-full swebench_lite; }
 done_q4seq(){ sc qwen3.8-27b-q4f pinchbench && sc qwen3.8-27b-q4f swebench_lite && term_done qwen38; }
 done_chain(){ [ -f .QWEN38_DONE ]; }
-done_agentic(){ grep -q 'q4_agentic_queue COMPLETE' logs_q4_agentic_queue.log 2>/dev/null; }
+done_agentic(){
+  # Done only when EVERY Q4 cell is actually scored (not just when the queue logged COMPLETE once) —
+  # so a cell that failed pre-fix gets the queue respawned to redo it (skip-guards skip the done ones).
+  for m in gemma-4-31b-q4f qwen3.6-27b-q4f qwen3.5-35b-a3b-q4f qwen3.8-27b-q4f muse-glimmer-30b-q4f; do
+    sc "$m" pinchbench && sc "$m" swebench_lite || return 1
+  done
+  for k in gemma qwen27 qwen35 qwen38 muse; do term_done "$k" || return 1; done
+  return 0
+}
 done_ifaime(){ sc qwen3.8-27b-full ifbench && sc qwen3.8-27b-full aime2026; }
 
 log "watchdog up (pid $$) — 5-min loop, GPU-mutex respawn."

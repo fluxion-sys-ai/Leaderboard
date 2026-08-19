@@ -8,7 +8,11 @@ VLLM=/home/aliixh/vllm-env/bin/vllm
 FP8=$REPO/models/qwen3.8-27b-fp8
 PORT=8081
 log(){ echo "[$(date +'%F %T')] $*"; }
-free_gpu(){ for p in $(pgrep -f 'vllm|llama-server'); do kill -9 "$p" 2>/dev/null; done; }
+free_gpu(){
+  for p in $(pgrep -f 'vllm|llama-server'); do kill -9 "$p" 2>/dev/null; done
+  for p in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do kill -9 "$p" 2>/dev/null; done
+  sleep 2
+}
 
 log "qwen38_full_ifaime: waiting for ALL other work to finish (this is the very end)..."
 # Deadlock-proof gate: proceed once the qwen38 priority run is DONE (.QWEN38_DONE) OR provably dead
@@ -22,8 +26,10 @@ if [ -f results/scored/qwen3.8-27b-full/ifbench.json ] && [ -f results/scored/qw
 
 log "all clear. Serving Qwen3.8 fp8 via vLLM for IFBench + AIME."
 free_gpu; sleep 3
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
 "$VLLM" serve "$FP8" --served-model-name edge-qwen38-full --host 127.0.0.1 --port $PORT \
-  --quantization fp8 --max-model-len 98304 --reasoning-parser qwen3 >/tmp/vllm_ifaime.log 2>&1 &
+  --quantization fp8 --max-model-len 65536 --gpu-memory-utilization 0.90 --enforce-eager \
+  --reasoning-parser qwen3 >/tmp/vllm_ifaime.log 2>&1 &
 VP=$!; trap "kill $VP 2>/dev/null; free_gpu" EXIT
 up=0; for i in $(seq 1 240); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/v1/models" >/dev/null 2>&1 && { up=1; break; }; sleep 3; done
 if [ "$up" -ne 1 ]; then log "ABORT: vLLM (fp8) failed to come up in 12min — see /tmp/vllm_ifaime.log (not running IF/AIME against a dead server)"; exit 1; fi

@@ -12,7 +12,14 @@ FP8=$REPO/models/qwen3.8-27b-fp8
 PORT=8081
 FN=qwen3.8-27b-full
 log(){ echo "[$(date +'%F %T')] $*"; }
-free_gpu(){ for p in $(pgrep -f 'vllm|llama-server'); do kill -9 "$p" 2>/dev/null; done; }
+free_gpu(){
+  for p in $(pgrep -f 'vllm|llama-server'); do kill -9 "$p" 2>/dev/null; done
+  # ALSO kill anything still HOLDING GPU memory — crashed vLLM EngineCore workers leak ~35GB that
+  # pgrep misses, and that leftover makes the next serve OOM ("Free memory less than desired"). This
+  # is safe here: qwen38-full owns the GPU at this point (q4_agentic is gated on .QWEN38_DONE).
+  for p in $(nvidia-smi --query-compute-apps=pid --format=csv,noheader 2>/dev/null); do kill -9 "$p" 2>/dev/null; done
+  sleep 2
+}
 # CRITICAL: .QWEN38_DONE is the gate that unblocks the other-4 Q4 queue + the dead-last IF/AIME
 # run. It MUST be set on ANY exit (vLLM-serve failure, crash, error) — otherwise a single failure
 # here permanently deadlocks every downstream queue (they wait on it with no timeout). Setting it

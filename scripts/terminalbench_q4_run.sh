@@ -93,5 +93,5 @@ tb run \
   --output-path "$OUT" \
   --run-id "$KEY" \
   --n-concurrent 2 \
-  --global-agent-timeout-sec 2400 \
+  --global-agent-timeout-sec 600 \
   --cleanup

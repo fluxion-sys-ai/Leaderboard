@@ -472,6 +472,47 @@ def _terminal_min() -> int:
         return 80
 
 
+# ── Frontier tab: the exact params behind each cell (click a number to inspect) ──
+_FR_SAMP = {   # vendor-recommended sampling knobs, from the run scripts
+    "muse":   "top_p 0.95 · top_k 64",
+    "gemma":  "top_p 0.95 · top_k 64",
+    "qwen27": "top_p 0.95 · top_k 20 · min_p 0 · presence_penalty 0",
+    "qwen35": "top_p 0.95 · top_k 20 · min_p 0 · presence_penalty 0 (1.5 on Terminal)",
+    "qwen38": "top_p 0.95 · top_k 20 · min_p 0 · presence_penalty 0",
+}
+_FR_FULL_SERVE = {   # full-precision serving (OpenRouter provider + quant pin)
+    "muse":   "OpenRouter · bf16 (DeepInfra)",
+    "gemma":  "OpenRouter · bf16 (CoreWeave/Novita)",
+    "qwen27": "OpenRouter · fp8", "qwen35": "OpenRouter · fp8", "qwen38": "OpenRouter · fp8",
+}
+_FR_BENCH = {   # benchmark harness — same regardless of model; (label, thinking)
+    "ifbench":    ("IFBench · instruction-following · rec sampling", "ON"),
+    "aime2026":   ("AIME 2026 · 30 problems (competition math) · rec sampling", "ON"),
+    "pinchbench": ("PinchBench · 116-task multi-turn agent · n_ctx 128K · judge DeepSeek-v3.1", "OFF (no_think — thinking zeroes agentic)"),
+    "tau3":       ("τ³-bank · terminus agent · max_steps 100 · 97 tasks", "ON"),
+    "terminal":   ("TerminalBench · terminus-2 agent · terminal-bench-core 0.1.1 · 80 tasks", "ON"),
+    "swe":        ("SWE-bench Lite · Agentless (file→related→line→repair) · localize temp 0 · repair temp 0.8 ×1 · strat-50 (20-task) sample", "ON (localize/repair)"),
+}
+_FR_DISP = {"ifbench": "IFBench", "aime2026": "AIME26", "pinchbench": "PinchBench",
+            "tau3": "τ³-bank", "terminal": "TerminalBench", "swe": "SWE-Lite"}
+def _fr_spec(model_key, bench, precision):
+    """Composed params HTML for one Frontier cell (precision · serving · sampling · harness)."""
+    samp = _FR_SAMP.get(model_key, "")
+    serve = (_FR_FULL_SERVE.get(model_key, "OpenRouter") if precision == "full"
+             else "local A100-40GB · llama.cpp · Q4_K_M GGUF")
+    harness, think = _FR_BENCH.get(bench, (bench, "ON"))
+    if bench == "swe" and model_key == "muse" and precision == "full":
+        samp += " · reasoning effort xhigh"
+    parts = [f'<b>precision</b>: {precision.upper()} · {serve}',
+             f'<b>sampling</b>: temp = vendor default · {samp}',
+             f'<b>thinking</b>: {think}',
+             f'<b>benchmark</b>: {harness}']
+    if bench == "pinchbench" and precision == "q4":
+        parts.append('<i>note: 87/116 tasks hit the ~300s/task timeout on long CSV/log/meeting '
+                     'analysis (Q4-local throughput), which depresses this score.</i>')
+    return '<br>'.join(parts)
+
+
 def _frontier_tab() -> str:
     """Frontier tab — Muse Glimmer reproduction: full-precision (OpenRouter) vs Q4 (local),
     on the recommended-limit benches. Renders whatever is scored so far; '·' = still running."""
@@ -525,13 +566,16 @@ def _frontier_tab() -> str:
         except Exception:
             return None
 
-    def cell(v, bar=False):
+    def cell(v, bar=False, mk=None, spec=None):
         if v is None:
             return '<td class="sc na" data-v="-1">·</td>'
         style = heat_bar(v) if bar else heat(v)
-        return f'<td class="{"sc bar" if bar else "sc"}" data-v="{v:.4f}" style="{style}">{v * 100:.1f}</td>'
+        a = (f' data-mk="{html.escape(mk)}" data-spec="{html.escape(spec)}" onclick="showSpec(this,event)"'
+             if spec else "")
+        cur = ";cursor:pointer" if spec else ""
+        return f'<td class="{"sc bar" if bar else "sc"}" data-v="{v:.4f}" style="{style}{cur}"{a}>{v * 100:.1f}</td>'
 
-    def tau3_cell(res):
+    def tau3_cell(res, mk=None, spec=None):
         v, bad = res
         if v is None:
             return '<td class="sc na" data-v="-1">·</td>'
@@ -541,7 +585,10 @@ def _frontier_tab() -> str:
                     'thinking). Corrected run in progress; this cell auto-updates when it finishes.">'
                     f'<span style="text-decoration:line-through;opacity:.5">{v * 100:.1f}</span> '
                     '<span class="flag">✗</span></td>')
-        return f'<td class="sc bar" data-v="{v:.4f}" style="{heat_bar(v)}">{v * 100:.1f}</td>'
+        a = (f' data-mk="{html.escape(mk)}" data-spec="{html.escape(spec)}" onclick="showSpec(this,event)"'
+             if spec else "")
+        cur = ";cursor:pointer" if spec else ""
+        return f'<td class="sc bar" data-v="{v:.4f}" style="{heat_bar(v)}{cur}"{a}>{v * 100:.1f}</td>'
 
     # ── Table 1: full-precision (OpenRouter). τ³ is full-precision only, so it lives here. ──
     full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
@@ -550,13 +597,15 @@ def _frontier_tab() -> str:
     full_body = []
     for disp, full, q4, tkey, note in FR:
         cf = allc.get(full, {})
+        def fc(b, v):   # full-precision cell with clickable params (bar styling unchanged from before)
+            return cell(v, mk=f"{disp} · {_FR_DISP.get(b, b)} · full", spec=_fr_spec(tkey, b, "full")) if v is not None else cell(v)
         full_body.append('<tr>'
                          f'<td class="ml">{disp}</td>'
-                         + cell(score_of(cf, "ifbench")) + cell(score_of(cf, "aime2026"))
-                         + cell(score_of(cf, "pinchbench"))   # real PinchBench (local-GPU agent); full-precision N/A until API-agent wired
-                         + tau3_cell(_tau3(tkey))
-                         + cell(_terminal(tkey))
-                         + cell(swe_score_of(cf))   # SWE-bench Lite (Agentless, strat-50)
+                         + fc("ifbench", score_of(cf, "ifbench")) + fc("aime2026", score_of(cf, "aime2026"))
+                         + fc("pinchbench", score_of(cf, "pinchbench"))
+                         + tau3_cell(_tau3(tkey), mk=f"{disp} · τ³-bank · full", spec=_fr_spec(tkey, "tau3", "full"))
+                         + fc("terminal", _terminal(tkey))
+                         + fc("swe", swe_score_of(cf))   # SWE-bench Lite (Agentless, strat-50)
                          + '</tr>')
 
     # ── Table 2: Q4-local (A100). IFBench + AIME + PinchBench (no Q4 τ³). ──
@@ -566,20 +615,23 @@ def _frontier_tab() -> str:
     for disp, full, q4, tkey, note in FR:
         ft = f' <span class="flag" title="{html.escape(note)}">⚑</span>' if note else ''
         cq = allc.get(q4, {})
+        def qc(b, v):   # Q4 cell with clickable params
+            return cell(v, mk=f"{disp} · {_FR_DISP.get(b, b)} · Q4", spec=_fr_spec(tkey, b, "q4")) if v is not None else cell(v)
         q4_body.append('<tr>'
                        f'<td class="ml">{disp}{ft}</td>'
-                       + cell(score_of(cq, "ifbench")) + cell(score_of(cq, "aime2026"))
+                       + qc("ifbench", score_of(cq, "ifbench")) + qc("aime2026", score_of(cq, "aime2026"))
                        # real PinchBench at RECOMMENDED params — the greedy board's numbers were
                        # temp0+no_think (NOT rec), so they're pulled; this reads the rec-params redo.
-                       + cell(score_of(cq, "pinchbench"))
-                       + cell(_terminal_q4(tkey))
-                       + cell(swe_score_of(cq))
+                       + qc("pinchbench", score_of(cq, "pinchbench"))
+                       + qc("terminal", _terminal_q4(tkey))
+                       + qc("swe", swe_score_of(cq))
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'
     return (
         '<h3 class="dimh">Frontier — Muse Glimmer reproduction'
-        '<span class="mut"> · vendor-recommended sampling + thinking ON · scores ×100</span></h3>'
+        '<span class="mut"> · vendor-recommended sampling · scores ×100 · '
+        '<b>click a number to see its exact params</b></span></h3>'
         f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
         f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
         f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'

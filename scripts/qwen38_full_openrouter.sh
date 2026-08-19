@@ -34,18 +34,18 @@ fi
 
 # (IFBench + AIME intentionally SKIPPED for qwen3.8-full per user — only Pinch, SWE, Terminal.)
 
-# 3) SWE-Lite on the 20-sample (OpenRouter fp8 — no SWE_API_BASE => OpenRouter)
-if [ ! -f "results/scored/$FN/swebench_lite.json" ]; then
-  log "SWE start (20-sample)"
-  bash scripts/swe_agentless_run.sh qwen38 --subset strat50 >>"$REPO/logs_swe_full_qwen38.log" 2>&1 || log "SWE non-zero"
-  log "SWE done -> $([ -f results/scored/$FN/swebench_lite.json ]&&echo scored||echo none)"
-fi
-
-# 4) TerminalBench (full 80, terminus-2 via OpenRouter)
+# 2) TerminalBench (full 80, terminus-2 via OpenRouter) — order per user: Pinch -> Terminal -> SWE
 if [ ! -f "results/terminalbench/qwen38/qwen38/results.json" ]; then
   export PATH="$HOME/.local/bin:$PATH"
   log "Terminal start (full 80)"
   bash scripts/terminalbench_run.sh qwen38 >>"$REPO/logs_tb_full_qwen38.log" 2>&1 || log "terminal non-zero"
   log "Terminal done"
+fi
+
+# 3) SWE-Lite on the 20-sample (OpenRouter fp8 — no SWE_API_BASE => OpenRouter)
+if [ ! -f "results/scored/$FN/swebench_lite.json" ]; then
+  log "SWE start (20-sample)"
+  bash scripts/swe_agentless_run.sh qwen38 --subset strat50 >>"$REPO/logs_swe_full_qwen38.log" 2>&1 || log "SWE non-zero"
+  log "SWE done -> $([ -f results/scored/$FN/swebench_lite.json ]&&echo scored||echo none)"
 fi
 log "qwen38_full_openrouter COMPLETE."

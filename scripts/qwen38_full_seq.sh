@@ -26,7 +26,8 @@ serve_vllm(){  # $1 = extra args (e.g. thinking default)
   # expandable_segments avoids the fragmentation the OOM error flagged.
   PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
   "$VLLM" serve "$FP8" --served-model-name edge-qwen38-full \
-    --host 127.0.0.1 --port $PORT --quantization fp8 --max-model-len 65536 --gpu-memory-utilization 0.92 \
+    --host 127.0.0.1 --port $PORT --quantization fp8 --max-model-len 65536 --gpu-memory-utilization 0.90 \
+    --enforce-eager \
     --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser hermes \
     >/tmp/vllm_qwen38.log 2>&1 &
   echo $! > /tmp/vllm_qwen38.pid

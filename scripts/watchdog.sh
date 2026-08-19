@@ -38,8 +38,10 @@ while true; do
   alive weekend_auto   || spawn weekend_auto
   if ! alive swe_full_queue && ! done_swe_full; then spawn swe_full_queue; fi
 
-  # 2) GPU chain — at most ONE launch per pass, only when the GPU is genuinely idle
-  if gpu_idle && ! any_gpu_script; then
+  # 2) GPU chain — at most ONE launch per pass, only when the GPU is genuinely idle AND not paused
+  # (.PAUSE_MAIN_QUEUES is set during manual GPU maintenance; without this check the watchdog raced
+  # a manual full_seq relaunch and spawned a competing Q4 llama-server -> vLLM OOM).
+  if gpu_idle && ! any_gpu_script && [ ! -f .PAUSE_MAIN_QUEUES ]; then
     if   ! done_q4seq   ; then spawn qwen38_q4_seq
     elif ! done_chain   ; then spawn qwen38_chain
     elif ! done_agentic ; then spawn q4_agentic_queue

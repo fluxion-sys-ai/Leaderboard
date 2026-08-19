@@ -11,7 +11,12 @@ log(){ echo "[$(date +'%F %T')] $*"; }
 free_gpu(){ for p in $(pgrep -f 'vllm|llama-server'); do kill -9 "$p" 2>/dev/null; done; }
 
 log "qwen38_full_ifaime: waiting for ALL other work to finish (this is the very end)..."
-until [ -f .QWEN38_DONE ] && ! pgrep -f 'q4_agentic_queue|qwen38_q4_seq|qwen38_full_seq' >/dev/null; do sleep 300; done
+# Deadlock-proof gate: proceed once the qwen38 priority run is DONE (.QWEN38_DONE) OR provably dead
+# (no qwen38 priority script alive = it crashed without setting the flag). THEN also wait for the
+# other-4 Q4 queue to exit (this run is dead-last). No unbounded dependency on a flag that a SIGKILL
+# could leave unset.
+while ! { [ -f .QWEN38_DONE ] || ! pgrep -f 'qwen38_q4_seq|qwen38_chain|qwen38_full_seq' >/dev/null; }; do sleep 300; done
+while pgrep -f 'q4_agentic_queue' >/dev/null; do sleep 300; done
 if [ -f results/scored/qwen3.8-27b-full/ifbench.json ] && [ -f results/scored/qwen3.8-27b-full/aime2026.json ]; then
   log "already done — exiting"; exit 0; fi
 
@@ -20,7 +25,8 @@ free_gpu; sleep 3
 "$VLLM" serve "$FP8" --served-model-name edge-qwen38-full --host 127.0.0.1 --port $PORT \
   --quantization fp8 --max-model-len 98304 --reasoning-parser qwen3 >/tmp/vllm_ifaime.log 2>&1 &
 VP=$!; trap "kill $VP 2>/dev/null; free_gpu" EXIT
-for i in $(seq 1 240); do curl -sf "http://127.0.0.1:$PORT/v1/models" >/dev/null 2>&1 && break; sleep 3; done
+up=0; for i in $(seq 1 240); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/v1/models" >/dev/null 2>&1 && { up=1; break; }; sleep 3; done
+if [ "$up" -ne 1 ]; then log "ABORT: vLLM (fp8) failed to come up in 12min — see /tmp/vllm_ifaime.log (not running IF/AIME against a dead server)"; exit 1; fi
 export IFBENCH_DIR=/home/aliixh/IFBench
 log "running IFBench + AIME (rec: temp1.0/top_p0.95/top_k20/presence0.0, thinking ON, max_tok 81920)"
 python3 run_benchmark.py --models-config configs/models_qwen38_full_ifaime.yaml \

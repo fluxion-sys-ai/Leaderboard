@@ -12,8 +12,14 @@ free_gpu(){ for p in $(pgrep -f 'llama-server'); do kill -9 "$p" 2>/dev/null; do
 MODELS=(gemma qwen27 qwen35 qwen38 muse)
 declare -A FN=( [gemma]=gemma-4-31b-q4f [qwen27]=qwen3.6-27b-q4f [qwen35]=qwen3.5-35b-a3b-q4f [qwen38]=qwen3.8-27b-q4f [muse]=muse-glimmer-30b-q4f )
 
-# gate: don't start until Qwen3.8 priority is done, and not while paused
-until [ -f .QWEN38_DONE ] && [ ! -f .PAUSE_MAIN_QUEUES ]; do sleep 120; done
+# gate: wait until the Qwen3.8 priority run is DONE (.QWEN38_DONE) OR provably dead — if every
+# qwen38 script has exited without setting the flag it CRASHED, so proceed rather than deadlock
+# forever (the flag is normally set by qwen38_full_seq's EXIT trap; this covers a SIGKILL that
+# bypasses the trap). While any qwen38 script is still alive we keep waiting (no GPU contention).
+while [ ! -f .QWEN38_DONE ] && pgrep -f 'qwen38_q4_seq|qwen38_chain|qwen38_full_seq' >/dev/null; do sleep 120; done
+[ -f .QWEN38_DONE ] || log "WARN: .QWEN38_DONE absent but all qwen38 scripts gone — priority run died; proceeding to avoid deadlock."
+# honor an explicit pause independently
+while [ -f .PAUSE_MAIN_QUEUES ]; do sleep 120; done
 log "q4_agentic_queue up (Pinch -> SWE -> Terminal). GPU free wait..."
 until ! pgrep -f 'run_benchmark.py|models_q4_frontier' >/dev/null; do sleep 60; done
 
@@ -23,7 +29,7 @@ for m in "${MODELS[@]}"; do
   free_gpu; sleep 3
   log "PINCH Q4 $m SMOKE (2)"
   bash scripts/pinchbench_q4_run.sh "$m" 2 >"/tmp/pb_q4_${m}_smoke.log" 2>&1 || true
-  NZ=$(grep -E 'Task task.*: [0-9.]+/1.0' "/tmp/pb_q4_${m}_smoke.log" 2>/dev/null | grep -cvE ': 0.0/' || echo 0)
+  NZ=$(grep -E 'Task task.*: [0-9.]+/1.0' "/tmp/pb_q4_${m}_smoke.log" 2>/dev/null | grep -cvE ': 0.0/'); NZ=${NZ:-0}
   log "  smoke: ${NZ} non-zero"
   [ "${NZ:-0}" -lt 1 ] && { log "  Pinch Q4 $m smoke all-zero — SKIP full (needs a look)"; continue; }
   free_gpu; sleep 3

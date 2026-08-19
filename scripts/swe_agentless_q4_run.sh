@@ -26,14 +26,49 @@ if pgrep -f "llama-server.*--port $PORT" >/dev/null; then echo "!! GPU busy on $
 GGUF=$(python3 -c "import sys,yaml;sys.path.insert(0,'.');from src.models_fetch import ensure_gguf;m=next(x for x in yaml.safe_load(open('configs/models_q4_frontier.yaml'))['models'] if x['name']=='$M');print(ensure_gguf(m['name'],m['gguf']))")
 echo "[swe-q4] $KEY ($M) gguf=$GGUF bin=$(basename $BIN)"
 
-"$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 2 -ngl 999 \
-  --chat-template-kwargs "$TKW" --temp 1.0 --top-p 0.95 \
-  --host 127.0.0.1 --port $PORT --no-webui >/tmp/swe_q4_${KEY}_server.log 2>&1 &
-LP=$!; trap "kill $LP 2>/dev/null || true" EXIT
-for i in $(seq 1 120); do curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
+SLOG=/tmp/swe_q4_${KEY}_server.log
+PIDF=/tmp/swe_q4_${KEY}_server.pid
+start_server(){
+  "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 2 -ngl 999 \
+    --chat-template-kwargs "$TKW" --temp 1.0 --top-p 0.95 \
+    --host 127.0.0.1 --port $PORT --no-webui >>"$SLOG" 2>&1 &
+  echo $! > "$PIDF"
+}
+start_server
+# keepalive: SWE localize+repair over 51 instances is a LONG run and a heavy repair prompt can spike
+# host memory and get the server OOM-killed mid-run. Without this, the remaining instances silently
+# fail -> resolved/51 is written as a real-looking but DEFLATED score. Restart after 3 consecutive
+# health failures (~45s), with a reload grace so a slow 27B-Q4 reload doesn't cause restart-thrash.
+( fails=0; while true; do
+    sleep 15
+    if timeout 8 curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; then fails=0
+    else fails=$((fails+1))
+      if [ "$fails" -ge 3 ]; then
+        echo "[$(date +%T)] [keepalive] server down (3x) -> restarting" >> "$SLOG"
+        kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; start_server
+        for _g in $(seq 1 45); do timeout 8 curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
+        fails=0
+      fi
+    fi
+  done ) &
+MON=$!
+trap 'kill $MON 2>/dev/null; kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; rm -f "$PIDF"' EXIT
+for i in $(seq 1 120); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
 
 # point the Agentless pipeline at the local server + tag output as q4f
 export SWE_API_BASE="http://127.0.0.1:$PORT/v1"
 export SWE_API_KEY="sk-local"
 export SWE_PRECISION="q4f"
 bash scripts/swe_agentless_run.sh "$KEY" "$@"
+
+# qwen35 dir fix: swe_agentless_run.sh maps key qwen35 -> FULLNAME qwen3.6-35b-a3b (correct for the
+# FULL SWE cell), but the Q4 GGUF and the Frontier tab's Qwen3.6-35B-A3B *Q4* SWE cell both use the
+# 3.5-35B name (qwen3.5-35b-a3b-q4f). Relocate so the completed Q4 score actually shows on the board
+# instead of landing in a dir nothing reads.
+if [ "$KEY" = "qwen35" ]; then
+  SRC="$REPO/results/scored/qwen3.6-35b-a3b-q4f"; DST="$REPO/results/scored/qwen3.5-35b-a3b-q4f"
+  if [ -f "$SRC/swebench_lite.json" ]; then
+    mkdir -p "$DST"; mv -f "$SRC/swebench_lite.json" "$DST/swebench_lite.json"
+    echo "[swe-q4] relocated qwen35 Q4 SWE score -> $DST/swebench_lite.json"
+  fi
+fi

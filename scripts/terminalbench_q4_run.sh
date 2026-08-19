@@ -52,13 +52,17 @@ start_server
         echo "[$(date +%T)] [keepalive] server down (3x) -> restarting" >> "$SLOG"
         kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null
         start_server
+        # GRACE: a 27B-Q4 reload often takes >45s; without waiting for it to become healthy the
+        # next 3x15s strike window kills a still-loading server -> infinite restart thrash. Wait
+        # up to ~90s for /health before resuming strike-counting.
+        for _g in $(seq 1 45); do timeout 8 curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
         fails=0
       fi
     fi
   done ) &
 MON=$!
 trap 'kill $MON 2>/dev/null; kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; rm -f "$PIDF"' EXIT
-for i in $(seq 1 120); do curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
+for i in $(seq 1 120); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
 
 export OPENAI_API_BASE="http://127.0.0.1:$PORT/v1"
 export OPENAI_API_KEY="sk-local"

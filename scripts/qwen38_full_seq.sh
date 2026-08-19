@@ -13,6 +13,11 @@ PORT=8081
 FN=qwen3.8-27b-full
 log(){ echo "[$(date +'%F %T')] $*"; }
 free_gpu(){ for p in $(pgrep -f 'vllm|llama-server'); do kill -9 "$p" 2>/dev/null; done; }
+# CRITICAL: .QWEN38_DONE is the gate that unblocks the other-4 Q4 queue + the dead-last IF/AIME
+# run. It MUST be set on ANY exit (vLLM-serve failure, crash, error) — otherwise a single failure
+# here permanently deadlocks every downstream queue (they wait on it with no timeout). Setting it
+# on early-exit means "qwen38 priority phase is over"; missing cells just render as pending.
+trap ': > "$REPO/.QWEN38_DONE"' EXIT
 
 serve_vllm(){  # $1 = extra args (e.g. thinking default)
   free_gpu; sleep 3
@@ -21,7 +26,7 @@ serve_vllm(){  # $1 = extra args (e.g. thinking default)
     --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser hermes \
     >/tmp/vllm_qwen38.log 2>&1 &
   echo $! > /tmp/vllm_qwen38.pid
-  for i in $(seq 1 240); do curl -sf "http://127.0.0.1:$PORT/v1/models" >/dev/null 2>&1 && return 0; sleep 3; done
+  for i in $(seq 1 240); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/v1/models" >/dev/null 2>&1 && return 0; sleep 3; done
   log "vLLM failed to come up in 12min — see /tmp/vllm_qwen38.log"; return 1
 }
 
@@ -40,7 +45,7 @@ if [ ! -f "results/scored/$FN/pinchbench.json" ]; then
   uv run scripts/benchmark.py --model vllmfull/qwen38 --thinking off \
     --judge openrouter/deepseek/deepseek-chat-v3.1 --suite "$S3" >/tmp/pb_full_qwen38_smoke.log 2>&1 || true
   cd "$REPO"
-  SNZ=$(grep -E 'Task task.*: [0-9.]+/1.0' /tmp/pb_full_qwen38_smoke.log 2>/dev/null | grep -cvE ': 0.0/' || echo 0)
+  SNZ=$(grep -E 'Task task.*: [0-9.]+/1.0' /tmp/pb_full_qwen38_smoke.log 2>/dev/null | grep -cvE ': 0.0/'); SNZ=${SNZ:-0}
   if [ "${SNZ:-0}" -lt 1 ]; then
     log "  Pinch full-fp8 SMOKE all-zero -> vLLM no_think likely not applied. SKIPPING full (needs a look)."
   else
@@ -54,7 +59,7 @@ if [ ! -f "results/scored/$FN/pinchbench.json" ]; then
 import json,glob,os
 for f in sorted(glob.glob('/home/aliixh/pinchbench-skill/results/*.json'),key=os.path.getmtime,reverse=True):
     d=json.load(open(f))
-    if 'vllmfull-qwen38' in (d.get('model') or '') or 'qwen38' in (d.get('model') or ''):
+    if 'vllmfull-qwen38' in (d.get('model') or ''):   # ONLY the full-fp8 transcript — not Q4/other 'qwen38' runs
         cs=d.get('category_scores') or {};tm=sum(c['max_score'] for c in cs.values())
         if tm>=115:
             os.makedirs('results/scored/qwen3.8-27b-full',exist_ok=True)

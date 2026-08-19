@@ -4,8 +4,8 @@
 # agent specialist — pinch is its whole point). Same guards: 128K (clamp-guarded), transcript-bug
 # discard, OOM->64K retry. Each auto-pushes; GGUF freed after.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+cd /home/aliixh/edge-intelligence-benchmark
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/pinch_batch2.log
@@ -21,7 +21,7 @@ while pgrep -f "[b]ash /tmp/pinch_batch.sh" >/dev/null \
 say "GPU free -> post-deadline pinch batch"
 
 for M in $MODELS; do
-  FREE=$(df --output=avail -BG /home/ubuntu | tail -1 | tr -dc '0-9')
+  FREE=$(df --output=avail -BG /home/aliixh | tail -1 | tr -dc '0-9')
   [ "${FREE:-0}" -lt 30 ] && { say "!! FLAG: ${FREE}G disk -> STOP"; break; }
   say "=== $M pinch === (${FREE}G free)"
   pkill -f "[l]lama-server" 2>/dev/null; sleep 8
@@ -50,7 +50,7 @@ PY
     say "!! FLAG: $M transcript-not-found bug ($tnf) -> DISCARDED pinch, agentic stays BFCL"
   fi
   python3 -m src.report.build_leaderboard >> "$L" 2>&1
-  cp -f leaderboard.html docs/index.html 2>/dev/null; cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+  cp -f leaderboard.html docs/index.html 2>/dev/null; cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
   git add configs/ leaderboard.html docs/index.html results/scored/$M results/raw/$M >> "$L" 2>&1
   git -c user.name=aliixh -c user.email=aliixhuang@gmail.com commit -q -m "pinch: PinchBench for $M ($ps, 128K) — post-deadline coverage" >> "$L" 2>&1 && git push origin main >> "$L" 2>&1 && say "$M committed+pushed"
   rm -rf models/$M 2>/dev/null

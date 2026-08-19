@@ -4,9 +4,9 @@
 # Runs RIGHT AFTER ornith, BEFORE the qwen fixes. Solo-GPU. Reverts config to low afterwards so
 # 'low' stays the documented default; only these 4 scores are marked medium in score_specs.json.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/gptoss_medium.log
 say(){ echo "[gptoss-med] $(date -u +%T) $*" >> "$L"; }
@@ -70,6 +70,6 @@ PY
 
 # 6) rebuild + free disk
 python3 -m src.report.build_leaderboard >> "$L" 2>&1
-cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
 rm -rf models/gpt-oss-20b 2>/dev/null
 say "GPT-OSS MEDIUM RERUN DONE"

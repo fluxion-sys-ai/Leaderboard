@@ -1,8 +1,8 @@
 #!/bin/bash
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/ornith_rerun.log
 say(){ echo "[ornith] $(date -u +%T) $*" >> "$L"; }
@@ -37,5 +37,5 @@ python3 judge_writing.py  >> "$L" 2>&1
 python3 judge_simpleqa.py >> "$L" 2>&1
 python3 rescore_all.py    >> "$L" 2>&1
 python3 -m src.report.build_leaderboard >> "$L" 2>&1
-cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
 say "ORNITH RE-RUN + FINAL JUDGE DONE"

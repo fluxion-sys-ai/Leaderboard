@@ -1,8 +1,8 @@
 #!/bin/bash
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/stage2_newmodels.log
 say(){ echo "[stage2] $(date -u +%T) $*" >> "$L"; }
@@ -24,14 +24,14 @@ say "redo chain done -> starting 7 new-model adds"
 # 1) reclaim SAFE junk only (my spec-decode drafts + unused perfectblend cache). Nothing cross-project.
 say "reclaiming safe disk: spec-decode drafts + open-perfectblend cache"
 rm -rf models/draft_* models/*_draft 2>/dev/null
-rm -rf /home/ubuntu/.cache/huggingface/hub/datasets--mlabonne--open-perfectblend 2>/dev/null
-df -h /home/ubuntu | tail -1 >> "$L"
+rm -rf /home/aliixh/.cache/huggingface/hub/datasets--mlabonne--open-perfectblend 2>/dev/null
+df -h /home/aliixh | tail -1 >> "$L"
 
 # 2) per model: disk-gate -> grid (auto-downloads) -> load-gate -> pinchbench -> import -> build -> delete
 for entry in $MODELS; do
   M="${entry%%:*}"; NEED="${entry##*:}"
   pkill -f 'llama-server' 2>/dev/null; sleep 8
-  AVAIL=$(df --output=avail -BG /home/ubuntu | tail -1 | tr -dc 0-9)
+  AVAIL=$(df --output=avail -BG /home/aliixh | tail -1 | tr -dc 0-9)
   if [ "${AVAIL:-0}" -lt "$NEED" ]; then
     say "!! $M SKIPPED: disk ${AVAIL}G < needed ${NEED}G. Free cross-project space (qwen3.5-9b/nanbeige/specdecode_data) then rerun this model."
     continue
@@ -50,7 +50,7 @@ for entry in $MODELS; do
   python3 -m src.report.build_leaderboard >> "$L" 2>&1
   say "$M finished -> deleting weights (models/$M) to free disk for next"
   rm -rf "models/$M" 2>/dev/null
-  df -h /home/ubuntu | tail -1 >> "$L"
+  df -h /home/aliixh | tail -1 >> "$L"
 done
-cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
 say "STAGE2 ALL DONE — review: gpt-oss (harmony), EXAONE (rope long-ctx) grid scores for sanity"

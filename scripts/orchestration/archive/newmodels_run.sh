@@ -3,8 +3,8 @@
 # 35B first (well-supported); 27B load-tested — if its Gated-DeltaNet arch won't load on
 # b9892, run_benchmark fails fast, produces no scores, and we skip its PinchBench.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-export HF_TOKEN="$(cat .hf_token 2>/dev/null)"; export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+cd /home/aliixh/edge-intelligence-benchmark
+export HF_TOKEN="$(cat .hf_token 2>/dev/null)"; export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 LOG=/tmp/newmodels_run.log
 BENCH="ifeval jsonschemabench gsm8k aime2026 mmlu_pro zebralogic gpqa_diamond livecodebench humaneval cruxeval babilong ruler writing bfcl simpleqa"
@@ -29,5 +29,5 @@ python3 judge_writing.py  >> $LOG 2>&1
 python3 judge_simpleqa.py >> $LOG 2>&1
 python3 rescore_all.py    >> $LOG 2>&1
 python3 -m src.report.build_leaderboard >> $LOG 2>&1
-cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
 echo "[new] ALL DONE $(date -u +%T)" >> $LOG

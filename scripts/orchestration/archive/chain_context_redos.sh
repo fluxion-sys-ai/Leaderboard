@@ -1,8 +1,8 @@
 #!/bin/bash
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/chain_redos.log
 say(){ echo "[chain] $(date -u +%T) $*" >> "$L"; }
@@ -55,5 +55,5 @@ for M in ornith-1.0-9b phi-4-mini-instruct; do
   python3 import_pinchbench.py >> "$L" 2>&1
   python3 -m src.report.build_leaderboard >> "$L" 2>&1
 done
-cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
 say "ALL REDOS + NEW PINCHBENCH (ornith, phi) DONE"

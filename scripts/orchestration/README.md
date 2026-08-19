@@ -5,7 +5,7 @@ Each sleeps until the jobs it depends on are gone (`ps`-grep on the other script
 processes), then does its work and self-deletes GGUF weights to free disk. They were developed live in
 `/tmp` and copied here for backup/reproducibility.
 
-⚠️ **Paths are hardcoded** (`/tmp/<name>.sh`, `/home/ubuntu/edge-intelligence-benchmark`, `/home/ubuntu/llama.cpp/llama-b9892`).
+⚠️ **Paths are hardcoded** (`/tmp/<name>.sh`, `/home/aliixh/edge-intelligence-benchmark`, `/home/aliixh/llama.cpp/llama-b9892`).
 Update them for a new host before reusing. The wait-conditions reference the scripts by their `/tmp/*.sh` path.
 
 ## Current pipeline (this snapshot — solo-GPU chain, in order)

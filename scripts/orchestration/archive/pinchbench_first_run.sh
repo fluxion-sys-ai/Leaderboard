@@ -3,7 +3,7 @@
 # batched benchmarks, then judges/rescore/build. Smoke-gated; imports + rebuilds the
 # leaderboard after EACH PinchBench model so results land incrementally (not after 2 days).
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token)"
 LOG=/tmp/pinchbench_first.log
 
@@ -30,7 +30,7 @@ if [ "$PB_OK" = "yes" ]; then
     pkill -f 'llama-b9892/llama-server' 2>/dev/null; sleep 15
     python3 import_pinchbench.py >> $LOG 2>&1
     python3 -m src.report.build_leaderboard >> $LOG 2>&1   # leaderboard updates as each lands
-    cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+    cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
   done
 else
   echo "[pb-first] !! smoke FAILED again — PinchBench harness still broken; skipping to batched." >> $LOG
@@ -46,8 +46,8 @@ echo "[pb-first] judges + rescore + final leaderboard $(date -u +%T)" >> $LOG
 python3 judge_writing.py                                        >> $LOG 2>&1
 python3 judge_simpleqa.py                                       >> $LOG 2>&1
 python3 import_pinchbench.py                                    >> $LOG 2>&1
-/home/ubuntu/scorer-env/bin/python score_official.py humaneval  >> $LOG 2>&1
+/home/aliixh/scorer-env/bin/python score_official.py humaneval  >> $LOG 2>&1
 python3 rescore_all.py                                          >> $LOG 2>&1
 python3 -m src.report.build_leaderboard                         >> $LOG 2>&1
-cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
 echo "[pb-first] ALL DONE $(date -u +%T)" >> $LOG

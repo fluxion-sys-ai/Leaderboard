@@ -7,13 +7,13 @@
 # Usage: pinchbench_run.sh <model-name-from-models.yaml>
 #   e.g. pinchbench_run.sh qwen2.5-7b-instruct
 #
-# Results go to /home/ubuntu/pinchbench-skill/results/edge-<model>-*.json to keep
+# Results go to /home/aliixh/pinchbench-skill/results/edge-<model>-*.json to keep
 # them clearly separated from prior gemma/qwen custom runs.
 set -euo pipefail
 MODEL="${1:?pass a model name from configs/models.yaml}"
 shift   # consume the model name so it isn't re-passed to benchmark.py via "$@"
-REPO=/home/ubuntu/edge-intelligence-benchmark
-PB=/home/ubuntu/pinchbench-skill
+REPO=/home/aliixh/edge-intelligence-benchmark
+PB=/home/aliixh/pinchbench-skill
 PORT=8081
 
 # ── 6th-best gate (shujun 2026-08-04): PinchBench costs ~2.5h — only run it for contenders.
@@ -144,7 +144,7 @@ TPL_ARG=""
 echo "[pb] model=$MODEL gguf=$GGUF ctx=$CTX yarn=${YARN_ARG:-no} template=${CHAT_TEMPLATE:-default}"
 
 # start the llama-server
-/home/ubuntu/llama.cpp/llama-b9892/llama-server \
+/home/aliixh/llama.cpp/llama-b9892/llama-server \
   -m "$GGUF" -c "$CTX" --parallel 1 -ngl 999 $YARN_ARG $NOTHINK_ARG $EFFORT_ARG $REASONING_ARG $TPL_ARG --host 127.0.0.1 --port $PORT --no-webui \
   >/tmp/pb_llama_${MODEL}.log 2>&1 &
 LP=$!

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/qwen_128k_fix.log
 say(){ echo "[qwenfix] $(date -u +%T) $*" >> "$L"; }
@@ -62,7 +62,7 @@ FORCE_PINCH=1 bash scripts/pinchbench_run.sh exaone-4.5-33b >> "$L" 2>&1 || say 
 pkill -f 'llama-server' 2>/dev/null; sleep 8
 python3 import_pinchbench.py >> "$L" 2>&1
 # [daemon-handles] python3 -m src.report.build_leaderboard >> "$L" 2>&1
-cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
 rm -rf models/exaone-4.5-33b 2>/dev/null
 
 say "QWEN 128K FIX DONE"

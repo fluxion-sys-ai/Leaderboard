@@ -4,8 +4,8 @@
 # STEP 2: if the smoke clearly beats the 5.7 baseline (tools actually executed), auto-run
 #         the FULL 116-task re-run with that template, re-import, rebuild. Else: footnote GLM.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-PB=/home/ubuntu/pinchbench-skill; PORT=8081; LOG=/tmp/glm_toolfix_smoke.log
+cd /home/aliixh/edge-intelligence-benchmark
+PB=/home/aliixh/pinchbench-skill; PORT=8081; LOG=/tmp/glm_toolfix_smoke.log
 export OPENROUTER_API_KEY="$(cat .openrouter_key)"; export OPENAI_API_KEY=sk-local
 echo "[glm-fix] waiting for batched + GPU free $(date -u +%T)" > $LOG
 while pgrep -f 'batched_fix_run.sh' >/dev/null || pgrep -f 'llama-b9892/llama-server' >/dev/null; do sleep 120; done
@@ -18,7 +18,7 @@ import sys,yaml; sys.path.insert(0,'.')
 from src.models_fetch import ensure_gguf
 m=next(x for x in yaml.safe_load(open('configs/models.yaml'))['models'] if x['name']=='glm-4-9b-0414')
 print(ensure_gguf(m['name'],m['gguf']))")
-/home/ubuntu/llama.cpp/llama-b9892/llama-server -m "$GGUF" -c 32768 --parallel 1 -ngl 999 \
+/home/aliixh/llama.cpp/llama-b9892/llama-server -m "$GGUF" -c 32768 --parallel 1 -ngl 999 \
   --chat-template chatglm4 --host 127.0.0.1 --port $PORT --no-webui >/tmp/glm_B_llama.log 2>&1 &
 LP=$!
 for i in $(seq 1 120); do curl -sf http://127.0.0.1:$PORT/health >/dev/null 2>&1 && break; sleep 2; done
@@ -47,7 +47,7 @@ if [ "$GO" = "yes" ]; then
   pkill -f 'llama-server' 2>/dev/null; sleep 8
   python3 import_pinchbench.py >> $LOG 2>&1
   python3 -m src.report.build_leaderboard >> $LOG 2>&1
-  cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+  cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
   NEW=$(python3 -c "import json;print(round(json.load(open('results/scored/glm-4-9b-0414/pinchbench.json'))['score']*100,1))" 2>/dev/null)
   echo "[glm-fix] DONE — glm PinchBench 5.7 -> ${NEW} $(date -u +%T)" >> $LOG
 else

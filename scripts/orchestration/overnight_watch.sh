@@ -7,7 +7,7 @@
 #  D) rebuild + commit + push (exclude the in-write model)
 #  E) health-log; server count EXCLUDES defunct (no more zombie false-alarms)
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 L=/tmp/overnight_watch.log
 say(){ echo "[watch2] $(date -u +%T) $*" >> "$L"; }
 say "=== watchdog v2 start: completeness-gate + stall-recovery + zombie-reap ==="
@@ -88,7 +88,7 @@ PY
 
   # D) rebuild + commit + push (exclude in-write model)
   python3 -m src.report.build_leaderboard >> "$L" 2>&1
-  cp -f leaderboard.html docs/index.html 2>/dev/null; cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+  cp -f leaderboard.html docs/index.html 2>/dev/null; cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
   git add configs/ src/report/build_leaderboard.py leaderboard.html docs/index.html results/scored results/raw >> "$L" 2>&1
   [ -n "$live" ] && git reset -q -- "results/scored/$live" "results/raw/$live" 2>/dev/null
   if ! git diff --cached --quiet; then
@@ -99,7 +99,7 @@ PY
 
   # E) health — server count EXCLUDES defunct/zombies (no false alarms)
   srv=$(ps -eo stat,cmd | grep '[l]lama-server' | grep -v defunct | wc -l)
-  fb=$(pgrep -f "[b]ash /tmp/fill_batch.sh"|wc -l); free=$(df --output=avail -BG /home/ubuntu|tail -1|tr -dc '0-9')
+  fb=$(pgrep -f "[b]ash /tmp/fill_batch.sh"|wc -l); free=$(df --output=avail -BG /home/aliixh|tail -1|tr -dc '0-9')
   [ "$srv" -gt 1 ] && say "ALERT: $srv REAL servers (solo-GPU broken)"
   [ "${free:-99}" -lt 15 ] && say "ALERT: only ${free}G disk"
   say "ok $i/52 · live=$live · realservers=$srv · fill_batch=$fb · disk=${free}G"

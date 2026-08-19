@@ -1,12 +1,12 @@
 #!/bin/bash
 # CORRECTIVE re-run: Phase 2 batched benchmarks failed for all 15 models because
-# LLAMACPP_BIN wasn't exported (run_benchmark defaulted to /home/ubuntu/llama.cpp,
+# LLAMACPP_BIN wasn't exported (run_benchmark defaulted to /home/aliixh/llama.cpp,
 # but the b9892 binary lives in .../llama-b9892/). Set it, re-run the 4 new-dimension
 # benchmarks (cache-aware: qwen2.5 already has them, only the other 14 generate),
 # then re-judge SimpleQA + rescore + rebuild. Waits for granite catch-up + GPU free first.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+cd /home/aliixh/edge-intelligence-benchmark
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export HF_TOKEN="$(cat .hf_token)"
 LOG=/tmp/batched_fix.log
 echo "[batched-fix] waiting for granite catch-up + GPU free $(date -u +%T)" > $LOG
@@ -21,5 +21,5 @@ python3 judge_simpleqa.py >> $LOG 2>&1
 python3 import_pinchbench.py >> $LOG 2>&1
 python3 rescore_all.py >> $LOG 2>&1
 python3 -m src.report.build_leaderboard >> $LOG 2>&1
-cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
 echo "[batched-fix] ALL DONE $(date -u +%T)" >> $LOG

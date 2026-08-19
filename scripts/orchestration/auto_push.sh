@@ -2,7 +2,7 @@
 # Auto-push daemon (~15h): every ~16 min, commit+push any COMPLETE new results so the live board
 # stays current unattended. Safety: never commits the model currently loaded in llama-server (mid-write).
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 L=/tmp/auto_push.log
 say(){ echo "[auto-push] $(date -u +%T) $*" >> "$L"; }
 echo "=== auto-push daemon start $(date -u) ===" > "$L"

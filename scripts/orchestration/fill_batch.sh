@@ -5,8 +5,8 @@
 # Per model: preflight -> smoke -> auto no_think -> auto max_tokens -> full grid if clean -> un-hide
 #            -> commit+push -> free the GGUF. Skips+flags cleanly on load-fail or un-fixable empties.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+cd /home/aliixh/edge-intelligence-benchmark
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/fill_batch.log
@@ -35,7 +35,7 @@ say "GPU free -> starting fill batch"
 
 for M in $MODELS; do
   # disk guard: need >=30G free to pull a model
-  FREE=$(df --output=avail -BG /home/ubuntu | tail -1 | tr -dc '0-9')
+  FREE=$(df --output=avail -BG /home/aliixh | tail -1 | tr -dc '0-9')
   if [ "${FREE:-0}" -lt 30 ]; then say "!! only ${FREE}G free -> STOP (disk)"; break; fi
   say "=== $M === (${FREE}G free)"
   pkill -f "[l]lama-server" 2>/dev/null; sleep 8
@@ -92,7 +92,7 @@ PY
   python3 judge_writing.py >> "$L" 2>&1; python3 judge_simpleqa.py >> "$L" 2>&1
   python3 -m src.report.build_leaderboard >> "$L" 2>&1
   cp -f leaderboard.html docs/index.html 2>/dev/null
-  cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+  cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
   git add configs/ leaderboard.html docs/index.html results/scored/$M results/raw/$M >> "$L" 2>&1
   git -c user.name=aliixh -c user.email=aliixhuang@gmail.com commit -q -m "fill-batch: add $M to board (auto-configured, clean grid)" >> "$L" 2>&1 && git push origin main >> "$L" 2>&1 && say "$M committed+pushed"
   rm -rf models/$M 2>/dev/null

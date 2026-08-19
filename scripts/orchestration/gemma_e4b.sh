@@ -3,9 +3,9 @@
 # (thinking dumped -> stripped -> 0). no_think:true is now in config, so a clean re-run un-fakes it.
 # Runs DEAD LAST — waits for every other job. Grid only (4B, avg ~49 -> pinch gate skips it anyway).
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/gemma_e4b.log
 say(){ echo "[gemma-e4b] $(date -u +%T) $*" >> "$L"; }
@@ -34,6 +34,6 @@ else
   say "!! gemma-4-e4b produced NO grid scores — flag."
 fi
 # [daemon-handles] python3 -m src.report.build_leaderboard >> "$L" 2>&1
-cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
 rm -rf models/gemma-4-e4b 2>/dev/null
 say "GEMMA-4-E4B RERUN DONE — everything complete"

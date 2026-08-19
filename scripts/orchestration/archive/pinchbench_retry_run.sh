@@ -4,7 +4,7 @@
 # DEFENSIVE against the orphan-server bug: kills any leftover llama-server before starting
 # (an orphaned server with no driver must never block us again).
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
+cd /home/aliixh/edge-intelligence-benchmark
 export HF_TOKEN="$(cat .hf_token)"
 LOG=/tmp/pinchbench_retry.log
 
@@ -32,7 +32,7 @@ if [ "$PB_OK" = "yes" ]; then
   done
   python3 import_pinchbench.py >> $LOG 2>&1
   python3 -m src.report.build_leaderboard >> $LOG 2>&1
-  cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+  cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
   echo "[pb-retry] DONE $(date -u +%T)" >> $LOG
 else
   echo "[pb-retry] !! smoke STILL failing after fix — check log" >> $LOG

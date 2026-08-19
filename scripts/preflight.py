@@ -12,7 +12,7 @@ PASS -> exit 0 (safe to run the full grid).  FAIL -> exit 1 + JSON reason (skip 
 SOLO-GPU: run only when the card is free (the orchestration calls it right after `pkill llama-server`).
 
 Usage: python3 scripts/preflight.py <model-name>
-Env:   LLAMACPP_BIN (default /home/ubuntu/llama.cpp/llama-b9892)
+Env:   LLAMACPP_BIN (default /home/aliixh/llama.cpp/llama-b9892)
 """
 import json, os, re, subprocess, sys, time, urllib.request
 
@@ -22,7 +22,7 @@ import yaml
 from src.models_fetch import ensure_gguf
 
 PORT = 8091   # distinct from grid/pinch (8081) so a stray server never collides
-LLAMA = os.environ.get("LLAMACPP_BIN", "/home/ubuntu/llama.cpp/llama-b9892")
+LLAMA = os.environ.get("LLAMACPP_BIN", "/home/aliixh/llama.cpp/llama-b9892")
 PROBES = [
     "Reply with exactly: OK",
     "What is 17 + 26? Answer with only the number.",

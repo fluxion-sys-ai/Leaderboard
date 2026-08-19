@@ -66,8 +66,8 @@ case "$KEY" in
   gemma)  MODEL="google/gemma-4-31b-it"
           EXTRA='{"top_p":0.95,"top_k":64,"reasoning":{"effort":"high"},"provider":{"quantizations":["bf16"]}}'
           FULLNAME="gemma-4-31b" ;;
-  qwen38) MODEL="qwen/qwen3.8-27b"   # Q4-ONLY (no OpenRouter slug); local server ignores the name
-          EXTRA='{"top_p":0.95,"top_k":20,"presence_penalty":0.0}'
+  qwen38) MODEL="qwen/qwen3.8-27b"   # now on OpenRouter (fp8); local Q4 server ignores the slug + provider
+          EXTRA='{"top_p":0.95,"top_k":20,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
           FULLNAME="qwen3.8-27b" ;;
   *) echo "unknown model key: $KEY"; exit 2 ;;
 esac

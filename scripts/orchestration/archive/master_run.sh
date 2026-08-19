@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-cd /home/ubuntu/edge-intelligence-benchmark
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+cd /home/aliixh/edge-intelligence-benchmark
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 echo "[master] full grid start $(date -u +%T)"
 python3 run_benchmark.py                                   # resilient + cache-aware: fills every gap
 echo "[master] writing judge $(date -u +%T)"
@@ -17,6 +17,6 @@ fi
 echo "[master] rescore + leaderboard $(date -u +%T)"
 python3 rescore_all.py
 python3 -m src.report.build_leaderboard
-/home/ubuntu/vllm-env/bin/python /tmp/lb_render.py
-cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html
+/home/aliixh/vllm-env/bin/python /tmp/lb_render.py
+cp -f leaderboard.html /home/aliixh/edge_leaderboard.html
 echo "[master] ALL DONE $(date -u +%T)"

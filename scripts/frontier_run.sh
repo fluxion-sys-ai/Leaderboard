@@ -19,7 +19,10 @@ export OPENROUTER_API_KEY="$(cat .openrouter_key)"
 export PINCHBENCH_MODELS_FULL="$REPO/configs/models_full.yaml"
 export PINCHBENCH_OPENROUTER_KEY_FILE="$REPO/.openrouter_key"
 
+# SCOPE: Muse Glimmer first, ALL its benches, before other models. IFEval is
+# DROPPED (switched to IFBench — separate harness, added once built). Direct-API
+# benches for Muse: aime2026 (done) + ifbench (pending build).
 nohup python3 scripts/frontier_auto.py \
-  --benchmarks ifeval aime2026 --smoke-limit 5 \
+  --models muse-glimmer-30b-full --benchmarks aime2026 --smoke-limit 5 \
   >> /tmp/frontier_full.log 2>&1 &
 echo "started frontier_auto pid $!"

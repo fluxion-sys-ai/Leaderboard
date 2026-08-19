@@ -4,8 +4,8 @@
 # bench that FAILED — not easy ifeval) to verify no_think actually works BEFORE the full grid.
 # If the template ignores enable_thinking, smoke stays dirty -> keep hidden + flag, no GPU wasted.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+cd /home/aliixh/edge-intelligence-benchmark
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/nemotron_rerun.log
@@ -78,6 +78,6 @@ if os.path.exists(f'results/scored/{m}/pinchbench.json'):
 PY
 python3 -m src.report.build_leaderboard >> "$L" 2>&1
 cp -f leaderboard.html docs/index.html 2>/dev/null
-cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
 rm -rf models/$M 2>/dev/null
 say "NEMOTRON RE-RUN DONE"

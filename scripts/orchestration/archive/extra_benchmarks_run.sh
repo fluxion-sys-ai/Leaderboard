@@ -4,9 +4,9 @@
 # batched new benchmarks, then judges + leaderboard.
 # SOLO-GPU SAFE: waits for main watcher AND every llama-server to be gone.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
-export HF_TOKEN="$(cat /home/ubuntu/edge-intelligence-benchmark/.hf_token)"   # gated GPQA pull
+cd /home/aliixh/edge-intelligence-benchmark
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
+export HF_TOKEN="$(cat /home/aliixh/edge-intelligence-benchmark/.hf_token)"   # gated GPQA pull
 LOG=/tmp/extra_benchmarks.log
 
 echo "[extra] waiting for main watcher (PID 1812216) to finish... $(date -u +%T)" > $LOG
@@ -59,8 +59,8 @@ echo "[extra] Step 3/3: judges + rescore + leaderboard $(date -u +%T)" >> $LOG
 python3 judge_writing.py                                        >> $LOG 2>&1
 python3 judge_simpleqa.py                                       >> $LOG 2>&1
 python3 import_pinchbench.py                                    >> $LOG 2>&1
-/home/ubuntu/scorer-env/bin/python score_official.py humaneval  >> $LOG 2>&1
+/home/aliixh/scorer-env/bin/python score_official.py humaneval  >> $LOG 2>&1
 python3 rescore_all.py                                          >> $LOG 2>&1
 python3 -m src.report.build_leaderboard                         >> $LOG 2>&1
-cp -f leaderboard.html /home/ubuntu/edge_leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/edge_leaderboard.html 2>/dev/null
 echo "[extra] ALL DONE $(date -u +%T)" >> $LOG

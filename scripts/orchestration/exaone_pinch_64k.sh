@@ -3,8 +3,8 @@
 # fits (~33GB total). Runs DEAD LAST, after every other job. FORCE gate. Marks a ◆ spec deviation
 # (ran at 64K, not the usual 128K) on the board.
 set -u
-cd /home/ubuntu/edge-intelligence-benchmark
-export LLAMACPP_BIN=/home/ubuntu/llama.cpp/llama-b9892
+cd /home/aliixh/edge-intelligence-benchmark
+export LLAMACPP_BIN=/home/aliixh/llama.cpp/llama-b9892
 export HF_TOKEN="$(cat .hf_token 2>/dev/null)"
 export OPENROUTER_API_KEY="$(cat .openrouter_key 2>/dev/null)"
 L=/tmp/exaone_pinch_64k.log
@@ -35,7 +35,7 @@ if os.path.exists(p):
     json.dump(d,open(sp,'w'),indent=1); print('marked exaone pinch 64K spec deviation')
 PY
 python3 -m src.report.build_leaderboard >> "$L" 2>&1
-cp -f leaderboard.html /home/ubuntu/.openclaw/workspace/leaderboard.html 2>/dev/null
+cp -f leaderboard.html /home/aliixh/.openclaw/workspace/leaderboard.html 2>/dev/null
 cp -f leaderboard.html docs/index.html 2>/dev/null
 rm -rf models/exaone-4.5-33b 2>/dev/null
 say "EXAONE 64K PINCH DONE — everything complete"

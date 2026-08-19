@@ -61,7 +61,7 @@ case "$KEY" in
           EXTRA='{"top_p":0.95,"top_k":20,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
           FULLNAME="qwen3.6-27b" ;;
   qwen35) MODEL="qwen/qwen3.6-35b-a3b"
-          EXTRA='{"top_p":0.95,"top_k":20,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
+          EXTRA='{"top_p":0.95,"top_k":20,"min_p":0,"presence_penalty":1.5,"provider":{"quantizations":["fp8"]}}'  # presence 1.5 per models_full.yaml (was 0.0)
           FULLNAME="qwen3.6-35b-a3b" ;;
   gemma)  MODEL="google/gemma-4-31b-it"
           EXTRA='{"top_p":0.95,"top_k":64,"reasoning":{"effort":"high"},"provider":{"quantizations":["bf16"]}}'

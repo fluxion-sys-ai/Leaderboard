@@ -13,11 +13,11 @@ KEY="${1:?usage: swe_agentless_q4_run.sh <gemma|qwen27|qwen35|qwen38|muse> [args
 shift
 
 case "$KEY" in
-  gemma)  M=gemma-4-31b-q4f;      TKW='{"enable_thinking":true}';   BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
-  qwen27) M=qwen3.6-27b-q4f;      TKW='{"enable_thinking":true}';   BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
-  qwen35) M=qwen3.5-35b-a3b-q4f;  TKW='{"enable_thinking":true}';   BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
-  qwen38) M=qwen3.8-27b-q4f;      TKW='{"enable_thinking":true}';   BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
-  muse)   M=muse-glimmer-30b-q4f; TKW='{"reasoning_effort":"xhigh"}'; BIN=/home/aliixh/llama.cpp/llama.cpp-b10433/build/bin ;;
+  gemma)  M=gemma-4-31b-q4f;      TKW='{"enable_thinking":true}';   SAMP="--top-k 64";                             BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
+  qwen27) M=qwen3.6-27b-q4f;      TKW='{"enable_thinking":true}';   SAMP="--top-k 20 --min-p 0 --presence-penalty 0.0"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
+  qwen35) M=qwen3.5-35b-a3b-q4f;  TKW='{"enable_thinking":true}';   SAMP="--top-k 20 --min-p 0 --presence-penalty 1.5"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
+  qwen38) M=qwen3.8-27b-q4f;      TKW='{"enable_thinking":true}';   SAMP="--top-k 20 --min-p 0 --presence-penalty 0.0"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
+  muse)   M=muse-glimmer-30b-q4f; TKW='{"reasoning_effort":"xhigh"}'; SAMP="--top-k 64";                           BIN=/home/aliixh/llama.cpp/llama.cpp-b10433/build/bin ;;
   *) echo "unknown model key: $KEY"; exit 2 ;;
 esac
 
@@ -30,7 +30,7 @@ SLOG=/tmp/swe_q4_${KEY}_server.log
 PIDF=/tmp/swe_q4_${KEY}_server.pid
 start_server(){
   "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 2 -ngl 999 \
-    --chat-template-kwargs "$TKW" --temp 1.0 --top-p 0.95 \
+    --chat-template-kwargs "$TKW" --temp 1.0 --top-p 0.95 $SAMP \
     --host 127.0.0.1 --port $PORT --no-webui >>"$SLOG" 2>&1 &
   echo $! > "$PIDF"
 }

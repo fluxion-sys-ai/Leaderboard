@@ -1,19 +1,16 @@
-# Qwen3.8-27B FULL-precision (fp8) IFBench + AIME via the local vLLM server (:8081), using the
-# openrouter runner's base_url override. Qwen thinking-general rec params. LOWEST priority — runs
-# dead-last after all agentic work, per user's request.
+# Qwen3.8-27B FULL-precision (fp8) IFBench + AIME via OpenRouter (qwen/qwen3.8-27b is now available
+# there — no more fragile self-hosted vLLM). fp8-pinned to match the intended precision. Qwen
+# thinking-general rec params.
 defaults:
   runner: openrouter
   temperature: 1.0
   max_tokens: 1024
-  # benchmarks.yaml sets 81920 for ifbench/aime (already the "reasoning never truncates" ceiling);
-  # mult MUST stay 1 here — this is the self-hosted vLLM (--max-model-len 98304), so 81920*2=163840
-  # would exceed the server context and get every request rejected/truncated -> false 0.0.
-  max_tokens_mult: 1
+  max_tokens_mult: 1     # benchmarks.yaml sets 81920 for ifbench/aime; OpenRouter allows the full budget
 models:
   - name: qwen3.8-27b-full
     runner: openrouter
-    model_slug: edge-qwen38-full
-    base_url: http://127.0.0.1:8081/v1
+    model_slug: qwen/qwen3.8-27b
+    provider: { quantizations: ["fp8"] }   # fp8 ceiling, matching the other Qwen full models
     top_p: 0.95
     top_k: 20
     min_p: 0

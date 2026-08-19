@@ -8,7 +8,8 @@ Repo: `/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark`. Commit as 
 
 ## 0 · Snapshot live state (always first)
 
-- The 7 loops up? `weekend_auto qwen38_q4_seq qwen38_chain q4_agentic_queue swe_full_queue qwen38_full_ifaime` (+ any watchdog). Use the bracket trick: `ps -eo args | grep '[w]eekend_auto.sh'` (never `pgrep -f name` — it self-matches).
+- The loops up? `weekend_auto qwen38_q4_seq qwen38_chain q4_agentic_queue swe_full_queue qwen38_full_ifaime` + `watchdog`. Liveness: match the **real invocation** `ps -eo command | grep -c '^bash scripts/<name>.sh'` — NOT `pgrep -f name` (self-matches) and NOT a bare `grep '[n]ame.sh'` (which false-positives on your *own* command line / a sibling `git commit <name>.sh` that mentions the filename). Anchor to `^bash scripts/…` to exclude `/bin/bash -c` wrappers.
+- A **respawn watchdog** (`scripts/watchdog.sh`) keeps every loop alive with a GPU-mutex (only one GPU launch per pass, only when the GPU is idle) so it can never double-launch and recreate contention. It does NOT survive a machine reboot (bash-level) — use cron/systemd if reboot-survival is needed. Ensure exactly ONE watchdog runs.
 - Board heartbeat fresh? `.board_heartbeat` age < 10 min.
 - Credits (OpenRouter) and burn rate. Guard kills paid runs < $20.
 - GPU: `nvidia-smi` — should be **exactly one** server (Q4 llama-server **or** fp8 vLLM), never two. `nvidia-smi --query-compute-apps`.

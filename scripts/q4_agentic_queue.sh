@@ -6,6 +6,7 @@
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO"
+TERMN=$(grep -cE "[^[:space:]]" "$REPO/configs/terminal_sample.txt" 2>/dev/null || echo 80)  # stratified terminal sample size
 export PATH="$HOME/.local/bin:$PATH"
 log(){ echo "[$(date +'%F %T')] $*"; }
 free_gpu(){ for p in $(pgrep -f 'llama-server'); do kill -9 "$p" 2>/dev/null; done; }
@@ -61,7 +62,7 @@ log "SWE-bench Q4 phase complete."
 # ---- Phase 3: TerminalBench Q4 (all 5) — LAST (slow), so it can't block Pinch/SWE ----
 for m in "${MODELS[@]}"; do
   TBF="results/terminalbench_q4/$m/$m/results.json"
-  [ -f "$TBF" ] && [ "$(python3 -c "import json;d=json.load(open('$TBF'));print(d['n_resolved']+d['n_unresolved'])" 2>/dev/null||echo 0)" -ge 80 ] && { log "Terminal Q4 $m done — skip"; continue; }
+  [ -f "$TBF" ] && [ "$(python3 -c "import json;d=json.load(open('$TBF'));print(d['n_resolved']+d['n_unresolved'])" 2>/dev/null||echo 0)" -ge "$TERMN" ] && { log "Terminal Q4 $m done — skip"; continue; }
   free_gpu; sleep 3
   log "TERMINAL Q4 $m FULL"
   bash scripts/terminalbench_q4_run.sh "$m" >>"$REPO/logs_tb_q4_${m}.log" 2>&1 || log "  terminal errored"

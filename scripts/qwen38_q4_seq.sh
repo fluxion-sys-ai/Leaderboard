@@ -4,6 +4,7 @@
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO"
+TERMN=$(grep -cE "[^[:space:]]" "$REPO/configs/terminal_sample.txt" 2>/dev/null || echo 80)  # stratified terminal sample size
 log(){ echo "[$(date +'%F %T')] $*"; }
 free_gpu(){ for p in $(pgrep -f 'llama-server'); do kill -9 "$p" 2>/dev/null; done; }
 FN=qwen3.8-27b-q4f
@@ -37,7 +38,7 @@ fi
 
 # ---- 3/3 Terminal Q4 (LAST — the slow one) ----
 TBF="results/terminalbench_q4/qwen38/qwen38/results.json"
-if [ -f "$TBF" ] && [ "$(python3 -c "import json;d=json.load(open('$TBF'));print(d['n_resolved']+d['n_unresolved'])" 2>/dev/null||echo 0)" -ge 80 ]; then
+if [ -f "$TBF" ] && [ "$(python3 -c "import json;d=json.load(open('$TBF'));print(d['n_resolved']+d['n_unresolved'])" 2>/dev/null||echo 0)" -ge "$TERMN" ]; then
   log "Terminal Q4 qwen38 done — skip"; else
   free_gpu; sleep 3
   log "3/3 Terminal Q4 qwen38 FULL"

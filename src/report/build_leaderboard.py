@@ -449,6 +449,16 @@ STALE_PINCHBENCH = {"gemma-2-9b-it", "glm-4-9b-0414", "mistral-nemo-12b",
 # gpt-oss-20b added 2026-08-12: pinch 0.050 is an ARTIFACT — by_category shows ANALYSIS 0.57 (model IS capable) but 7/9 categories collapsed to exactly 0.00 (harmony/reasoning format failing to parse on those task types), not genuine inability. Agentic = BFCL only. (gemma-4-12b 0.239 + nemotron-30b 0.194 were CHECKED and KEPT — real spread across 7-8/9 categories.)
 
 
+def _terminal_min() -> int:
+    """Min completed TerminalBench tasks before a cell is shown (hide partial runs). Matches the
+    stratified sample size (configs/terminal_sample.txt) when present, else the full 80."""
+    try:
+        n = sum(1 for l in open(REPO_ROOT / "configs" / "terminal_sample.txt") if l.strip())
+        return n or 80
+    except Exception:
+        return 80
+
+
 def _frontier_tab() -> str:
     """Frontier tab — Muse Glimmer reproduction: full-precision (OpenRouter) vs Q4 (local),
     on the recommended-limit benches. Renders whatever is scored so far; '·' = still running."""
@@ -488,7 +498,7 @@ def _frontier_tab() -> str:
         # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy. Full-precision.
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
-            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < 80: return None  # hide partials
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials
             return d.get("accuracy")
         except Exception:
             return None
@@ -497,7 +507,7 @@ def _frontier_tab() -> str:
         # TerminalBench Q4-local (terminus-2 vs local llama-server) accuracy.
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
-            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < 80: return None  # hide partials until complete
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials until complete
             return d.get("accuracy")
         except Exception:
             return None

@@ -92,9 +92,15 @@ if [ ! -f "results/terminalbench/qwen38full/qwen38full/results.json" ]; then
   export PATH="$HOME/.local/bin:$PATH"
   export TB_MODEL_PARAMS='{"top_p":0.95,"extra_body":{"top_k":20,"min_p":0,"presence_penalty":0.0,"chat_template_kwargs":{"enable_thinking":true}}}'
   OUT="$REPO/results/terminalbench/qwen38full"; mkdir -p "$OUT"
-  log "3/3 Terminal full-fp8"
+  # same stratified 24-task sample as the Q4 runs (configs/terminal_sample.txt)
+  TARGS=()
+  if [ -s "$REPO/configs/terminal_sample.txt" ]; then
+    while IFS= read -r t; do [ -n "$t" ] && TARGS+=(--task-id "$t"); done < "$REPO/configs/terminal_sample.txt"
+  fi
+  log "3/3 Terminal full-fp8 (sample=${#TARGS[@]} task-id args)"
   tb run --dataset terminal-bench-core==0.1.1 --agent terminus-2 --agent-kwarg temperature=1.0 \
     --model openai/edge-qwen38-full --output-path "$OUT" --run-id qwen38full \
+    "${TARGS[@]}" \
     --n-concurrent 2 --global-agent-timeout-sec 2400 --cleanup >>"$REPO/logs_tb_full_qwen38.log" 2>&1 || log "  terminal errored"
 fi
 

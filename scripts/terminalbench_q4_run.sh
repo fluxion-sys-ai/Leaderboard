@@ -72,7 +72,15 @@ OUT="$REPO/results/terminalbench_q4/$KEY"
 # stale-dir guard: tb refuses to run if the run dir exists without a lock file
 [ -d "$OUT/$KEY" ] && [ ! -f "$OUT/$KEY/tb.lock" ] && rm -rf "$OUT/$KEY"
 mkdir -p "$OUT"
-NARG=(); [ -n "$NTASKS" ] && NARG=(--n-tasks "$NTASKS")
+# Stratified terminal sample: run the SAME fixed 24-task subset (configs/terminal_sample.txt,
+# stratified by difficulty, seed 42) for EVERY model to cut wall-clock ~70%. The remaining 56 tasks
+# are saved in configs/terminal_sample_remaining.txt to finish later. Falls back to full-80 (or
+# --n-tasks N) only if the sample file is absent.
+TARGS=()
+if [ -s "$REPO/configs/terminal_sample.txt" ]; then
+  while IFS= read -r t; do [ -n "$t" ] && TARGS+=(--task-id "$t"); done < "$REPO/configs/terminal_sample.txt"
+  echo "[tb-q4] using stratified sample: ${#TARGS[@]} tasks (÷2 = task count)"
+elif [ -n "$NTASKS" ]; then TARGS=(--n-tasks "$NTASKS"); fi
 
 cd "$REPO"
 # NOT exec: keep the shell so the EXIT trap tears down the server + keepalive when tb finishes.
@@ -81,7 +89,7 @@ tb run \
   --agent terminus-2 \
   --agent-kwarg temperature=1.0 \
   --model "openai/edge-${KEY}-q4" \
-  "${NARG[@]}" \
+  "${TARGS[@]}" \
   --output-path "$OUT" \
   --run-id "$KEY" \
   --n-concurrent 2 \

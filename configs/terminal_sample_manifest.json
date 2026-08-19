@@ -1,0 +1,37 @@
+{
+  "method": "stratified random by difficulty, proportional",
+  "seed": 42,
+  "size": 24,
+  "strata": {
+    "hard": 24,
+    "medium": 44,
+    "easy": 12
+  },
+  "sample": [
+    "blind-maze-explorer-algorithm.easy",
+    "blind-maze-explorer-algorithm.hard",
+    "build-tcc-qemu",
+    "configure-git-webserver",
+    "count-dataset-tokens",
+    "create-bucket",
+    "decommissioning-service-with-sensitive-data",
+    "download-youtube",
+    "eval-mteb",
+    "extract-moves-from-video",
+    "fix-permissions",
+    "git-multibranch",
+    "nginx-request-logging",
+    "oom",
+    "polyglot-c-py",
+    "polyglot-rust-c",
+    "pytorch-model-cli.hard",
+    "raman-fitting.easy",
+    "sanitize-git-repo",
+    "sanitize-git-repo.hard",
+    "security-vulhub-minio",
+    "sqlite-with-gcov",
+    "tmux-advanced-workflow",
+    "write-compressor"
+  ],
+  "remaining_count": 56
+}

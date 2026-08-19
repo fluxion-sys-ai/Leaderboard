@@ -14,6 +14,7 @@
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO"
+TERMN=$(grep -cE "[^[:space:]]" "$REPO/configs/terminal_sample.txt" 2>/dev/null || echo 80)  # stratified terminal sample size
 log(){ echo "[$(date +'%F %T')] [watchdog] $*" >> "$REPO/logs_watchdog.log"; }
 alive(){ ps -eo args | grep -q "[b]ash scripts/$1.sh"; }
 gpu_idle(){ ! pgrep -f 'llama-server|vllm serve' >/dev/null; }
@@ -22,7 +23,7 @@ spawn(){ nohup bash "scripts/$1.sh" >> "$REPO/logs_$1.log" 2>&1 & log "respawned
 
 # --- per-script completion tests (true = work done, do NOT respawn) ---
 sc(){ [ -f "results/scored/$1/$2.json" ]; }               # scored cell exists
-term_done(){ local p="results/terminalbench_q4/$1/$1/results.json"; [ -f "$p" ] && [ "$(python3 -c "import json;d=json.load(open('$p'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge 80 ]; }
+term_done(){ local p="results/terminalbench_q4/$1/$1/results.json"; [ -f "$p" ] && [ "$(python3 -c "import json;d=json.load(open('$p'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge "$TERMN" ]; }
 done_swe_full(){ sc muse-glimmer-30b-full swebench_lite && sc qwen3.6-27b-full swebench_lite && sc qwen3.6-35b-a3b-full swebench_lite && sc gemma-4-31b-full swebench_lite; }
 done_q4seq(){ sc qwen3.8-27b-q4f pinchbench && sc qwen3.8-27b-q4f swebench_lite && term_done qwen38; }
 done_chain(){ [ -f .QWEN38_DONE ]; }

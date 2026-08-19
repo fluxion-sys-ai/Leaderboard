@@ -117,6 +117,19 @@ def score_of(row: dict, key: str):
     return c.get("score") if c and c.get("score") is not None else None
 
 
+# A SWE-bench run whose Docker eval completed almost no instances is a PIPELINE FAILURE (empty
+# patches / crash), not a real 0% — showing it would be a false number. Require a minimum number
+# of actually-evaluated instances before the cell displays; otherwise render blank (·, pending).
+SWE_MIN_COMPLETED = 5
+
+def swe_score_of(row: dict):
+    c = row.get("swebench_lite")
+    if not c or c.get("score") is None:
+        return None
+    completed = len((c.get("detail") or {}).get("completed_ids") or [])
+    return c.get("score") if completed >= SWE_MIN_COMPLETED else None
+
+
 def dim_avg(row: dict, typ: str):
     xs = [score_of(row, k) for k, _s, _l, t in DIMENSIONS if t == typ and score_of(row, k) is not None]
     return round(100 * statistics.mean(xs), 1) if xs else None
@@ -543,7 +556,7 @@ def _frontier_tab() -> str:
                          + cell(score_of(cf, "pinchbench"))   # real PinchBench (local-GPU agent); full-precision N/A until API-agent wired
                          + tau3_cell(_tau3(tkey))
                          + cell(_terminal(tkey))
-                         + cell(score_of(cf, "swebench_lite"))   # SWE-bench Lite (Agentless, strat-50)
+                         + cell(swe_score_of(cf))   # SWE-bench Lite (Agentless, strat-50)
                          + '</tr>')
 
     # ── Table 2: Q4-local (A100). IFBench + AIME + PinchBench (no Q4 τ³). ──
@@ -560,7 +573,7 @@ def _frontier_tab() -> str:
                        # temp0+no_think (NOT rec), so they're pulled; this reads the rec-params redo.
                        + cell(score_of(cq, "pinchbench"))
                        + cell(_terminal_q4(tkey))
-                       + cell(score_of(cq, "swebench_lite"))
+                       + cell(swe_score_of(cq))
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

@@ -10,12 +10,10 @@ export IFBENCH_DIR=/home/aliixh/IFBench
 FN=qwen3.8-27b-full
 log(){ echo "[$(date +'%F %T')] $*" >> "$REPO/logs_qwen38_full_or.log"; }
 log "qwen38_full_openrouter up — Pinch/Terminal/SWE via OpenRouter fp8."
-# DEPRIORITIZED (user): the non-GPU slot runs the other-4 full SWE first; qwen3.8-full waits until
-# muse/qwen27/qwen35/gemma SWE are all scored — OR swe_full_queue has exited — then runs.
-while ! { [ -f results/scored/muse-glimmer-30b-full/swebench_lite.json ] && [ -f results/scored/qwen3.6-27b-full/swebench_lite.json ] \
-       && [ -f results/scored/qwen3.6-35b-a3b-full/swebench_lite.json ] && [ -f results/scored/gemma-4-31b-full/swebench_lite.json ]; } \
-      && pgrep -f 'swe_full_queue' >/dev/null; do sleep 120; done
-log "other-4 full SWE done (or queue exited) — starting qwen3.8-full."
+# PRIORITIZED (user standing order: ALWAYS prioritize qwen3.8). This runs the qwen3.8-full pipeline
+# FIRST on the non-GPU slot; the other-4 SWE queue (swe_full_queue) waits until our SWE cell is scored.
+# No gate here — start immediately.
+log "qwen3.8-full PRIORITIZED — starting immediately (other-4 SWE waits for us)."
 
 # 1) PinchBench (no_think — thinking-ON zeroes agentic) + import to the scored dir
 if [ ! -f "results/scored/$FN/pinchbench.json" ]; then

@@ -11,7 +11,10 @@ declare -A FULLNAME=( [muse]=muse-glimmer-30b [qwen27]=qwen3.6-27b [qwen35]=qwen
 
 if [ ! -f .SWE_PIPELINE_OK ]; then log "SWE pipeline not verified yet (.SWE_PIPELINE_OK absent) — exiting; will be relaunched once smoke passes."; exit 0; fi
 # non-GPU full-precision SWE-Lite (20-sample) for the 4 non-3.8 models. This is the ONE non-GPU
-# benchmark; qwen3.8-full SWE is deprioritized and runs AFTER these (its wrapper waits for us).
+# benchmark. PRIORITIZE qwen3.8 (user standing order): the other-4 SWE WAITS until qwen3.8-full SWE is
+# scored, OR the qwen38_full_openrouter wrapper has exited (deadlock-proof). Only ONE non-GPU at a time.
+while [ ! -f results/scored/qwen3.8-27b-full/swebench_lite.json ] && ps -eo args | grep -q '[b]ash scripts/qwen38_full_openrouter.sh'; do sleep 120; done
+log "qwen3.8-full SWE scored (or wrapper exited) — now running other-4 SWE."
 log "swe_full_queue up — 20-sample SWE on muse/qwen27/qwen35/gemma (OpenRouter)."
 for m in muse qwen27 qwen35 gemma; do
   fn=${FULLNAME[$m]}

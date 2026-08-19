@@ -30,8 +30,20 @@ serve_vllm(){  # $1 = extra args (e.g. thinking default)
   log "vLLM failed to come up in 12min — see /tmp/vllm_qwen38.log"; return 1
 }
 
-log "===== Qwen3.8 FULL (fp8/vLLM) PRIORITY: Pinch -> Terminal -> SWE ====="
-if ! serve_vllm; then log "ABORT: vLLM not serving"; exit 1; fi
+log "===== Qwen3.8 FULL (fp8/vLLM) PRIORITY: Pinch -> SWE -> Terminal ====="
+# Try HARD before giving up — a transient vLLM startup hiccup must not abandon the whole qwen38-full
+# run (Pinch+SWE+Terminal+IF/AIME). Only after 3 genuine failures do we exit (the EXIT trap then
+# releases the gate so downstream isn't deadlocked). Each serve_vllm already waits up to 12 min.
+served=0
+for attempt in 1 2 3; do
+  if serve_vllm; then served=1; break; fi
+  log "vLLM serve attempt $attempt/3 failed — freeing GPU and retrying in 30s (see /tmp/vllm_qwen38.log)"
+  free_gpu; sleep 30
+done
+if [ "$served" -ne 1 ]; then
+  log "ABORT: vLLM not serving after 3 attempts — releasing gate to avoid deadlock (qwen38-full cells show pending)."
+  exit 1
+fi
 log "vLLM up (fp8, :$PORT). Qwen3.8 full-precision served as edge-qwen38-full."
 export OPENAI_API_BASE="http://127.0.0.1:$PORT/v1" OPENAI_API_KEY="sk-local"
 export OPENROUTER_API_KEY="$(cat "$REPO/.openrouter_key")"   # deepseek judge for pinch

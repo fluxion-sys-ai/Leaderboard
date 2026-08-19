@@ -1,19 +1,39 @@
 {
-  "score": 0.0196078431372549,
+  "score": 0.11764705882352941,
   "metric": "swebench_lite_resolved_pct",
   "n": 51,
-  "resolved": 1,
+  "resolved": 6,
   "detail": {
     "resolved_ids": [
-      "astropy__astropy-14995"
+      "astropy__astropy-14995",
+      "django__django-12284",
+      "django__django-13933",
+      "scikit-learn__scikit-learn-10297",
+      "scikit-learn__scikit-learn-12471",
+      "sympy__sympy-20212"
     ],
     "unresolved_ids": [
-      "django__django-12589"
+      "django__django-11797",
+      "django__django-13551",
+      "django__django-13590",
+      "django__django-15498",
+      "django__django-15902",
+      "psf__requests-2674"
     ],
     "error_ids": [],
     "completed_ids": [
       "astropy__astropy-14995",
-      "django__django-12589"
+      "django__django-11797",
+      "django__django-12284",
+      "django__django-13551",
+      "django__django-13590",
+      "django__django-13933",
+      "django__django-15498",
+      "django__django-15902",
+      "psf__requests-2674",
+      "scikit-learn__scikit-learn-10297",
+      "scikit-learn__scikit-learn-12471",
+      "sympy__sympy-20212"
     ]
   }
 }

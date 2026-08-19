@@ -496,17 +496,26 @@ _FR_BENCH = {   # benchmark harness — same regardless of model; (label, thinki
 _FR_DISP = {"ifbench": "IFBench", "aime2026": "AIME26", "pinchbench": "PinchBench",
             "tau3": "τ³-bank", "terminal": "TerminalBench", "swe": "SWE-Lite"}
 def _fr_spec(model_key, bench, precision):
-    """Composed params HTML for one Frontier cell (precision · serving · sampling · harness)."""
+    """Composed params HTML for one Frontier cell. Every knob is tagged REC (vendor-recommended)
+    or DEF (vendor/model default) so it's explicit which values produced this score."""
     samp = _FR_SAMP.get(model_key, "")
     serve = (_FR_FULL_SERVE.get(model_key, "OpenRouter") if precision == "full"
              else "local A100-40GB · llama.cpp · Q4_K_M GGUF")
     harness, think = _FR_BENCH.get(bench, (bench, "ON"))
     if bench == "swe" and model_key == "muse" and precision == "full":
         samp += " · reasoning effort xhigh"
-    parts = [f'<b>precision</b>: {precision.upper()} · {serve}',
-             f'<b>sampling</b>: temp = vendor default · {samp}',
-             f'<b>thinking</b>: {think}',
-             f'<b>benchmark</b>: {harness}']
+    # temperature: vendor/model default everywhere except SWE, where Agentless fixes it per stage
+    temp = ("localize 0.0 · repair 0.8 <span class='rd'>REC</span>" if bench == "swe"
+            else "model default (unset) <span class='rd df'>DEF</span>")
+    parts = [
+        '<div class="sp-src">params used: <b>vendor-recommended sampling + vendor/model defaults</b> '
+        '— nothing custom</div>',
+        f'<b>precision</b>: {precision.upper()} · {serve} <span class="rd df">DEF</span>',
+        f'<b>temperature</b>: {temp}',
+        f'<b>sampling</b>: {samp} <span class="rd">REC</span>',
+        f'<b>thinking</b>: {think} <span class="rd">REC</span>',
+        f'<b>harness</b>: {harness}',
+    ]
     if bench == "pinchbench" and precision == "q4":
         parts.append('<i>note: 87/116 tasks hit the ~300s/task timeout on long CSV/log/meeting '
                      'analysis (Q4-local throughput), which depresses this score.</i>')
@@ -754,8 +763,11 @@ tbody tr:hover td{outline:1px solid var(--acc);outline-offset:-1px}
 .uvk{color:var(--mut);font-size:9px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
 .uvv{color:var(--tx);font-size:11.5px;margin-top:2px}
 .sc{cursor:pointer}
-#specpop{position:absolute;z-index:60;max-width:270px;background:var(--s2);border:1px solid var(--acc);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--tx);box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;line-height:1.45}
+#specpop{position:absolute;z-index:60;max-width:305px;background:var(--s2);border:1px solid var(--acc);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--tx);box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;line-height:1.5}
 #specpop .sp-h{color:var(--acc);font-weight:700;font-size:10px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+#specpop .sp-src{color:var(--mut);font-size:10px;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid rgba(128,128,128,.28)}
+#specpop .rd{display:inline-block;font-size:8.5px;font-weight:700;padding:0 4px;border-radius:4px;background:var(--acc);color:#fff;margin-left:3px;letter-spacing:.04em;vertical-align:middle}
+#specpop .rd.df{background:var(--mut)}
 .devs{margin-top:9px;font-size:11.5px;color:var(--mut)}
 .devs ul{margin:5px 0 0;padding-left:2px;list-style:none}
 .devs li{margin:3px 0}

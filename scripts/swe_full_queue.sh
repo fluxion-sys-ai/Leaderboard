@@ -10,13 +10,9 @@ log(){ echo "[$(date +'%F %T')] $*"; }
 declare -A FULLNAME=( [muse]=muse-glimmer-30b [qwen27]=qwen3.6-27b [qwen35]=qwen3.6-35b-a3b [gemma]=gemma-4-31b )
 
 if [ ! -f .SWE_PIPELINE_OK ]; then log "SWE pipeline not verified yet (.SWE_PIPELINE_OK absent) — exiting; will be relaunched once smoke passes."; exit 0; fi
-# SERIALIZE with qwen38-full: run ONLY one non-GPU benchmark at a time (user's rule), and qwen38 is
-# priority. Wait until qwen38-full's Pinch+SWE+Terminal are all done — OR its wrapper has exited
-# (crashed/finished) — before starting the other-4. Deadlock-proof (proceeds if the wrapper is gone).
-log "swe_full_queue: waiting for qwen38-full to finish (one non-GPU run at a time)..."
-while ! { [ -f results/scored/qwen3.8-27b-full/pinchbench.json ] && [ -f results/scored/qwen3.8-27b-full/swebench_lite.json ] && [ -f results/terminalbench/qwen38/qwen38/results.json ]; } \
-      && pgrep -f 'qwen38_full_openrouter' >/dev/null; do sleep 120; done
-log "swe_full_queue up — 20-sample on muse/qwen27/qwen35/gemma (OpenRouter, after qwen38-full)."
+# non-GPU full-precision SWE-Lite (20-sample) for the 4 non-3.8 models. This is the ONE non-GPU
+# benchmark; qwen3.8-full SWE is deprioritized and runs AFTER these (its wrapper waits for us).
+log "swe_full_queue up — 20-sample SWE on muse/qwen27/qwen35/gemma (OpenRouter)."
 for m in muse qwen27 qwen35 gemma; do
   fn=${FULLNAME[$m]}
   if [ -f "results/scored/${fn}-full/swebench_lite.json" ]; then log "SWE full $m already scored — skip"; continue; fi

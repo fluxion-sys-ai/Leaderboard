@@ -13,7 +13,7 @@ if [ ! -f .SWE_PIPELINE_OK ]; then log "SWE pipeline not verified yet (.SWE_PIPE
 # non-GPU full-precision SWE-Lite (20-sample) for the 4 non-3.8 models. This is the ONE non-GPU
 # benchmark. PRIORITIZE qwen3.8 (user standing order): the other-4 SWE WAITS until qwen3.8-full SWE is
 # scored, OR the qwen38_full_openrouter wrapper has exited (deadlock-proof). Only ONE non-GPU at a time.
-while [ ! -f results/scored/qwen3.8-27b-full/swebench_lite.json ] && ps -eo args | grep -q '[b]ash scripts/qwen38_full_openrouter.sh'; do sleep 120; done
+while [ ! -f results/scored/qwen3.8-27b-full/swebench_lite.json ] && ps -eo args | grep -qE '[b]ash scripts/(rec_pinch_full|qwen38_full_openrouter)\.sh'; do sleep 120; done
 log "qwen3.8-full SWE scored (or wrapper exited) — now running other-4 SWE."
 log "swe_full_queue up — 20-sample SWE on muse/qwen27/qwen35/gemma (OpenRouter)."
 for m in muse qwen27 qwen35 gemma; do

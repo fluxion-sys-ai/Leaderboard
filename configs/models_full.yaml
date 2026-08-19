@@ -91,3 +91,18 @@ models:
     provider:
       quantizations: ["fp8"]
       allow_fallbacks: true
+
+  # ---- Qwen3.8-27B (NEW, Aug 2026) — fp8 CEILING -----------------------------
+  # thinking-general recipe (presence 0.0, matches the 27B card, NOT 35B's 1.5).
+  - name: qwen3.8-27b-full
+    model_slug: qwen/qwen3.8-27b
+    precision: fp8
+    precision_label: "fp8 (ceiling — not bf16)"
+    temperature: 1.0
+    top_p: 0.95
+    top_k: 20
+    min_p: 0
+    presence_penalty: 0.0
+    provider:
+      quantizations: ["fp8"]
+      allow_fallbacks: true

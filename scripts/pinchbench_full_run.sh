@@ -17,6 +17,10 @@ case "$KEY" in
   *) echo "unknown key: $KEY"; exit 2 ;;
 esac
 export OPENROUTER_API_KEY="$(cat "$REPO/.openrouter_key")"
+# Inject per-model VENDOR-REC sampling (top_p/top_k/min_p/presence) + precision pin: lib_agent.py
+# reads this config, matches --model's slug, and packages the sampling into the agent's provider
+# params. Without it, full pinch runs at OpenRouter DEFAULTS (top_p 1.0, no top_k) — NOT rec.
+export PINCHBENCH_MODELS_FULL="$REPO/configs/models_full.yaml"
 cd "$PB"
 if [ -n "$NTASKS" ]; then SUITE=$(head -"$NTASKS" "$REPO/configs/pinchbench_tasks.txt" | paste -sd,)
 else SUITE=$(paste -sd, "$REPO/configs/pinchbench_tasks.txt"); fi

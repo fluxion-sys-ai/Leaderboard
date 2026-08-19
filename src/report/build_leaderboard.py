@@ -223,7 +223,7 @@ def _universal_html():
     cards = "".join(
         f'<div class="uv"><span class="uvk">{html.escape(k)}</span><span class="uvv">{html.escape(str(v))}</span></div>'
         for k, v in SPEC_UNIVERSAL.items())
-    return (f'<div class="specgrid"><span class="pk">universal · same for every model unless a ◆ score says otherwise</span>'
+    return (f'<div class="specgrid"><span class="pk">universal · same for every model unless ◆</span>'
             f'<div class="uvlist">{cards}</div></div>')
 
 
@@ -333,9 +333,9 @@ def _dim_tables(rows):
         # Agentic: BFCL + PinchBench as SEPARATE side-by-side tables (PinchBench not on all models)
         if t == "Agentic":
             nb, bt = _single_bench_table(rows, "bfcl", "BFCL", "BFCL — tool-use, single call", "dAb", bar=False)
-            npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp", bar=True)
+            npb, pt = _single_bench_table(rows, "pinchbench", "PinchBench", "PinchBench — 116-task multi-turn agent", "dAp", bar=False)
             out.append(
-                f'<h3 class="dimh">Agentic<span class="mut"> · BFCL &amp; PinchBench shown separately — PinchBench isn\'t run on every model</span></h3>'
+                f'<h3 class="dimh">Agentic<span class="mut"> · BFCL &amp; PinchBench (not every model runs PinchBench)</span></h3>'
                 f'<div class="dimrow"><div class="dtab scroll"><div class="sbs-h">BFCL<span class="mut"> · {nb} models</span></div>{bt}</div>'
                 f'<div class="dtab scroll"><div class="sbs-h">PinchBench<span class="mut"> · {npb} models</span></div>{pt}</div></div>')
             continue
@@ -589,7 +589,7 @@ def build() -> str:
 <div class="brand"><span class="dot"></span><h1>Edge Intelligence Leaderboard</h1></div>
 <button id="tg" onclick="theme()" title="light / dark">◐</button>
 </header>
-<div class="meta">{len(rows)} models · {n_cells} cells · big→small · click any header to sort · click a score for its config</div>
+<div class="meta">{len(rows)} models · {n_cells} cells · click a header to sort · a score for its config</div>
 {_universal_html()}
 {_deviations_html()}
 <nav>
@@ -602,7 +602,7 @@ def build() -> str:
 <div id="v2" class="view">{_dim_tables(rows)}</div>
 <div id="v4" class="view"><div class="scroll">{_frontier_tab()}</div></div>
 <div id="v3" class="view">
-<h3 class="dimh">Capability vs size<span class="mut"> · green = best model at its size (not beaten by anything smaller)</span></h3>
+<h3 class="dimh">Capability vs size<span class="mut"> · green = best at its size</span></h3>
 {_pareto_svg(rows)}
 <h3 class="dimh">Ranked by dimension-weighted average</h3>
 {_bars_html(rows)}
@@ -613,7 +613,7 @@ def build() -> str:
 <span class="lg" style="{heat(0.15)}">low</span>
 <span class="lg" style="{heat(0.5)}">mid</span>
 <span class="lg" style="{heat(0.9)}">high</span>
-<span class="mut">· shade per cell, not comparable across columns · · = no score (excluded from averages)</span>
+<span class="mut">· shade is per-cell · · = no score</span>
 </div>
 </div>
 <script>{JS}</script></body></html>"""

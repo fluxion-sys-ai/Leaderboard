@@ -5,7 +5,10 @@ defaults:
   runner: openrouter
   temperature: 1.0
   max_tokens: 1024
-  max_tokens_mult: 2
+  # benchmarks.yaml sets 81920 for ifbench/aime (already the "reasoning never truncates" ceiling);
+  # mult MUST stay 1 here — this is the self-hosted vLLM (--max-model-len 98304), so 81920*2=163840
+  # would exceed the server context and get every request rejected/truncated -> false 0.0.
+  max_tokens_mult: 1
 models:
   - name: qwen3.8-27b-full
     runner: openrouter

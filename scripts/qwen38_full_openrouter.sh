@@ -15,7 +15,12 @@ log "qwen38_full_openrouter up — Pinch/Terminal/SWE via OpenRouter fp8."
 # No gate here — start immediately.
 log "qwen3.8-full PRIORITIZED — starting immediately (other-4 SWE waits for us)."
 
-# 1) PinchBench (no_think — thinking-ON zeroes agentic) + import to the scored dir
+# rec_pinch_full.sh owns ALL full-precision PinchBench (rec/default thinking-ON). Wait for it so we
+# never double-run qwen3.8 pinch; once it's done, our Pinch step below is skip-guarded (cell exists).
+while ps -eo args | grep -q '[b]ash scripts/rec_pinch_full.sh'; do sleep 60; done
+
+# 1) PinchBench at REC/DEFAULT (thinking ON) — normally already done by rec_pinch_full; this is a
+#    skip-guarded fallback so the wrapper is self-sufficient if rec_pinch_full never ran.
 if [ ! -f "results/scored/$FN/pinchbench.json" ]; then
   log "Pinch start"
   bash scripts/pinchbench_full_run.sh qwen38 >>"$REPO/logs_pb_full_qwen38.log" 2>&1 || log "pinch non-zero"

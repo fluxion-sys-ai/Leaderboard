@@ -46,6 +46,7 @@ while true; do
 
   # 1) non-GPU daemons/queues — always keep up (zero GPU-contention risk)
   alive weekend_auto || spawn weekend_auto
+  if ! alive rec_pinch_full        && ! sc qwen3.8-27b-full pinchbench; then spawn rec_pinch_full; fi  # qwen3.8 pinch root — crash-resilient
   if ! alive swe_full_queue        && ! done_swe_full;  then spawn swe_full_queue;        fi
   if ! alive qwen38_full_openrouter && ! done_openrouter; then spawn qwen38_full_openrouter; fi
   if ! alive full_terminal_queue    && ! done_full_terminal; then spawn full_terminal_queue;    fi

@@ -29,6 +29,8 @@ case "$KEY" in
           export TB_MODEL_PARAMS='{"top_p":0.95,"presence_penalty":0.0,"extra_body":{"top_k":20,"min_p":0,"provider":{"quantizations":["fp8"],"allow_fallbacks":true}}}' ;;
   qwen35) MODEL="openrouter/qwen/qwen3.6-35b-a3b"
           export TB_MODEL_PARAMS='{"top_p":0.95,"presence_penalty":1.5,"extra_body":{"top_k":20,"min_p":0,"provider":{"quantizations":["fp8"],"allow_fallbacks":true}}}' ;;
+  qwen38) MODEL="openrouter/qwen/qwen3.8-27b"
+          export TB_MODEL_PARAMS='{"top_p":0.95,"presence_penalty":0.0,"extra_body":{"top_k":20,"min_p":0,"provider":{"quantizations":["fp8"],"allow_fallbacks":true}}}' ;;
   *) echo "unknown model key: $KEY"; exit 2 ;;
 esac
 

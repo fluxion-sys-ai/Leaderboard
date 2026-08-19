@@ -12,6 +12,7 @@ case "$KEY" in
   qwen27) MODEL="openrouter/qwen/qwen3.6-27b" ;;
   qwen35) MODEL="openrouter/qwen/qwen3.6-35b-a3b" ;;
   gemma)  MODEL="openrouter/google/gemma-4-31b-it" ;;
+  qwen38) MODEL="openrouter/qwen/qwen3.8-27b" ;;
   *) echo "unknown key: $KEY"; exit 2 ;;
 esac
 export OPENROUTER_API_KEY="$(cat "$REPO/.openrouter_key")"

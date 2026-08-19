@@ -32,13 +32,7 @@ PY
   log "Pinch done -> $([ -f results/scored/$FN/pinchbench.json ]&&echo scored||echo none)"
 fi
 
-# 2) IFBench + AIME (thinking ON, fp8)
-if [ ! -f "results/scored/$FN/ifbench.json" ] || [ ! -f "results/scored/$FN/aime2026.json" ]; then
-  log "IF/AIME start"
-  python3 run_benchmark.py --models-config configs/models_qwen38_full_ifaime.yaml \
-    --models qwen3.8-27b-full --benchmarks aime2026 ifbench >>"$REPO/logs_ifaime_qwen38_full.log" 2>&1 || log "IF/AIME non-zero"
-  log "IF/AIME done -> ifbench=$([ -f results/scored/$FN/ifbench.json ]&&echo y||echo n) aime=$([ -f results/scored/$FN/aime2026.json ]&&echo y||echo n)"
-fi
+# (IFBench + AIME intentionally SKIPPED for qwen3.8-full per user — only Pinch, SWE, Terminal.)
 
 # 3) SWE-Lite on the 20-sample (OpenRouter fp8 — no SWE_API_BASE => OpenRouter)
 if [ ! -f "results/scored/$FN/swebench_lite.json" ]; then

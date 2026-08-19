@@ -34,8 +34,8 @@ done_agentic(){
   for k in gemma qwen27 qwen35 qwen38 muse; do term_done "$k" || return 1; done
   return 0
 }
-done_openrouter(){ sc qwen3.8-27b-full pinchbench && sc qwen3.8-27b-full ifbench && sc qwen3.8-27b-full aime2026 \
-                   && sc qwen3.8-27b-full swebench_lite && [ -f results/terminalbench/qwen38/qwen38/results.json ]; }
+done_openrouter(){ sc qwen3.8-27b-full pinchbench && sc qwen3.8-27b-full swebench_lite \
+                   && [ -f results/terminalbench/qwen38/qwen38/results.json ]; }   # NO ifbench/aime per user
 
 log "watchdog up (pid $$) — 5-min loop, GPU-mutex respawn."
 while true; do

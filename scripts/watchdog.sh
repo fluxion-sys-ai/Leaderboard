@@ -18,15 +18,13 @@ TERMN=$(grep -cE "[^[:space:]]" "$REPO/configs/terminal_sample.txt" 2>/dev/null 
 log(){ echo "[$(date +'%F %T')] [watchdog] $*" >> "$REPO/logs_watchdog.log"; }
 alive(){ ps -eo args | grep -q "[b]ash scripts/$1.sh"; }
 gpu_idle(){ ! pgrep -f 'llama-server|vllm serve' >/dev/null; }
-any_gpu_script(){ for s in qwen38_q4_seq qwen38_chain qwen38_full_seq q4_agentic_queue qwen38_full_ifaime; do alive "$s" && return 0; done; return 1; }
+any_gpu_script(){ alive q4_agentic_queue; }   # the only remaining GPU worker (qwen38-full moved to OpenRouter)
 spawn(){ nohup bash "scripts/$1.sh" >> "$REPO/logs_$1.log" 2>&1 & log "respawned $1 (pid $!)"; }
 
 # --- per-script completion tests (true = work done, do NOT respawn) ---
 sc(){ [ -f "results/scored/$1/$2.json" ]; }               # scored cell exists
 term_done(){ local p="results/terminalbench_q4/$1/$1/results.json"; [ -f "$p" ] && [ "$(python3 -c "import json;d=json.load(open('$p'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge "$TERMN" ]; }
 done_swe_full(){ sc muse-glimmer-30b-full swebench_lite && sc qwen3.6-27b-full swebench_lite && sc qwen3.6-35b-a3b-full swebench_lite && sc gemma-4-31b-full swebench_lite; }
-done_q4seq(){ sc qwen3.8-27b-q4f pinchbench && sc qwen3.8-27b-q4f swebench_lite && term_done qwen38; }
-done_chain(){ [ -f .QWEN38_DONE ]; }
 done_agentic(){
   # Done only when EVERY Q4 cell is actually scored (not just when the queue logged COMPLETE once) —
   # so a cell that failed pre-fix gets the queue respawned to redo it (skip-guards skip the done ones).
@@ -36,25 +34,22 @@ done_agentic(){
   for k in gemma qwen27 qwen35 qwen38 muse; do term_done "$k" || return 1; done
   return 0
 }
-done_ifaime(){ sc qwen3.8-27b-full ifbench && sc qwen3.8-27b-full aime2026; }
+done_openrouter(){ sc qwen3.8-27b-full ifbench && sc qwen3.8-27b-full aime2026 && sc qwen3.8-27b-full swebench_lite; }
 
 log "watchdog up (pid $$) — 5-min loop, GPU-mutex respawn."
 while true; do
   date +%s > "$REPO/.watchdog_heartbeat"
 
-  # 1) non-GPU daemons — always keep up
-  alive weekend_auto   || spawn weekend_auto
-  if ! alive swe_full_queue && ! done_swe_full; then spawn swe_full_queue; fi
+  # 1) non-GPU daemons/queues — always keep up (zero GPU-contention risk)
+  alive weekend_auto || spawn weekend_auto
+  if ! alive swe_full_queue        && ! done_swe_full;  then spawn swe_full_queue;        fi
+  if ! alive qwen38_full_openrouter && ! done_openrouter; then spawn qwen38_full_openrouter; fi
 
-  # 2) GPU chain — at most ONE launch per pass, only when the GPU is genuinely idle AND not paused
-  # (.PAUSE_MAIN_QUEUES is set during manual GPU maintenance; without this check the watchdog raced
-  # a manual full_seq relaunch and spawned a competing Q4 llama-server -> vLLM OOM).
-  if gpu_idle && ! any_gpu_script && [ ! -f .PAUSE_MAIN_QUEUES ]; then
-    if   ! done_q4seq   ; then spawn qwen38_q4_seq
-    elif ! done_chain   ; then spawn qwen38_chain
-    elif ! done_agentic ; then spawn q4_agentic_queue
-    elif ! done_ifaime  ; then spawn qwen38_full_ifaime
-    fi
+  # 2) GPU: only the Q4 queue remains (qwen38-full is on OpenRouter now). Respawn ONLY when the GPU
+  # is idle, not paused, no GPU worker alive, and Q4 isn't already complete. The obsolete vLLM chain
+  # (qwen38_chain / qwen38_full_seq / qwen38_full_ifaime / qwen38_q4_seq) is intentionally NOT spawned.
+  if gpu_idle && ! any_gpu_script && [ ! -f .PAUSE_MAIN_QUEUES ] && ! done_agentic; then
+    spawn q4_agentic_queue
   fi
 
   sleep 300

@@ -1,0 +1,12 @@
+{
+  "score": 0.0,
+  "metric": "swebench_lite_resolved_pct",
+  "n": 51,
+  "resolved": 0,
+  "detail": {
+    "resolved_ids": [],
+    "unresolved_ids": [],
+    "error_ids": [],
+    "completed_ids": []
+  }
+}

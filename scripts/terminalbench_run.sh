@@ -35,6 +35,17 @@ case "$KEY" in
 esac
 
 OUT="$REPO/results/terminalbench/$KEY"
+# stale-run guard: a prior run dir that is INCOMPLETE (<80) and not owned by a live tb process is
+# stale (e.g. a killed partial + leftover tb.lock). tb refuses/misbehaves on a locked/stale run-id
+# dir, so the terminal re-run would never reach 80 and downstream gates (other-4 pinch) block forever.
+# Back it up and clear it. Complete dirs (>=80, e.g. the other-4) are never touched.
+RUNDIR="$OUT/$KEY"
+if [ -d "$RUNDIR" ]; then
+  DONE_N=$([ -f "$RUNDIR/results.json" ] && python3 -c "import json;d=json.load(open('$RUNDIR/results.json'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null || echo 0)
+  if [ "${DONE_N:-0}" -lt 80 ] && ! pgrep -f "tb run .*terminalbench/$KEY" >/dev/null 2>&1; then
+    BK="$OUT/_stale_${KEY}_$(date +%s)"; mv "$RUNDIR" "$BK" 2>/dev/null && echo "[tb-full] cleared stale/incomplete run dir ($DONE_N/80) -> $BK"
+  fi
+fi
 mkdir -p "$OUT"
 NARG=(); [ -n "$NTASKS" ] && NARG=(--n-tasks "$NTASKS")
 

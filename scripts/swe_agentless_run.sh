@@ -203,7 +203,7 @@ $PY agentless/repair/repair.py \
     --model "$MODEL" --backend openai \
     --loc_interval --top_n 3 --context_window 10 \
     --max_samples "$REPAIR_SAMPLES" \
-    --cot --diff_format --gen_and_process --num_threads 1 || exit 1
+    --cot --diff_format --gen_and_process --num_threads 2 || exit 1
 
 PREDS="$REP/output_0_processed.jsonl"
 [ -s "$PREDS" ] || { echo "ERROR: predictions empty: $PREDS"; exit 1; }

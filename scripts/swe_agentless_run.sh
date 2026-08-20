@@ -36,7 +36,9 @@ SUBSET=""
 NLIM=""
 IDS_CSV=""
 TAG=""
-REPAIR_SAMPLES=1        # cheap default; Agentless methodology uses more
+REPAIR_SAMPLES=10       # 10 samples/bug (1 greedy + 9 sampled) = one official Agentless repair run.
+                        # Was 1 (a placeholder that crushed SWE scores). Full Agentless = 40 (4 loc-sets x 10);
+                        # bump specific models to 40 on OpenRouter for a headline number. Override: --repair-samples N.
 EVAL_WORKERS=2
 while [ $# -gt 0 ]; do
   case "$1" in

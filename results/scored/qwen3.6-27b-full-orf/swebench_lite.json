@@ -1,0 +1,27 @@
+{
+  "score": 0.1,
+  "metric": "swebench_lite_resolved_pct",
+  "n": 20,
+  "resolved": 2,
+  "detail": {
+    "resolved_ids": [
+      "astropy__astropy-14995",
+      "scikit-learn__scikit-learn-10297"
+    ],
+    "unresolved_ids": [
+      "django__django-13551",
+      "django__django-13590",
+      "django__django-15902",
+      "matplotlib__matplotlib-23476"
+    ],
+    "error_ids": [],
+    "completed_ids": [
+      "astropy__astropy-14995",
+      "django__django-13551",
+      "django__django-13590",
+      "django__django-15902",
+      "matplotlib__matplotlib-23476",
+      "scikit-learn__scikit-learn-10297"
+    ]
+  }
+}

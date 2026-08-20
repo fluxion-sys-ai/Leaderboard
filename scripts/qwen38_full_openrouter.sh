@@ -43,14 +43,16 @@ fi
 
 # (IFBench + AIME intentionally SKIPPED for qwen3.8-full per user — only Pinch, SWE, Terminal.)
 
-# 2) TerminalBench (full 80, terminus-2 via OpenRouter) — order per user: Pinch -> Terminal -> SWE.
-# Completeness check (>=80), NOT mere existence — a partial results.json (e.g. the 2/80 jumper) must
-# NOT count as done, or terminal gets skipped. terminal-bench resumes completed trials on re-run.
+# 2) TerminalBench (24-task stratified sample, terminus-2 via OpenRouter) — order per user: Pinch ->
+# Terminal -> SWE. Completeness check (>= sample size), NOT mere existence — a partial results.json
+# (e.g. the 2/80 jumper) must NOT count as done, or terminal gets skipped. terminal-bench resumes
+# completed trials on re-run.
+TB_EXPECT=$(grep -cE "[^[:space:]]" "$REPO/configs/terminal_sample.txt" 2>/dev/null || echo 80); [ "${TB_EXPECT:-0}" -gt 0 ] || TB_EXPECT=80
 TBF="results/terminalbench/qwen38/qwen38/results.json"
-TB_DONE=$([ -f "$TBF" ] && python3 -c "import json;d=json.load(open('$TBF'));print(1 if (d.get('n_resolved',0)+d.get('n_unresolved',0))>=80 else 0)" 2>/dev/null || echo 0)
+TB_DONE=$([ -f "$TBF" ] && python3 -c "import json,sys;d=json.load(open('$TBF'));print(1 if (d.get('n_resolved',0)+d.get('n_unresolved',0))>=$TB_EXPECT else 0)" 2>/dev/null || echo 0)
 if [ "$TB_DONE" != "1" ]; then
   export PATH="$HOME/.local/bin:$PATH"
-  log "Terminal start (full 80)"
+  log "Terminal start (stratified sample, $TB_EXPECT tasks)"
   bash scripts/terminalbench_run.sh qwen38 >>"$REPO/logs_tb_full_qwen38.log" 2>&1 || log "terminal non-zero"
   log "Terminal done"
 fi

@@ -8,14 +8,12 @@ models:
 - name: llama-3.2-3b
   role: "smoke test \u2014 local pre-downloaded GGUF"
   gguf:
-    local: /home/ubuntu/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf
+    local: /home/aliixh/models/gguf/Llama-3.2-3B-Instruct-Q4_K_M.gguf
   draft_gguf:
     repo: bartowski/Llama-3.2-1B-Instruct-GGUF
     file: '*Q4_K_M.gguf'
 - name: qwen2.5-7b-instruct
-  role: "all-round anchor. GGUF swapped to the 1M-context build (2026-08-05) \u2014\
-    \ base 32K GGUF has NO YaRN baked in so b9892 clamps -c 131072 \u2192 32K; the\
-    \ -1M build loads 128K on plain -c."
+  role: "all-round anchor. GGUF swapped to the 1M-context build (2026-08-05) \u2014 base 32K GGUF has NO YaRN baked in so b9892 clamps -c 131072 \u2192 32K; the -1M build loads 128K on plain -c."
   gguf:
     repo: bartowski/Qwen2.5-7B-Instruct-1M-GGUF
     file: '*Q4_K_M.gguf'
@@ -69,9 +67,7 @@ models:
     repo: bartowski/THUDM_GLM-4-9B-0414-GGUF
     file: '*Q4_K_M.gguf'
 - name: qwen3-8b
-  role: "Qwen3 dual-mode. GGUF swapped to the 128K build (2026-08-05) \u2014 base\
-    \ 32K GGUF has no YaRN baked in (b9892 clamps to 32K); the -128K build loads 128K\
-    \ on plain -c."
+  role: "Qwen3 dual-mode. GGUF swapped to the 128K build (2026-08-05) \u2014 base 32K GGUF has no YaRN baked in (b9892 clamps to 32K); the -128K build loads 128K on plain -c."
   gguf:
     repo: unsloth/Qwen3-8B-128K-GGUF
     file: '*Q4_K_M.gguf'
@@ -110,15 +106,13 @@ models:
     repo: bartowski/Nanbeige_Nanbeige4.2-3B-GGUF
     file: '*Q4_K_M.gguf'
 - name: lfm2.5-8b-a1b
-  role: "Liquid AI edge MoE \u2014 8.5B total / ~1B active (efficiency-first, 158k\
-    \ dl)"
+  role: "Liquid AI edge MoE \u2014 8.5B total / ~1B active (efficiency-first, 158k dl)"
   gguf:
     repo: LiquidAI/LFM2.5-8B-A1B-GGUF
     file: '*Q4_K_M.gguf'
   max_tokens_mult: 4
 - name: granite-4.1-8b
-  role: "IBM Granite 4.1 \u2014 8.8B dense, Apache-2.0, huge adoption (3.85M dl);\
-    \ safe arch"
+  role: "IBM Granite 4.1 \u2014 8.8B dense, Apache-2.0, huge adoption (3.85M dl); safe arch"
   gguf:
     repo: ibm-granite/granite-4.1-8b-GGUF
     file: '*Q4_K_M.gguf'
@@ -130,8 +124,7 @@ models:
   no_think: true
   max_tokens_mult: 2
 - name: qwen3.5-4b
-  role: "Qwen3.5-4B base \u2014 floor tier (un-deferred; this GGUF is Q4_K_M, local\
-    \ was Q4_K_S)"
+  role: "Qwen3.5-4B base \u2014 floor tier (un-deferred; this GGUF is Q4_K_M, local was Q4_K_S)"
   gguf:
     repo: unsloth/Qwen3.5-4B-GGUF
     file: '*Q4_K_M.gguf'
@@ -144,23 +137,22 @@ models:
     file: '*Q4_K_M.gguf'
   no_think: true
   max_tokens_mult: 2
+  n_ctx: 40960
 - name: qwen3.6-27b
-  role: "Qwen3.6-27B \u2014 27B dense (May 2026). NOVEL arch (Gated DeltaNet) \u2014\
-    \ load-test on b9892 first"
+  role: "Qwen3.6-27B \u2014 27B dense (May 2026). NOVEL arch (Gated DeltaNet) \u2014 load-test on b9892 first"
   gguf:
     repo: unsloth/Qwen3.6-27B-GGUF
     file: '*Q4_K_M.gguf'
   no_think: true
   max_tokens_mult: 2
+  n_ctx: 40960
 - name: mistral-small-3.2-24b
-  role: "Mistral-Small-3.2-24B (Jun 2026) \u2014 24B dense generalist, 128K native;\
-    \ non-Qwen lineage"
+  role: "Mistral-Small-3.2-24B (Jun 2026) \u2014 24B dense generalist, 128K native; non-Qwen lineage"
   gguf:
     repo: unsloth/Mistral-Small-3.2-24B-Instruct-2506-GGUF
     file: '*Q4_K_M.gguf'
 - name: gpt-oss-20b
-  role: "gpt-oss-20b (Aug 2025) \u2014 OpenAI open MoE (~3.6B active), harmony reasoning\
-    \ fmt; SMOKE-TEST harmony + reasoning-effort before trusting a full run"
+  role: "gpt-oss-20b (Aug 2025) \u2014 OpenAI open MoE (~3.6B active), harmony reasoning fmt; SMOKE-TEST harmony + reasoning-effort before trusting a full run"
   gguf:
     repo: unsloth/gpt-oss-20b-GGUF
     file: '*Q4_K_M.gguf'
@@ -168,38 +160,31 @@ models:
     reasoning_effort: low
   max_tokens_mult: 2
 - name: nemotron-3-nano-30b
-  role: "NVIDIA Nemotron-3-Nano-30B-A3B (Jan 2026) \u2014 30B MoE (~3B active), 32K\
-    \ ctx, REASONING (first run dumped think-tokens to the cap \u2192 mmlu 44% empty).\
-    \ Run no_think."
+  role: "NVIDIA Nemotron-3-Nano-30B-A3B (Jan 2026) \u2014 30B MoE (~3B active), 32K ctx, REASONING (first run dumped think-tokens to the cap \u2192 mmlu 44% empty). Run no_think."
   gguf:
     repo: lmstudio-community/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF
     file: '*Q4_K_M.gguf'
   max_tokens_mult: 2
   no_think: true
 - name: devstral-small-2-24b
-  role: "Devstral-Small-2-24B (Dec 2025) \u2014 agentic-coding specialist on the Mistral-Small\
-    \ 24B base; generalist-vs-specialist pair with mistral-small-3.2-24b"
+  role: "Devstral-Small-2-24B (Dec 2025) \u2014 agentic-coding specialist on the Mistral-Small 24B base; generalist-vs-specialist pair with mistral-small-3.2-24b"
   gguf:
     repo: unsloth/Devstral-Small-2-24B-Instruct-2512-GGUF
     file: '*Q4_K_M.gguf'
 - name: exaone-4.5-33b
-  role: "EXAONE-4.5-33B (Apr 2026) \u2014 LG, exaone4_5 arch, 33B. REASONING model\
-    \ \u2014 no_think REQUIRED (2026-08-05 fix; without it 73 pct of ifeval outputs\
-    \ came back empty)."
+  role: "EXAONE-4.5-33B (Apr 2026) \u2014 LG, exaone4_5 arch, 33B. REASONING model \u2014 no_think REQUIRED (2026-08-05 fix; without it 73 pct of ifeval outputs came back empty)."
   gguf:
     repo: LGAI-EXAONE/EXAONE-4.5-33B-GGUF
     file: '*Q4_K_M.gguf'
   no_think: true
   max_tokens_mult: 2
 - name: granite-4.1-30b
-  role: "granite-4.1-30b (Apr 2026) \u2014 IBM, 30B dense, 128K native; extends the\
-    \ granite-4.1-8b into an 8B->30B scaling curve"
+  role: "granite-4.1-30b (Apr 2026) \u2014 IBM, 30B dense, 128K native; extends the granite-4.1-8b into an 8B->30B scaling curve"
   gguf:
     repo: bartowski/ibm-granite_granite-4.1-30b-GGUF
     file: '*Q4_K_M.gguf'
 - name: gemma-4-26b-a4b
-  role: "gemma-4-26B-A4B-it (Mar 2026) \u2014 Google, 26B MoE (4B active), 256K native;\
-    \ dense-vs-MoE contrast with gemma-4-31b"
+  role: "gemma-4-26B-A4B-it (Mar 2026) \u2014 Google, 26B MoE (4B active), 256K native; dense-vs-MoE contrast with gemma-4-31b"
   gguf:
     repo: unsloth/gemma-4-26B-A4B-it-GGUF
     file: '*Q4_K_M.gguf'
@@ -211,8 +196,9 @@ models:
     file: '*Q4_K_M.gguf'
   no_think: true
   max_tokens_mult: 2
+  n_ctx: 40960
 - name: muse-glimmer-30b
-  role: "Muse-Glimmer-30B (Aug 2026) \u2014 Meta, 29.6B dense + vision (run TEXT-ONLY); REASONING model, strength set via reasoning_effort (template normalises Effort->Strength), pin low for greedy board or it dumps think-tokens. NOTE: no plain Q4_K_M ships \u2192 using Unsloth dynamic UD-Q4_K_XL (\u25c6 off-standard quant, flag on board). Smoke arch+think before trusting."
+  role: "Muse-Glimmer-30B (Aug 2026) \u2014 Meta, 29.6B dense + vision (run TEXT-ONLY); REASONING model, strength set via reasoning_effort (template normalises Effort->Strength), pin low for greedy board or it dumps think-tokens. NOTE: no plain Q4_K_M ships \u2192 using Unsloth dynamic UD-Q4_K_XL (\u25C6 off-standard quant, flag on board). Smoke arch+think before trusting."
   gguf:
     repo: unsloth/Muse-Glimmer-30B-GGUF
     file: '*UD-Q4_K_XL.gguf'

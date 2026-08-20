@@ -44,21 +44,19 @@ while true; do
   find .git -name 'index.lock' -mmin +2 -delete 2>/dev/null  # clear stale git lock
   import_pinch
   timeout 180 python3 -m src.report.build_leaderboard >/dev/null 2>&1 && cp leaderboard.html docs/index.html 2>/dev/null
-  if ! git diff --quiet docs/index.html 2>/dev/null; then
-    # Stage the always-present board files FIRST and on their own — a single `git add` with a glob
-    # that matches nothing (e.g. no swebench_lite.json scored yet) is FATAL and stages NOTHING, not
-    # even docs/index.html, so the commit was silently empty and the board never deployed. Add the
-    # optional score globs as separate best-effort calls so an unmatched glob can't block the deploy.
-    timeout 30 git add docs/index.html leaderboard.html 2>/dev/null
-    timeout 30 git add results/scored/*/pinchbench.json 2>/dev/null || true
-    timeout 30 git add results/scored/*/swebench_lite.json 2>/dev/null || true
-    timeout 30 git_c commit -q -m "leaderboard: auto-refresh" 2>/dev/null || log "commit produced nothing (no staged change)"
-    # Always push if local is ahead of origin — otherwise manual fix-commits sit unpushed whenever
-    # the board rebuild is byte-identical (root cause of the origin stalling 10 commits behind).
-    AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
-    if [ "${AHEAD:-0}" -gt 0 ]; then
-      if timeout 90 git push origin main -q 2>>"$LOG"; then log "board pushed ($AHEAD commit(s))"; else log "PUSH FAILED/timed-out (will retry next pass)"; fi
-    fi
+  # Deploy — UNGATED (was gated on `git diff --quiet docs/index.html`, which stranded staged changes
+  # forever once a byte-identical rebuild made that gate false, and skipped the push too). Now: always
+  # stage board files best-effort (unmatched score globs can't block), commit iff something is actually
+  # staged (index-vs-HEAD, not unstaged-only), and ALWAYS push whenever local is ahead of origin.
+  timeout 30 git add docs/index.html leaderboard.html 2>/dev/null || true
+  timeout 30 git add results/scored/*/pinchbench.json 2>/dev/null || true
+  timeout 30 git add results/scored/*/swebench_lite.json 2>/dev/null || true
+  if ! git diff --cached --quiet 2>/dev/null; then
+    timeout 30 git_c commit -q -m "leaderboard: auto-refresh" 2>/dev/null && log "board committed" || log "commit failed"
+  fi
+  AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+  if [ "${AHEAD:-0}" -gt 0 ]; then
+    if timeout 90 git push origin main -q 2>>"$LOG"; then log "board pushed ($AHEAD commit(s))"; else log "PUSH FAILED/timed-out (will retry next pass)"; fi
   fi
   C=$(credits)
   if [ -n "$C" ] && python3 -c "import sys;sys.exit(0 if float('$C')<20 else 1)" 2>/dev/null; then

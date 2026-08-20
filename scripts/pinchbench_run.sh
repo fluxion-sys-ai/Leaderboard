@@ -152,7 +152,7 @@ trap "kill $LP 2>/dev/null || true" EXIT
 
 # wait for /health to come up
 for i in $(seq 1 120); do
-  if curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; then break; fi
+  if curl -sf --max-time 8 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; then break; fi
   sleep 2
 done
 
@@ -161,7 +161,7 @@ done
 # a wrong-context run. Only enforced when CTX is the 128K target; gemma-2 (8K) is exempt.
 # Fail-OPEN: if the check can't read n_ctx, proceed normally (never blocks on a flaky read).
 if [ "$CTX" -ge 100000 ] 2>/dev/null; then
-  NCTX=$(curl -s "http://127.0.0.1:$PORT/props" 2>/dev/null | python3 -c "import sys,json;print(json.load(sys.stdin).get('default_generation_settings',{}).get('n_ctx') or 0)" 2>/dev/null)
+  NCTX=$(curl -s --max-time 8 "http://127.0.0.1:$PORT/props" 2>/dev/null | python3 -c "import sys,json;print(json.load(sys.stdin).get('default_generation_settings',{}).get('n_ctx') or 0)" 2>/dev/null)
   if [ -n "$NCTX" ] && [ "$NCTX" -lt 100000 ] 2>/dev/null; then
     echo "[pb] $MODEL CLAMP DETECTED: server n_ctx=$NCTX < 128K — GGUF didn't load 128K. SKIPPING (needs a native-128K GGUF, like qwen2.5/qwen3-8b)."
     kill "$LP" 2>/dev/null || true

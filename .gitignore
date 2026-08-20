@@ -21,3 +21,23 @@ dashboard_preview.html
 .gpu_lock
 .gpu_guardian_heartbeat
 logs_gpu_guardian*.log
+
+# --- runtime junk (never commit; regenerated live) ---
+.PAUSE_MAIN_QUEUES
+.PAUSE_SWE_GUARDIAN
+.QWEN38_ONLY_PHASE
+.SWE_PIPELINE_OK
+.QWEN38_DONE
+.board_heartbeat
+.watchdog_heartbeat
+.gpu_lock
+agentless.agentless_*.json
+logs/
+logs_*.log
+*.repair1.bak
+results/swe_agentless/*_bak_*
+results/swe_agentless/*/repair_bak_*
+results/swe_agentless/*/_stale_*
+results/swe_agentless/_*_bak_*
+scripts/*.bak_*
+scripts/*.bak

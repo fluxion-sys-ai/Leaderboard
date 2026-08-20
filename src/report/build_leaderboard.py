@@ -462,14 +462,34 @@ STALE_PINCHBENCH = {"gemma-2-9b-it", "glm-4-9b-0414", "mistral-nemo-12b",
 # gpt-oss-20b added 2026-08-12: pinch 0.050 is an ARTIFACT — by_category shows ANALYSIS 0.57 (model IS capable) but 7/9 categories collapsed to exactly 0.00 (harmony/reasoning format failing to parse on those task types), not genuine inability. Agentic = BFCL only. (gemma-4-12b 0.239 + nemotron-30b 0.194 were CHECKED and KEPT — real spread across 7-8/9 categories.)
 
 
+def _terminal_sample() -> list:
+    """The fixed stratified-by-difficulty 24-task subset (seed 42). Empty if the file is absent."""
+    try:
+        return [l.strip() for l in open(REPO_ROOT / "configs" / "terminal_sample.txt") if l.strip()]
+    except Exception:
+        return []
+
+
 def _terminal_min() -> int:
     """Min completed TerminalBench tasks before a cell is shown (hide partial runs). Matches the
     stratified sample size (configs/terminal_sample.txt) when present, else the full 80."""
-    try:
-        n = sum(1 for l in open(REPO_ROOT / "configs" / "terminal_sample.txt") if l.strip())
-        return n or 80
-    except Exception:
-        return 80
+    n = len(_terminal_sample())
+    return n or 80
+
+
+def _terminal_sample_acc(d: dict):
+    """Score a TerminalBench results.json over the fixed 24-task stratified sample so EVERY model is
+    compared on the same denominator. Full runs (80 tasks) are filtered down to the 24; native 24-task
+    runs are unchanged (their ids == the sample). Falls back to the raw accuracy if the sample file is
+    absent or the run doesn't cover all 24 sample tasks (partial → caller's _terminal_min guard hides it)."""
+    samp = _terminal_sample()
+    if not samp:
+        return d.get("accuracy")
+    resolved = set(d.get("resolved_ids", []))
+    ran = resolved | set(d.get("unresolved_ids", []))
+    if not set(samp).issubset(ran):        # not every sample task present → don't understate; fall back
+        return d.get("accuracy")
+    return sum(1 for t in samp if t in resolved) / len(samp)
 
 
 # ── Frontier tab: the exact params behind each cell (click a number to inspect) ──
@@ -490,7 +510,7 @@ _FR_BENCH = {   # benchmark harness — same regardless of model; (label, thinki
     "aime2026":   ("AIME 2026 · 30 problems (competition math) · rec sampling", "ON"),
     "pinchbench": ("PinchBench · 116-task multi-turn agent · n_ctx 128K · judge DeepSeek-v3.1", "OFF (no_think — thinking zeroes agentic)"),
     "tau3":       ("τ³-bank · terminus agent · max_steps 100 · 97 tasks", "ON"),
-    "terminal":   ("TerminalBench · terminus-2 agent · terminal-bench-core 0.1.1 · 80 tasks", "ON"),
+    "terminal":   ("TerminalBench · terminus-2 agent · terminal-bench-core 0.1.1 · 24-task stratified sample (by difficulty, seed 42)", "ON"),
     "swe":        ("SWE-bench Lite · Agentless (file→related→line→repair) · localize temp 0 · repair temp 0.8 ×1 · strat-50 (20-task) sample", "ON (localize/repair)"),
 }
 _FR_DISP = {"ifbench": "IFBench", "aime2026": "AIME26", "pinchbench": "PinchBench",
@@ -562,7 +582,7 @@ def _frontier_tab() -> str:
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
             if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials
-            return d.get("accuracy")
+            return _terminal_sample_acc(d)   # score over the 24-task stratified sample (subset of the 80)
         except Exception:
             return None
 
@@ -571,7 +591,7 @@ def _frontier_tab() -> str:
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
             if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials until complete
-            return d.get("accuracy")
+            return _terminal_sample_acc(d)   # same 24-task stratified sample as full, for consistency
         except Exception:
             return None
 

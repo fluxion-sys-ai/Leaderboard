@@ -15,13 +15,14 @@
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO" || exit 1
+[ -f "$REPO/.PAUSE_SWE_GUARDIAN" ] && { echo "[full-swe] paused"; exit 0; }
 
 # key : board-fullname : tag ("" = untagged)
 RUNS=(
   "muse:muse-glimmer-30b:orf"
   "qwen38:qwen3.8-27b:orf"
   "qwen27:qwen3.6-27b:orf"
-  "qwen35:qwen3.6-35b-a3b:orf"
+  # "qwen35:qwen3.6-35b-a3b:orf"  # N/A: format-incompatible MoE, removed from SWE guardian
   "gemma:gemma-4-31b:orf"
 )
 

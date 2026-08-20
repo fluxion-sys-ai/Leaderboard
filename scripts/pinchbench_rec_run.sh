@@ -33,7 +33,7 @@ echo "[pb-rec] $KEY ($MODEL) gguf=$GGUF sampling=$SAMP no_think=yes"
   --chat-template-kwargs '{"enable_thinking":false}' $SAMP \
   --host 127.0.0.1 --port $PORT --no-webui >/tmp/pb_rec_${MODEL}.log 2>&1 &
 LP=$!; trap "kill $LP 2>/dev/null || true" EXIT
-for i in $(seq 1 120); do curl -sf "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
+for i in $(seq 1 120); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
 
 export OPENROUTER_API_KEY="$(cat "$REPO/.openrouter_key")"
 cd "$PB"

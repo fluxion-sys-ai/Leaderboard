@@ -19,6 +19,10 @@ log(){ echo "[$(date +'%F %T')] [watchdog] $*" >> "$REPO/logs_watchdog.log"; }
 alive(){ ps -eo args | grep -q "[b]ash scripts/$1.sh"; }
 gpu_idle(){ ! pgrep -f 'llama-server|vllm serve' >/dev/null; }
 any_gpu_script(){ alive q4_agentic_queue; }   # the only remaining GPU worker (qwen38-full moved to OpenRouter)
+# GPU lock: a manual/priority GPU run writes .gpu_lock (owner_pid\tname\trestart). While a LIVE owner
+# holds it, the watchdog must NOT spawn q4_agentic (that's the "watchdog steals the GPU" bug). The
+# gpu_guardian releases a stale lock when its owner dies, so this can't deadlock.
+gpu_locked(){ [ -s "$REPO/.gpu_lock" ] && kill -0 "$(cut -f1 "$REPO/.gpu_lock" 2>/dev/null)" 2>/dev/null; }
 spawn(){ nohup bash "scripts/$1.sh" >> "$REPO/logs_$1.log" 2>&1 & log "respawned $1 (pid $!)"; }
 
 # --- per-script completion tests (true = work done, do NOT respawn) ---
@@ -35,8 +39,8 @@ done_agentic(){
   return 0
 }
 done_openrouter(){ sc qwen3.8-27b-full pinchbench && sc qwen3.8-27b-full swebench_lite \
-                   && term_done_full qwen38; }   # NO ifbench/aime per user; terminal must be COMPLETE (>=80), not just exist
-term_done_full(){ local p="results/terminalbench/$1/$1/results.json"; [ -f "$p" ] && [ "$(python3 -c "import json;d=json.load(open('$p'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge 80 ]; }
+                   && term_done_full qwen38; }   # NO ifbench/aime per user; terminal must be COMPLETE (>= sample size), not just exist
+term_done_full(){ local p="results/terminalbench/$1/$1/results.json"; [ -f "$p" ] && [ "$(python3 -c "import json;d=json.load(open('$p'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge "$TERMN" ]; }
 done_full_terminal(){ for k in muse qwen27 qwen35 gemma; do term_done_full "$k" || return 1; done; }
 done_other4_pinch(){ for m in muse-glimmer-30b-full qwen3.6-27b-full qwen3.6-35b-a3b-full gemma-4-31b-full; do sc "$m" pinchbench || return 1; done; }
 
@@ -46,6 +50,7 @@ while true; do
 
   # 1) non-GPU daemons/queues — always keep up (zero GPU-contention risk)
   alive weekend_auto || spawn weekend_auto
+  alive gpu_guardian || spawn gpu_guardian   # keeps the GPU-lock supervisor alive (non-GPU; zero contention)
   if ! alive rec_pinch_full        && ! sc qwen3.8-27b-full pinchbench; then spawn rec_pinch_full; fi  # qwen3.8 pinch root — crash-resilient
   if ! alive swe_full_queue        && ! done_swe_full;  then spawn swe_full_queue;        fi
   if ! alive qwen38_full_openrouter && ! done_openrouter; then spawn qwen38_full_openrouter; fi
@@ -55,7 +60,7 @@ while true; do
   # 2) GPU: only the Q4 queue remains (qwen38-full is on OpenRouter now). Respawn ONLY when the GPU
   # is idle, not paused, no GPU worker alive, and Q4 isn't already complete. The obsolete vLLM chain
   # (qwen38_chain / qwen38_full_seq / qwen38_full_ifaime / qwen38_q4_seq) is intentionally NOT spawned.
-  if gpu_idle && ! any_gpu_script && [ ! -f .PAUSE_MAIN_QUEUES ] && ! done_agentic; then
+  if gpu_idle && ! any_gpu_script && ! gpu_locked && [ ! -f .PAUSE_MAIN_QUEUES ] && ! done_agentic; then
     spawn q4_agentic_queue
   fi
 
@@ -66,7 +71,7 @@ while true; do
   #     process is still alive and the run-dir has been quiet >10 min => wedged in --cleanup on an
   #     undead container, holding the GPU idle. Kill it so the wrapper advances. Results already on disk.
   for base in results/terminalbench_q4 results/terminalbench; do
-    exp=$([ "$base" = results/terminalbench_q4 ] && echo "$TERMN" || echo 80)
+    exp="$TERMN"   # both full + Q4 terminal now use the 24-task stratified sample
     for rj in "$base"/*/*/results.json; do
       [ -f "$rj" ] || continue
       k=$(basename "$(dirname "$(dirname "$rj")")")
@@ -106,6 +111,41 @@ while true; do
       log "STALL-WARN: llama-server up but GPU idle(${util}%) + no results written in 40min — check GPU worker"
     fi
   fi
+
+  # 3e) SWE localize infinite-hang guard: one --target_id localize call is a single model request
+  #     (num_threads 1) — it finishes in minutes. temp0 + enable_thinking can send the model into a
+  #     greedy repetition loop that never returns -> client 30-min timeout -> retries forever, pegging
+  #     the GPU and blocking ALL of SWE-Lite (seen 2026-08-20 matplotlib-26011, 2h20m wasted). If a
+  #     localize proc has run >35min on one target (past a full timeout cycle => provably looping, since
+  #     --skip_existing means a done target is never re-run), kill it and append an empty-loc skip
+  #     placeholder so --skip_existing advances the per-target loop. Never cuts a live task (a healthy
+  #     single request never reaches 35min).
+  while read -r lpid; do
+    [ -n "$lpid" ] || continue
+    el=$(ps -o etimes= -p "$lpid" 2>/dev/null | tr -d ' '); [ -n "$el" ] || continue
+    [ "$el" -gt 2100 ] || continue
+    largs=$(tr '\0' ' ' < "/proc/$lpid/cmdline" 2>/dev/null)
+    tid=$(sed -n 's/.*--target_id \([^ ]*\).*/\1/p' <<<"$largs")
+    ofolder=$(sed -n 's/.*--output_folder \([^ ]*\).*/\1/p' <<<"$largs")
+    [ -n "$tid" ] && [ -n "$ofolder" ] || continue
+    log "STALL: SWE localize($lpid) hung ${el}s on $tid (temp0+thinking greedy loop) -> kill + skip-placeholder"
+    kill -9 "$lpid" 2>/dev/null
+    python3 - "$ofolder/loc_outputs.jsonl" "$tid" <<'PY' 2>/dev/null
+import json,sys,os
+loc,tid=sys.argv[1],sys.argv[2]
+rows=[json.loads(l) for l in open(loc)] if os.path.exists(loc) and os.path.getsize(loc) else []
+if any(r.get('instance_id')==tid for r in rows): sys.exit(0)   # already succeeded; do nothing
+keys=['instance_id','found_files','additional_artifact_loc_file','file_traj','found_related_locs','additional_artifact_loc_related','related_loc_traj','found_edit_locs','additional_artifact_loc_edit_location','edit_loc_traj']
+if rows:
+    tmpl=rows[-1]; new={k:([] if isinstance(v,list) else ("" if isinstance(v,str) else None)) for k,v in tmpl.items()}
+else:
+    new={k:None for k in keys}
+new['instance_id']=tid
+for f in ('found_files','found_related_locs','found_edit_locs'): new[f]=[]
+new['_skipped_reason']='watchdog 3e: localize hung >35min (temp0+thinking greedy loop) auto-skipped'
+open(loc,'a').write(json.dumps(new)+'\n')
+PY
+  done < <(pgrep -f 'agentless/fl/localize.py')
 
   sleep 300
 done

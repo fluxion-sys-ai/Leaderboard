@@ -18,3 +18,6 @@ results/_archived_first200/
 # design mockups / generated images — not source
 dashboard_preview.html
 *.png
+.gpu_lock
+.gpu_guardian_heartbeat
+logs_gpu_guardian*.log

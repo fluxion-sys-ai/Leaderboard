@@ -52,7 +52,11 @@ start_server
     fi
   done ) &
 MON=$!
-trap 'kill $MON 2>/dev/null; kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; rm -f "$PIDF"' EXIT
+# GPU lock: claim the single GPU so the watchdog/q4 queue can't steal it mid-run; gpu_guardian.sh
+# releases it automatically if we die. Trap releases it on clean exit (only if we still own it).
+GPULOCK=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/.gpu_lock
+trap 'kill $MON 2>/dev/null; kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; rm -f "$PIDF"; [ "$(cut -f1 "$GPULOCK" 2>/dev/null)" = "$$" ] && rm -f "$GPULOCK"' EXIT
+printf '%s\t%s\t\n' "$$" "swe-q4-${KEY}" > "$GPULOCK"
 for i in $(seq 1 120); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
 
 # point the Agentless pipeline at the local server + tag output as q4f

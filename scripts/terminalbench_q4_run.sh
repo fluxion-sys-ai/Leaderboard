@@ -61,7 +61,11 @@ start_server
     fi
   done ) &
 MON=$!
-trap 'kill $MON 2>/dev/null; kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; rm -f "$PIDF"' EXIT
+# GPU lock: claim the single GPU so the watchdog/q4 queue can't steal it mid-run (gpu_guardian
+# releases it if we die). Trap releases it on exit only if we still own it.
+GPULOCK=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/.gpu_lock
+trap 'kill $MON 2>/dev/null; kill -9 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; rm -f "$PIDF"; [ "$(cut -f1 "$GPULOCK" 2>/dev/null)" = "$$" ] && rm -f "$GPULOCK"' EXIT
+printf '%s\t%s\t\n' "$$" "tb-q4-${KEY}" > "$GPULOCK"
 for i in $(seq 1 120); do curl -sf --max-time 8 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1 && break; sleep 2; done
 
 export OPENAI_API_BASE="http://127.0.0.1:$PORT/v1"
@@ -69,8 +73,18 @@ export OPENAI_API_KEY="sk-local"
 export TB_MODEL_PARAMS='{"top_p":0.95}'
 
 OUT="$REPO/results/terminalbench_q4/$KEY"
-# stale-dir guard: tb refuses to run if the run dir exists without a lock file
-[ -d "$OUT/$KEY" ] && [ ! -f "$OUT/$KEY/tb.lock" ] && rm -rf "$OUT/$KEY"
+# stale-run guard: a prior run dir that is INCOMPLETE and not owned by a live tb process is stale
+# (e.g. a killed partial + leftover tb.lock, OR a lock baked with different args -> the
+# "Current run configuration does not match existing lock file" ABORT). tb crashes on a mismatched
+# lock BEFORE any task runs, so we must back it up / clear it even when a tb.lock IS present (the old
+# guard only cleared when NO lock existed -> crash-loop). Complete dirs are never touched.
+RUNDIR="$OUT/$KEY"
+if [ -d "$RUNDIR" ]; then
+  DONE_N=$([ -f "$RUNDIR/results.json" ] && python3 -c "import json;d=json.load(open('$RUNDIR/results.json'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null || echo 0)
+  if [ "${DONE_N:-0}" -lt "${TERMN:-24}" ] && ! pgrep -f "tb run .*terminalbench_q4/$KEY" >/dev/null 2>&1; then
+    BK="$OUT/_stale_${KEY}_$(date +%s)"; mv "$RUNDIR" "$BK" 2>/dev/null && echo "[tb-q4] cleared stale/incomplete run dir ($DONE_N tasks, lock-agnostic) -> $BK"
+  fi
+fi
 mkdir -p "$OUT"
 # Stratified terminal sample: run the SAME fixed 24-task subset (configs/terminal_sample.txt,
 # stratified by difficulty, seed 42) for EVERY model to cut wall-clock ~70%. The remaining 56 tasks

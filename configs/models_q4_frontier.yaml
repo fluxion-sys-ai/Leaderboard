@@ -58,12 +58,13 @@ models:
     presence_penalty: 0.0
     template_kwargs: { enable_thinking: true }
 
-  # ---- Qwen3.8-27B — NEW (Aug 2026), Q4-ONLY (not on OpenRouter yet) ----------
+  # ---- Qwen3.8-27B — NEW (Aug 2026). Q4 GGUF here for the local track; ALSO on OpenRouter
+  # (openrouter/qwen/qwen3.8-27b) for the full-precision track — used by terminal/pinch/swe. ------
   # Standard Q4_K_M from the official ggml-org repo. qwen3_5-family arch (same as
   # qwen3.6-27b which already runs on b9892). Qwen thinking-general recipe (presence 0.0,
   # like the 27B dense). Full-precision N/A until OpenRouter serves the 27B — flag on the tab.
   - name: qwen3.8-27b-q4f
-    role: "Qwen3.8-27B Q4_K_M — NEW model, Q4-only (no OpenRouter full-precision yet), thinking ON"
+    role: "Qwen3.8-27B Q4_K_M — local Q4 track (full-precision runs via openrouter/qwen/qwen3.8-27b)"
     gguf:
       repo: ggml-org/Qwen3.8-27B-GGUF
       file: '*Q4_K_M.gguf'

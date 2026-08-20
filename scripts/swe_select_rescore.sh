@@ -32,7 +32,10 @@ esac
 
 WORK="results/swe_agentless/${KEY}${TAG:+-$TAG}"
 REP="$WORK/repair"
-SCORED_DIR="results/scored/${FULLNAME}-${PREC}${TAG:+-$TAG}"
+# Write the majority-vote score straight to the BOARD dir (<fn>-full), NOT the tagged -full-orf dir.
+# The guardian promotes/removes -full-orf and treats -full as done, so writing -full-orf lets the
+# greedy score win the race. Writing -full directly makes the majority-vote score authoritative.
+SCORED_DIR="results/scored/${FULLNAME}-${PREC}"
 mapfile -t IDS < configs/swe_lite_strat50.txt
 CLEAN=(); for i in "${IDS[@]}"; do [ -n "$i" ] && CLEAN+=("$i"); done; IDS=("${CLEAN[@]}")
 N=${#IDS[@]}
@@ -41,10 +44,11 @@ NS=$(ls "$REP"/output_*_processed.jsonl 2>/dev/null | wc -l)
 if [ "$NS" -lt 2 ]; then echo "[rescore] $KEY: only $NS processed sample file(s) in $REP — need >=2 to select. Abort."; exit 1; fi
 echo "[rescore] $KEY ($FULLNAME): majority-voting over $NS samples in $REP (N=$N bugs)"
 
-# 1) SELECT: pure majority vote (normalized-patch frequency). No --regression/--reproduction = cheap.
-$PY "$AGENTLESS/agentless/repair/rerank.py" \
-    --patch_folder "$REP/" --num_samples "$NS" --deduplicate \
-    --output_file "$REP/all_preds.jsonl" || { echo "[rescore] rerank failed"; exit 1; }
+# 1) SELECT: majority vote among NON-EMPTY patches (ignores empty-padded samples that would otherwise
+# win the vote for a bug that had valid patches -> empty prediction -> board blanks the cell). Any bug
+# with >=1 real patch gets a real prediction; all-empty bugs stay empty (genuine no-fix).
+$PY "$REPO/scripts/swe_nonempty_vote.py" "$REP" "$NS" "${FULLNAME}-full" "$REP/all_preds.jsonl" \
+    || { echo "[rescore] non-empty vote failed"; exit 1; }
 [ -s "$REP/all_preds.jsonl" ] || { echo "[rescore] all_preds.jsonl empty"; exit 1; }
 echo "[rescore] selected patches: $(wc -l < "$REP/all_preds.jsonl") bugs"
 

@@ -10,10 +10,14 @@ log(){ echo "[$(date +'%F %T')] $*" >> "$REPO/logs_other4_pinch.log"; }
 declare -A FN=( [muse]=muse-glimmer-30b-full [qwen27]=qwen3.6-27b-full [qwen35]=qwen3.6-35b-a3b-full [gemma]=gemma-4-31b-full )
 declare -A MATCH=( [muse]=muse-glimmer-30b [qwen27]=qwen3-6-27b [qwen35]=qwen3-6-35b [gemma]=gemma-4-31b )
 
-# GATE: wait until qwen3.8's full SWE is scored (its pinch->terminal->swe pipeline done), OR the
-# qwen3.8 pinch/wrapper have both exited (deadlock-proof).
-while [ ! -f results/scored/qwen3.8-27b-full/swebench_lite.json ] \
-      && ps -eo args | grep -qE '[b]ash scripts/(rec_pinch_full|qwen38_full_openrouter)\.sh'; do sleep 120; done
+# GATE: wait until qwen3.8 is FULLY done — pinch + swe scored AND terminal COMPLETE (>=80) — OR the
+# qwen3.8 pinch/wrapper have both exited (deadlock-proof). Completeness (not existence) so a partial
+# terminal can't let the other-4 jump ahead of qwen3.8's terminal.
+q38_done(){ [ -f results/scored/qwen3.8-27b-full/pinchbench.json ] && [ -f results/scored/qwen3.8-27b-full/swebench_lite.json ] \
+  && [ "$(python3 -c "import json;d=json.load(open('results/terminalbench/qwen38/qwen38/results.json'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge 80 ]; }
+# Pure completeness gate (watchdog guarantees the wrapper finishes qwen3.8, so no deadlock): wait
+# until qwen3.8 is fully done. Robust against the wrapper's respawn gap.
+while ! q38_done; do sleep 120; done
 rm -f "$REPO/.QWEN38_ONLY_PHASE"   # qwen3.8 fully done -> release the other 4
 log "other4_pinch_queue up — qwen3.8 done; running muse/qwen27/qwen35/gemma full pinch (rec/default)."
 for k in muse qwen27 qwen35 gemma; do

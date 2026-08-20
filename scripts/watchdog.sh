@@ -35,7 +35,7 @@ done_agentic(){
   return 0
 }
 done_openrouter(){ sc qwen3.8-27b-full pinchbench && sc qwen3.8-27b-full swebench_lite \
-                   && [ -f results/terminalbench/qwen38/qwen38/results.json ]; }   # NO ifbench/aime per user
+                   && term_done_full qwen38; }   # NO ifbench/aime per user; terminal must be COMPLETE (>=80), not just exist
 term_done_full(){ local p="results/terminalbench/$1/$1/results.json"; [ -f "$p" ] && [ "$(python3 -c "import json;d=json.load(open('$p'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge 80 ]; }
 done_full_terminal(){ for k in muse qwen27 qwen35 gemma; do term_done_full "$k" || return 1; done; }
 done_other4_pinch(){ for m in muse-glimmer-30b-full qwen3.6-27b-full qwen3.6-35b-a3b-full gemma-4-31b-full; do sc "$m" pinchbench || return 1; done; }

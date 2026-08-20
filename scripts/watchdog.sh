@@ -59,5 +59,53 @@ while true; do
     spawn q4_agentic_queue
   fi
 
+  # 3) STALL DETECTION — section 1/2 only respawn DEAD scripts. These catch ALIVE-but-HUNG, the
+  #    real cause of unattended breakage. Conservative thresholds; never kill a task mid-progress.
+
+  # 3a) tb --cleanup post-completion hang: a terminal run is COMPLETE (results.json full) but its `tb`
+  #     process is still alive and the run-dir has been quiet >10 min => wedged in --cleanup on an
+  #     undead container, holding the GPU idle. Kill it so the wrapper advances. Results already on disk.
+  for base in results/terminalbench_q4 results/terminalbench; do
+    exp=$([ "$base" = results/terminalbench_q4 ] && echo "$TERMN" || echo 80)
+    for rj in "$base"/*/*/results.json; do
+      [ -f "$rj" ] || continue
+      k=$(basename "$(dirname "$(dirname "$rj")")")
+      dn=$(python3 -c "import json;d=json.load(open('$rj'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null || echo 0)
+      [ "$dn" -ge "$exp" ] || continue
+      tbpid=$(pgrep -f "tb run .*$base/$k($|[^0-9])" | head -1)
+      [ -n "$tbpid" ] || continue
+      if [ -z "$(find "$base/$k" -newermt '-10 min' -type f 2>/dev/null | head -1)" ]; then
+        log "STALL: tb($tbpid) $k complete ($dn/$exp) but hung >10min in cleanup -> killing + clearing containers"
+        docker ps --format '{{.Names}}' 2>/dev/null | grep -- "-of-1-$k$" | xargs -r docker rm -f >/dev/null 2>&1
+        kill -9 "$tbpid" 2>/dev/null
+      fi
+    done
+  done
+
+  # 3b) pinch wedge: benchmark.py alive but its log silent >35 min (thinking tasks are ~3 min each, so
+  #     35 min of total silence = stuck OpenClaw session). Kill it; loop 1 respawns rec_pinch_full,
+  #     which resumes from per-task cache. 35 min is generous to never cut a live task.
+  if pgrep -f "benchmark.py --model openrouter/qwen/qwen3.8-27b" >/dev/null 2>&1; then
+    if [ -z "$(find logs_pb_rec_qwen38.log -newermt '-35 min' 2>/dev/null)" ]; then
+      log "STALL: qwen3.8 pinch log silent >35min -> killing benchmark.py (rec_pinch_full will resume from cache)"
+      pkill -9 -f "benchmark.py --model openrouter/qwen/qwen3.8-27b" 2>/dev/null
+    fi
+  fi
+
+  # 3c) deploy guard: origin/main behind HEAD => push (belt-and-suspenders beyond weekend_auto's loop).
+  AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+  if [ "${AHEAD:-0}" -gt 0 ]; then
+    timeout 90 git push origin main -q 2>/dev/null && log "deploy-guard: pushed $AHEAD commit(s) to origin"
+  fi
+
+  # 3d) GPU-wedge warning (log-only, no kill — SWE structure-caching can be legitimately quiet):
+  #     a llama-server is up but GPU util ~0 and NO results written in 40 min. Surface it loudly.
+  if pgrep -f 'llama-server' >/dev/null 2>&1; then
+    util=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -1)
+    if [ "${util:-100}" -lt 5 ] && [ -z "$(find results -newermt '-40 min' -type f 2>/dev/null | head -1)" ]; then
+      log "STALL-WARN: llama-server up but GPU idle(${util}%) + no results written in 40min — check GPU worker"
+    fi
+  fi
+
   sleep 300
 done

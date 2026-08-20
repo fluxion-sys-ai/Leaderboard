@@ -60,16 +60,16 @@ case "$KEY" in
           EXTRA='{"top_p":0.95,"top_k":64,"reasoning":{"effort":"xhigh"},"provider":{"order":["Parasail"],"quantizations":["bf16"],"allow_fallbacks":true}}'
           FULLNAME="muse-glimmer-30b" ;;
   qwen27) MODEL="qwen/qwen3.6-27b"
-          EXTRA='{"top_p":0.95,"top_k":20,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
+          EXTRA='{"top_p":0.95,"top_k":20,"min_p":0,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
           FULLNAME="qwen3.6-27b" ;;
   qwen35) MODEL="qwen/qwen3.6-35b-a3b"
-          EXTRA='{"top_p":0.95,"top_k":20,"min_p":0,"presence_penalty":1.5,"provider":{"quantizations":["fp8"]}}'  # presence 1.5 per models_full.yaml (was 0.0)
+          EXTRA='{"top_p":0.95,"top_k":20,"min_p":0,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'  # presence 0.0 for SWE (1.5 is Terminal-only). pp 1.5 SUPPRESSED the repeated SEARCH/REPLACE marker tokens -> model emitted plain code fences -> Agentless --diff_format extracted EMPTY patches -> 0% score. Reverted to 0.0 to restore the diff format.
           FULLNAME="qwen3.6-35b-a3b" ;;
   gemma)  MODEL="google/gemma-4-31b-it"
           EXTRA='{"top_p":0.95,"top_k":64,"reasoning":{"effort":"high"},"provider":{"quantizations":["bf16"]}}'
           FULLNAME="gemma-4-31b" ;;
   qwen38) MODEL="qwen/qwen3.8-27b"   # now on OpenRouter (fp8); local Q4 server ignores the slug + provider
-          EXTRA='{"top_p":0.95,"top_k":20,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
+          EXTRA='{"top_p":0.95,"top_k":20,"min_p":0,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'
           FULLNAME="qwen3.8-27b" ;;
   *) echo "unknown model key: $KEY"; exit 2 ;;
 esac

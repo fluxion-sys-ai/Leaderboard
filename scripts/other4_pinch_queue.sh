@@ -13,11 +13,19 @@ declare -A MATCH=( [muse]=muse-glimmer-30b [qwen27]=qwen3-6-27b [qwen35]=qwen3-6
 # GATE: wait until qwen3.8 is FULLY done — pinch + swe scored AND terminal COMPLETE (>=80) — OR the
 # qwen3.8 pinch/wrapper have both exited (deadlock-proof). Completeness (not existence) so a partial
 # terminal can't let the other-4 jump ahead of qwen3.8's terminal.
-q38_done(){ [ -f results/scored/qwen3.8-27b-full/pinchbench.json ] && [ -f results/scored/qwen3.8-27b-full/swebench_lite.json ] \
+# DEADLOCK ESCAPE: a DEFINITIVE qwen38 SWE failure writes swebench_lite.ERROR (never a .json). Treat
+# that as a terminal SWE state so a permanently-failing qwen38 SWE cell can't wedge the other-4 pinch
+# queue forever (which would cascade-block swe_full_queue + full_terminal_queue). Terminal still must
+# be COMPLETE (>=80) so a partial terminal can't let the other-4 jump ahead of qwen38's terminal.
+q38_done(){ [ -f results/scored/qwen3.8-27b-full/pinchbench.json ] \
+  && { [ -f results/scored/qwen3.8-27b-full/swebench_lite.json ] || [ -f results/scored/qwen3.8-27b-full/swebench_lite.ERROR ]; } \
   && [ "$(python3 -c "import json;d=json.load(open('results/terminalbench/qwen38/qwen38/results.json'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null||echo 0)" -ge 80 ]; }
-# Pure completeness gate (watchdog guarantees the wrapper finishes qwen3.8, so no deadlock): wait
-# until qwen3.8 is fully done. Robust against the wrapper's respawn gap.
-while ! q38_done; do sleep 120; done
+# GATE BYPASSED (user request 2026-08-20): start the other-4 full pinch NOW, in parallel with
+# qwen3.8's SWE (both OpenRouter, zero conflict). qwen3.8 full pinch is already scored, so "qwen3.8
+# first" for pinch is satisfied. The old ">=80 terminal" clause could NEVER clear — qwen3.8 ran the
+# 24-task stratified terminal sample, not 80 — so this gate was a permanent deadlock. Start on a light
+# guard only: proceed unless someone explicitly re-pauses via .QWEN38_ONLY_PHASE.
+while [ -f "$REPO/.QWEN38_ONLY_PHASE" ]; do sleep 120; done
 rm -f "$REPO/.QWEN38_ONLY_PHASE"   # qwen3.8 fully done -> release the other 4
 log "other4_pinch_queue up — qwen3.8 done; running muse/qwen27/qwen35/gemma full pinch (rec/default)."
 for k in muse qwen27 qwen35 gemma; do

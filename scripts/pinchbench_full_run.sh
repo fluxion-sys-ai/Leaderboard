@@ -1,7 +1,10 @@
 #!/bin/bash
-# PinchBench on the FULL-PRECISION models via OpenRouter (no GPU). --thinking high = the vendor
-# REC/DEFAULT for these models (IFBench/AIME use enable_thinking:true; Terminal/SWE use model
-# default = ON). Prior no_think override was WRONG (not rec/default) and is removed. Judge = deepseek.
+# PinchBench on the FULL-PRECISION models via OpenRouter (no GPU). Thinking = OFF for PinchBench:
+# it's an agentic multi-turn benchmark and thinking ZEROES the agent (the model reasons instead of
+# acting), a finding baked into the board ("OFF — thinking zeroes agentic"). PROOF: qwen3.8 full pinch
+# scored 0.833 with Thinking:off; the --thinking high variant was an untested regression that would
+# either zero the other 4 or make them non-comparable to qwen3.8. Sampling still uses the vendor rec
+# (top_p/top_k/min_p/presence via models_full.yaml) — only the reasoning trace is off. Judge = deepseek.
 # Usage: pinchbench_full_run.sh <muse|qwen27|qwen35|gemma> [n_tasks]   (omit n_tasks = full 116)
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
@@ -30,6 +33,6 @@ cd "$PB"
 if [ -n "$NTASKS" ]; then SUITE=$(head -"$NTASKS" "$REPO/configs/pinchbench_tasks.txt" | paste -sd,)
 else SUITE=$(paste -sd, "$REPO/configs/pinchbench_tasks.txt"); fi
 exec uv run scripts/benchmark.py \
-  --model "$MODEL" --thinking high \
+  --model "$MODEL" --thinking off \
   --judge "openrouter/deepseek/deepseek-chat-v3.1" \
   --suite "$SUITE"

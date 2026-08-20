@@ -52,10 +52,12 @@ while true; do
     timeout 30 git add docs/index.html leaderboard.html 2>/dev/null
     timeout 30 git add results/scored/*/pinchbench.json 2>/dev/null || true
     timeout 30 git add results/scored/*/swebench_lite.json 2>/dev/null || true
-    if timeout 30 git_c commit -q -m "leaderboard: auto-refresh" 2>/dev/null; then
-      if timeout 90 git push origin main -q 2>>"$LOG"; then log "board pushed"; else log "PUSH FAILED/timed-out (will retry next pass)"; fi
-    else
-      log "commit produced nothing (no staged change) — skipping push"
+    timeout 30 git_c commit -q -m "leaderboard: auto-refresh" 2>/dev/null || log "commit produced nothing (no staged change)"
+    # Always push if local is ahead of origin — otherwise manual fix-commits sit unpushed whenever
+    # the board rebuild is byte-identical (root cause of the origin stalling 10 commits behind).
+    AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+    if [ "${AHEAD:-0}" -gt 0 ]; then
+      if timeout 90 git push origin main -q 2>>"$LOG"; then log "board pushed ($AHEAD commit(s))"; else log "PUSH FAILED/timed-out (will retry next pass)"; fi
     fi
   fi
   C=$(credits)

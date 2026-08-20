@@ -17,7 +17,10 @@ log "qwen38_q4_gpu up — Terminal(80) then SWE(20) for qwen3.8-Q4."
 
 # 1) TerminalBench Q4 (full 80)
 TBF="results/terminalbench_q4/qwen38/qwen38/results.json"
-DONE_T=$([ -f "$TBF" ] && python3 -c "import json;d=json.load(open('$TBF'));print(1 if (d.get('n_resolved',0)+d.get('n_unresolved',0))>=80 else 0)" 2>/dev/null || echo 0)
+# sample-aware completeness: expect the stratified sample size (24) when the sample file is present,
+# else full-80. Prevents a wrapper restart from wastefully re-running an already-complete sample.
+TB_EXPECT=$([ -s "$REPO/configs/terminal_sample.txt" ] && grep -c . "$REPO/configs/terminal_sample.txt" || echo 80)
+DONE_T=$([ -f "$TBF" ] && python3 -c "import json;d=json.load(open('$TBF'));print(1 if (d.get('n_resolved',0)+d.get('n_unresolved',0))>=$TB_EXPECT else 0)" 2>/dev/null || echo 0)
 if [ "$DONE_T" != "1" ]; then
   free_gpu
   log "Terminal Q4 qwen38 (80) start"

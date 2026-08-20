@@ -140,37 +140,51 @@ PYEOF
   fi
 done
 
+# localize concurrency: run up to LOC_PAR instances at once so the llama-server --parallel slots
+# stay full. Was sequential (num_threads 1, one id at a time) -> only 1 slot busy = GPU half-idle
+# through ALL of localize (3 passes x N instances). VRAM-neutral: in llama.cpp -c is the TOTAL
+# context split across slots, so more in-flight requests add no KV. Also speeds the OpenRouter full
+# runs (the provider handles concurrency). Per-instance output + --skip_existing => safe concurrent.
+LOC_PAR="${LOC_PAR:-4}"
+loc_sem(){ while [ "$(jobs -rp | wc -l)" -ge "$LOC_PAR" ]; do wait -n 2>/dev/null || break; done; }
+
 # --- 1. file-level localization (LLM, temp 0) ---
 for id in "${IDS[@]}"; do
-  $PY agentless/fl/localize.py --file_level \
+  loc_sem
+  ( $PY agentless/fl/localize.py --file_level \
       --output_folder "$LOC/file_level" \
       --model "$MODEL" --backend openai \
-      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance"
+      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance" ) &
 done
+wait
 
 [ -f "$LOC/file_level/loc_outputs.jsonl" ] || : > "$LOC/file_level/loc_outputs.jsonl"
 
 # --- 2. related-element localization ---
 for id in "${IDS[@]}"; do
-  $PY agentless/fl/localize.py --related_level \
+  loc_sem
+  ( $PY agentless/fl/localize.py --related_level \
       --output_folder "$LOC/related" \
       --model "$MODEL" --backend openai \
       --top_n 3 --compress \
       --start_file "$LOC/file_level/loc_outputs.jsonl" \
-      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance"
+      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance" ) &
 done
+wait
 
 [ -f "$LOC/related/loc_outputs.jsonl" ] || : > "$LOC/related/loc_outputs.jsonl"
 
 # --- 3. line-level (edit location) localization ---
 for id in "${IDS[@]}"; do
-  $PY agentless/fl/localize.py --fine_grain_line_level \
+  loc_sem
+  ( $PY agentless/fl/localize.py --fine_grain_line_level \
       --output_folder "$LOC/edit_samples" \
       --model "$MODEL" --backend openai \
       --top_n 3 --compress --temperature 0.0 --num_samples 1 \
       --start_file "$LOC/related/loc_outputs.jsonl" \
-      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance"
+      --target_id "$id" --num_threads 1 --skip_existing || echo "  [warn] localize failed for $id (empty/None response) — skipping this instance" ) &
 done
+wait
 
 # --- 3a-fix: Agentless merge() expects found_edit_locs to be a LIST of per-sample dicts
 # (it slices [st_id:st_id+1]); this fine_grain build emits a bare dict {file: locs}. Wrap it
@@ -203,7 +217,7 @@ $PY agentless/repair/repair.py \
     --model "$MODEL" --backend openai \
     --loc_interval --top_n 3 --context_window 10 \
     --max_samples "$REPAIR_SAMPLES" \
-    --cot --diff_format --gen_and_process --num_threads 2 || exit 1
+    --cot --diff_format --gen_and_process --num_threads 4 || exit 1
 
 PREDS="$REP/output_0_processed.jsonl"
 [ -s "$PREDS" ] || { echo "ERROR: predictions empty: $PREDS"; exit 1; }

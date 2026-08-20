@@ -29,7 +29,11 @@ echo "[swe-q4] $KEY ($M) gguf=$GGUF bin=$(basename $BIN)"
 SLOG=/tmp/swe_q4_${KEY}_server.log
 PIDF=/tmp/swe_q4_${KEY}_server.pid
 start_server(){
-  "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 2 -ngl 999 \
+  # --parallel 4 (was 2): SWE localize now runs LOC_PAR=4 concurrent + repair --num_threads 4, so
+  # keep 4 server slots full to actually use the A100 instead of ~half. VRAM-neutral — -c is the
+  # TOTAL context split across slots (98304/4 = 24576 tok/slot, ample for SWE localize/repair
+  # prompts). NOTE: terminal keeps --parallel 2 (its ~33k-token prompts need 49152/slot).
+  "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 4 -ngl 999 \
     --chat-template-kwargs "$TKW" --temp 1.0 --top-p 0.95 $SAMP \
     --host 127.0.0.1 --port $PORT --no-webui >>"$SLOG" 2>&1 &
   echo $! > "$PIDF"

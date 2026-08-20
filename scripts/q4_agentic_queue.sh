@@ -10,7 +10,7 @@ TERMN=$(grep -cE "[^[:space:]]" "$REPO/configs/terminal_sample.txt" 2>/dev/null 
 export PATH="$HOME/.local/bin:$PATH"
 log(){ echo "[$(date +'%F %T')] $*"; }
 free_gpu(){ for p in $(pgrep -f 'llama-server'); do kill -9 "$p" 2>/dev/null; done; }
-MODELS=(qwen38 gemma qwen27 qwen35 muse)   # qwen38 FIRST (priority)
+MODELS=(qwen38 muse gemma qwen27 qwen35)   # user priority: qwen3.8 FIRST, then MUSE/Glimmer, then rest
 declare -A FN=( [gemma]=gemma-4-31b-q4f [qwen27]=qwen3.6-27b-q4f [qwen35]=qwen3.5-35b-a3b-q4f [qwen38]=qwen3.8-27b-q4f [muse]=muse-glimmer-30b-q4f )
 
 # gate: qwen38-full is on OpenRouter now (non-GPU) — there is NO vLLM chain to wait for. The only

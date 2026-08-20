@@ -52,8 +52,13 @@ while true; do
   alive weekend_auto || spawn weekend_auto
   alive gpu_guardian || spawn gpu_guardian   # keeps the GPU-lock supervisor alive (non-GPU; zero contention)
   if ! alive rec_pinch_full        && ! sc qwen3.8-27b-full pinchbench; then spawn rec_pinch_full; fi  # qwen3.8 pinch root — crash-resilient
-  if ! alive swe_full_queue        && ! done_swe_full;  then spawn swe_full_queue;        fi
-  if ! alive qwen38_full_openrouter && ! done_openrouter; then spawn qwen38_full_openrouter; fi
+  # full-precision SWE-Lite: all 5 models run in PARALLEL over OpenRouter, each in a -orf tagged
+  # work dir (muse untagged) so they can't collide with the same models' Q4-LOCAL SWE (which share
+  # the untagged results/swe_agentless/<key> dir). The guardian is idempotent: it promotes any
+  # finished score onto the board + relaunches a dead run (resumes from cached structures/).
+  # This REPLACES swe_full_queue + qwen38_full_openrouter's SWE step — BOTH ran UNTAGGED and
+  # collided with the Q4 runs in the shared work dir (contaminated the Q4 qwen3.8 SWE result).
+  bash scripts/full_swe_guardian.sh >> "$REPO/logs_full_swe_guardian.log" 2>&1
   if ! alive full_terminal_queue    && ! done_full_terminal; then spawn full_terminal_queue;    fi
   if ! alive other4_pinch_queue     && ! done_other4_pinch;   then spawn other4_pinch_queue;     fi
 

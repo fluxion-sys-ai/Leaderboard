@@ -8,16 +8,17 @@
 # process is not alive -> relaunch it (localize is cached via structures/, so a relaunch resumes
 # cheaply rather than restarting from scratch). Idempotent + safe to call every watchdog tick.
 #
-# Tagging: qwen38/qwen27/qwen35/gemma use `--tag orf` (separate work dir) so they can't collide
-# with the same models' Q4-LOCAL SWE runs that share results/swe_agentless/<key>. Muse has no Q4
-# SWE queued in this batch, so it runs untagged and lands in -full directly.
+# Tagging: ALL 5 runs use `--tag orf` (separate work dir results/swe_agentless/<key>-orf) so they
+# can't collide with the same models' Q4-LOCAL SWE runs, which share the untagged
+# results/swe_agentless/<key> dir. (An earlier version left muse untagged — that collided with the
+# muse Q4 run, so muse is now tagged too.)
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO" || exit 1
 
 # key : board-fullname : tag ("" = untagged)
 RUNS=(
-  "muse:muse-glimmer-30b:"
+  "muse:muse-glimmer-30b:orf"
   "qwen38:qwen3.8-27b:orf"
   "qwen27:qwen3.6-27b:orf"
   "qwen35:qwen3.6-35b-a3b:orf"

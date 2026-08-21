@@ -1,48 +1,62 @@
 #!/usr/bin/env python3
-"""Whole-function repair post-processor for models that emit code fences instead of SEARCH/REPLACE.
+"""Whole-function repair post-processor (v2) for models that emit code fences, not SEARCH/REPLACE.
 
-qwen3.6-35b-a3b (MoE) will not follow the SEARCH/REPLACE diff format on real SWE prompts — it dumps
-the *complete edited function/class* in a ```python fence. Agentless' --diff_format extractor finds
-no SEARCH/REPLACE blocks -> empty patch -> 0%. This recovers a real score from those outputs:
+qwen3.6-35b-a3b (MoE) never produces the SEARCH/REPLACE diff format on real SWE prompts — it dumps
+the complete edited function/class in a ```python fence. Agentless' --diff_format extractor finds
+nothing -> empty patch -> 0%. This recovers a real score from those outputs:
 
   for each bug, for each of the N repair samples:
-    - extract each ```python block + the file path (### path) + the def/class it (re)defines
-    - locate that same def/class in the ORIGINAL file (saved in repair output.jsonl 'prev_content')
-    - splice the new version in and emit a unified git diff
-  then majority-vote across the samples -> one patch per bug -> all_preds.jsonl (for swebench eval).
+    - extract each ```python block + the def/class it (re)defines (skip test_* defs)
+    - find the ORIGINAL file:  the `### path` marker if present, else the file-level-localized
+      candidate whose source actually contains that def/class
+    - get the original file TEXT from structures/<iid>.json (Agentless' cached repo), splice the new
+      version in, and emit a unified git diff
+  then majority-vote (non-empty) across the samples -> one patch per bug -> all_preds.jsonl.
 
-Usage: swe_wholefunc_postprocess.py <key> [--tag orf] -> writes <work>/repair/all_preds_wholefunc.jsonl
+v1 relied on repair 'prev_content' (empty for many bugs after a localize hiccup) and got 1/20; v2
+uses structures/ (always present) + candidate-file search and recovers most function edits.
+
+Usage: swe_wholefunc_postprocess.py <key> [--tag orf]  ->  writes <work>/repair/all_preds.jsonl
 """
 import json, re, sys, os, difflib
 from collections import Counter
 
 REPO = "/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark"
 KEY = sys.argv[1]
-TAG = ""
-if "--tag" in sys.argv:
-    TAG = sys.argv[sys.argv.index("--tag") + 1]
+TAG = sys.argv[sys.argv.index("--tag") + 1] if "--tag" in sys.argv else ""
 FULL = {"muse": "muse-glimmer-30b", "qwen27": "qwen3.6-27b", "qwen35": "qwen3.6-35b-a3b",
         "gemma": "gemma-4-31b", "qwen38": "qwen3.8-27b"}[KEY]
 WORK = f"{REPO}/results/swe_agentless/{KEY}{('-'+TAG) if TAG else ''}"
-REP = f"{WORK}/repair"
-OUT = f"{REP}/all_preds_wholefunc.jsonl"
+REP, STRUCT = f"{WORK}/repair", f"{WORK}/structures"
+OUT = f"{REP}/all_preds.jsonl"
 
 
-def flatten_str(x):
-    """prev_content/file_names are irregularly nested; pull out (filename, content) pairs."""
-    out = []
-    def walk(node):
-        if isinstance(node, list):
-            for v in node:
-                walk(v)
-        elif isinstance(node, str) and node:
-            out.append(node)
-    walk(x)
-    return out
+def get_file_text(struct, path):
+    node = struct
+    for p in path.split("/"):
+        if isinstance(node, dict) and p in node:
+            node = node[p]
+        else:
+            return None
+    if isinstance(node, dict) and "text" in node:
+        t = node["text"]
+        return "\n".join(t) + "\n" if isinstance(t, list) else t
+    return None
+
+
+def iter_files(struct, prefix=""):
+    """Yield (path, node) for every file (dict with 'text') in the structure."""
+    if not isinstance(struct, dict):
+        return
+    for k, v in struct.items():
+        if isinstance(v, dict):
+            if "text" in v:
+                yield (f"{prefix}{k}", v)
+            else:
+                yield from iter_files(v, f"{prefix}{k}/")
 
 
 def def_span(lines, name, kind):
-    """Return (start, end) line indices of the top-level/method `kind name` block, or None."""
     pat = re.compile(rf"^(\s*){kind}\s+{re.escape(name)}\b")
     for i, ln in enumerate(lines):
         m = pat.match(ln)
@@ -55,100 +69,102 @@ def def_span(lines, name, kind):
             if s.strip() == "" or s.lstrip().startswith("#"):
                 j += 1
                 continue
-            cur = len(s) - len(s.lstrip())
-            if cur <= indent:          # dedent back to or past the def -> block ended
+            if len(s) - len(s.lstrip()) <= indent:
                 break
             j += 1
         return i, j
     return None
 
 
-def build_patch(orig_content, file_path, new_block):
-    """Replace the def/class in new_block into orig_content; return a unified git diff or None."""
-    # what does the new block (re)define?
-    dm = re.search(r"^(\s*)(def|class)\s+(\w+)", new_block, re.M)
+def build_patch(orig, fpath, block):
+    dm = re.search(r"^(\s*)(def|class)\s+(\w+)", block, re.M)
     if not dm:
         return None
     kind, name = dm.group(2), dm.group(3)
-    # trim the new block to start at its def/class line (drop stray leading text)
-    nb_lines = new_block.splitlines(keepends=True)
-    start_idx = next((k for k, l in enumerate(nb_lines) if re.match(rf"^\s*{kind}\s+{re.escape(name)}\b", l)), 0)
-    new_func = nb_lines[start_idx:]
-    orig_lines = orig_content.splitlines(keepends=True)
-    span = def_span(orig_lines, name, kind)
+    if name.lower().startswith("test"):
+        return None  # qwen35 sometimes writes a test instead of the fix — not a patch
+    nb = block.splitlines(keepends=True)
+    si = next((k for k, l in enumerate(nb) if re.match(rf"^\s*{kind}\s+{re.escape(name)}\b", l)), 0)
+    newf = nb[si:]
+    ol = orig.splitlines(keepends=True)
+    span = def_span(ol, name, kind)
     if not span:
         return None
     s, e = span
-    # match the new function's indentation to the original's
-    orig_indent = len(orig_lines[s]) - len(orig_lines[s].lstrip())
-    new_indent = len(new_func[0]) - len(new_func[0].lstrip())
-    shift = orig_indent - new_indent
+    oi = len(ol[s]) - len(ol[s].lstrip())
+    ni = len(newf[0]) - len(newf[0].lstrip())
+    shift = oi - ni
     if shift > 0:
-        new_func = [(" " * shift) + l if l.strip() else l for l in new_func]
-    elif shift < 0:
-        new_func = [l[-shift:] if l[:-shift].strip() == "" else l for l in new_func]
-    if new_func and not new_func[-1].endswith("\n"):
-        new_func[-1] += "\n"
-    patched = orig_lines[:s] + new_func + orig_lines[e:]
-    if patched == orig_lines:
+        newf = [(" " * shift) + l if l.strip() else l for l in newf]
+    if newf and not newf[-1].endswith("\n"):
+        newf[-1] += "\n"
+    patched = ol[:s] + newf + ol[e:]
+    if patched == ol:
         return None
-    diff = difflib.unified_diff(orig_lines, patched, fromfile=f"a/{file_path}", tofile=f"b/{file_path}", n=3)
-    body = "".join(diff)
+    body = "".join(l for l in difflib.unified_diff(ol, patched, n=3)
+                   if not l.startswith(("--- ", "+++ ")))
     if not body.strip():
         return None
-    return f"diff --git a/{file_path} b/{file_path}\n--- a/{file_path}\n+++ b/{file_path}\n" + \
-           "".join(l for l in body.splitlines(keepends=True) if not l.startswith(("--- ", "+++ ")))
+    return f"diff --git a/{fpath} b/{fpath}\n--- a/{fpath}\n+++ b/{fpath}\n" + body
 
 
 def norm(p):
-    return "".join(l.strip() for l in p.splitlines() if l.startswith(("+", "-")) and not l.startswith(("+++", "---")))
+    return "".join(l.strip() for l in p.splitlines()
+                   if l.startswith(("+", "-")) and not l.startswith(("+++", "---")))
 
 
 def main():
     n_ok = 0
+    total = 0
     with open(OUT, "w") as fo:
         for line in open(f"{REP}/output.jsonl"):
             d = json.loads(line)
             iid = d["instance_id"]
-            files = flatten_str(d.get("file_names"))
-            contents = flatten_str(d.get("prev_content"))
-            # map filename -> original content
-            fmap = {}
-            for c in contents:
-                # each content is a whole file; find which known filename it is (best effort: pair by order)
-                pass
-            # pair contents to filenames positionally (both come from the same localized set)
-            uniq_files = list(dict.fromkeys(files))
-            for i, fn in enumerate(uniq_files):
-                if i < len(contents):
-                    fmap[fn] = contents[i]
+            total += 1
+            sf = f"{STRUCT}/{iid}.json"
+            struct = json.load(open(sf))["structure"] if os.path.exists(sf) else None
             cands = []
-            for raw in (d.get("raw_output") or []):
-                text = raw if isinstance(raw, str) else json.dumps(raw)
-                for block in re.findall(r"```(?:python)?\n(.*?)```", text, re.S):
-                    fm = re.search(r"###\s*(\S+)", block)
-                    fpath = fm.group(1) if fm else (uniq_files[0] if uniq_files else None)
-                    if not fpath or fpath not in fmap:
-                        # try any known file whose content contains the edited def name
-                        dm = re.search(r"\b(?:def|class)\s+(\w+)", block)
-                        if dm:
-                            for fn, c in fmap.items():
-                                if re.search(rf"\b(?:def|class)\s+{dm.group(1)}\b", c):
-                                    fpath = fn
+            if struct:
+                for raw in (d.get("raw_output") or []):
+                    t = raw if isinstance(raw, str) else json.dumps(raw)
+                    for block in re.findall(r"```(?:python)?\n(.*?)```", t, re.S):
+                        dm = re.search(r"^\s*(def|class)\s+(\w+)", block, re.M)
+                        if not dm:
+                            continue
+                        kind, name = dm.group(1), dm.group(2)
+                        fm = re.search(r"###\s*(\S+)", block)
+                        fpaths = []
+                        if fm:
+                            fpaths = [fm.group(1)]
+                        else:
+                            # find file(s) that actually contain this def/class
+                            for path, node in iter_files(struct):
+                                txt = node.get("text")
+                                if isinstance(txt, list):
+                                    src = "\n".join(str(x) for x in txt)
+                                elif isinstance(txt, str):
+                                    src = txt
+                                else:
+                                    continue
+                                if re.search(rf"^\s*{kind}\s+{re.escape(name)}\b", src, re.M):
+                                    fpaths.append(path)
+                                    if len(fpaths) >= 3:
+                                        break
+                        for fpath in fpaths:
+                            orig = get_file_text(struct, fpath)
+                            if orig:
+                                p = build_patch(orig, fpath, block)
+                                if p:
+                                    cands.append(p)
                                     break
-                    if fpath and fpath in fmap:
-                        p = build_patch(fmap[fpath], fpath, block)
-                        if p:
-                            cands.append(p)
             best = ""
             if cands:
-                # majority vote by normalized patch
                 key = Counter(norm(c) for c in cands).most_common(1)[0][0]
                 best = next(c for c in cands if norm(c) == key)
                 n_ok += 1
-            fo.write(json.dumps({"instance_id": iid, "model_name_or_path": f"{FULL}-wholefunc",
+            fo.write(json.dumps({"instance_id": iid, "model_name_or_path": f"{FULL}-full",
                                  "model_patch": best}) + "\n")
-    print(f"[wholefunc] {KEY}: recovered a non-empty patch for {n_ok} bugs -> {OUT}")
+    print(f"[wholefunc-v2] {KEY}: recovered a non-empty patch for {n_ok}/{total} bugs -> {OUT}")
 
 
 if __name__ == "__main__":

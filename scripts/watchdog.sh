@@ -60,7 +60,7 @@ while true; do
   # collided with the Q4 runs in the shared work dir (contaminated the Q4 qwen3.8 SWE result).
   bash scripts/full_swe_guardian.sh >> "$REPO/logs_full_swe_guardian.log" 2>&1
   if ! alive full_terminal_queue    && ! done_full_terminal; then spawn full_terminal_queue;    fi
-  if ! alive other4_pinch_queue     && ! done_other4_pinch;   then spawn other4_pinch_queue;     fi
+  if ! alive other4_pinch_queue     && ! done_other4_pinch && [ ! -f "$REPO/.PAUSE_OTHER4" ];   then spawn other4_pinch_queue;     fi
 
   # 2) GPU: only the Q4 queue remains (qwen38-full is on OpenRouter now). Respawn ONLY when the GPU
   # is idle, not paused, no GPU worker alive, and Q4 isn't already complete. The obsolete vLLM chain

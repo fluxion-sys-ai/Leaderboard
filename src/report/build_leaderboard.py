@@ -524,9 +524,10 @@ def _fr_spec(model_key, bench, precision):
     harness, think = _FR_BENCH.get(bench, (bench, "ON"))
     if bench == "swe" and model_key == "muse" and precision == "full":
         samp += " · reasoning effort xhigh"
-    # temperature: vendor/model default everywhere except SWE, where Agentless fixes it per stage
+    # temperature: 1.0 (vendor-recommended thinking-mode temp) everywhere except SWE, where
+    # Agentless fixes it per stage (localize greedy 0.0, repair 0.8)
     temp = ("localize 0.0 · repair 0.8 <span class='rd'>REC</span>" if bench == "swe"
-            else "model default (unset) <span class='rd df'>DEF</span>")
+            else "1.0 <span class='rd'>REC</span>")
     parts = [
         '<div class="sp-src">params used: <b>vendor-recommended sampling + vendor/model defaults</b> '
         '— nothing custom</div>',

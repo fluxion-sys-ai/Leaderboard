@@ -1,27 +1,26 @@
 {
-  "score": 0.0,
+  "score": 0.05,
   "metric": "swebench_lite_resolved_pct",
   "n": 20,
-  "resolved": 0,
+  "resolved": 1,
   "detail": {
-    "resolved_ids": [],
+    "resolved_ids": [
+      "django__django-14787"
+    ],
     "unresolved_ids": [
       "django__django-13551",
       "django__django-13590",
       "django__django-15902",
       "pydata__xarray-4248",
-      "pytest-dev__pytest-11148",
-      "scikit-learn__scikit-learn-14087",
       "sphinx-doc__sphinx-8474"
     ],
     "error_ids": [],
     "completed_ids": [
       "django__django-13551",
       "django__django-13590",
+      "django__django-14787",
       "django__django-15902",
       "pydata__xarray-4248",
-      "pytest-dev__pytest-11148",
-      "scikit-learn__scikit-learn-14087",
       "sphinx-doc__sphinx-8474"
     ]
   }

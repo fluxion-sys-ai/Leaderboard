@@ -1,27 +1,55 @@
 {
-  "score": 0.05,
+  "score": 0.13725490196078433,
   "metric": "swebench_lite_resolved_pct",
-  "n": 20,
-  "resolved": 1,
+  "n": 51,
+  "resolved": 7,
   "detail": {
     "resolved_ids": [
-      "django__django-14787"
+      "django__django-12284",
+      "django__django-12708",
+      "django__django-13933",
+      "django__django-14787",
+      "django__django-15790",
+      "django__django-15851",
+      "sympy__sympy-17022"
     ],
     "unresolved_ids": [
+      "django__django-11283",
+      "django__django-12470",
+      "django__django-12589",
+      "django__django-13321",
       "django__django-13551",
       "django__django-13590",
+      "django__django-14999",
+      "django__django-15213",
       "django__django-15902",
+      "matplotlib__matplotlib-25332",
       "pydata__xarray-4248",
+      "sphinx-doc__sphinx-11445",
       "sphinx-doc__sphinx-8474"
     ],
     "error_ids": [],
     "completed_ids": [
+      "django__django-11283",
+      "django__django-12284",
+      "django__django-12470",
+      "django__django-12589",
+      "django__django-12708",
+      "django__django-13321",
       "django__django-13551",
       "django__django-13590",
+      "django__django-13933",
       "django__django-14787",
+      "django__django-14999",
+      "django__django-15213",
+      "django__django-15790",
+      "django__django-15851",
       "django__django-15902",
+      "matplotlib__matplotlib-25332",
       "pydata__xarray-4248",
-      "sphinx-doc__sphinx-8474"
+      "sphinx-doc__sphinx-11445",
+      "sphinx-doc__sphinx-8474",
+      "sympy__sympy-17022"
     ]
   }
 }

@@ -127,6 +127,11 @@ def swe_score_of(row: dict):
     if not c or c.get("score") is None:
         return None
     completed = len((c.get("detail") or {}).get("completed_ids") or [])
+    # `genuine_zero`: the run finished the full set but the MODEL produced 0 parseable patches
+    # (e.g. Q4 35B-A3B emitted prose instead of the SEARCH/REPLACE edit format) — a real 0, NOT a
+    # pipeline crash, so show it (with a footnote) rather than hide it behind the completed-count guard.
+    if c.get("genuine_zero"):
+        return c.get("score")
     return c.get("score") if completed >= SWE_MIN_COMPLETED else None
 
 
@@ -554,7 +559,8 @@ def _frontier_tab() -> str:
          "NEW (Aug 2026); full-precision = self-hosted fp8 via vLLM (not on OpenRouter)"),
         ("Qwen3.6-27B", "qwen3.6-27b-full", "qwen3.6-27b-q4f", "qwen27", ""),
         ("Qwen3.6-35B-A3B", "qwen3.6-35b-a3b-full", "qwen3.5-35b-a3b-q4f", "qwen35",
-         "Q4 row uses the older 3.5-35B GGUF (no 3.6-35B GGUF yet)"),
+         "Q4 row uses the older 3.5-35B GGUF (no 3.6-35B GGUF yet). Q4 SWE=0: the Q4 MoE emitted prose "
+         "explanations instead of the SEARCH/REPLACE edit format → 0 parseable patches (real 0, not a pipeline error)."),
         ("Gemma-4-31B", "gemma-4-31b-full", "gemma-4-31b-q4f", "gemma", ""),
     ]
 

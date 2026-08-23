@@ -8,5 +8,7 @@
     "unresolved_ids": [],
     "error_ids": [],
     "completed_ids": []
-  }
+  },
+  "genuine_zero": true,
+  "note": "model emitted prose, not SEARCH/REPLACE edit format -> 0 parseable patches (real 0)"
 }

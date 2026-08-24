@@ -5,12 +5,15 @@ defaults:
   runner: openrouter
   temperature: 1.0
   max_tokens: 1024
-  max_tokens_mult: 1     # benchmarks.yaml sets 81920 for ifbench/aime; OpenRouter allows the full budget
+  max_tokens_mult: 1     # restored to 81920 for IFBench (0.4=32768 truncated reasoning->empty answers)
+                         # generations that were hanging the run (no per-request timeout in harness)
 models:
   - name: qwen3.8-27b-full
     runner: openrouter
     model_slug: qwen/qwen3.8-27b
-    provider: { quantizations: ["fp8"] }   # fp8 ceiling, matching the other Qwen full models
+    # Provider order: Chutes/Parasail FIRST (2026-08-24 — Reka hung mid-stream on an AIME problem and
+    # the retry kept re-routing to it, wedging the run at 10/30; demoted Reka to last-resort fallback).
+    provider: { quantizations: ["fp8"], order: ["Chutes", "Parasail", "Reka"], allow_fallbacks: true }
     top_p: 0.95
     top_k: 20
     min_p: 0

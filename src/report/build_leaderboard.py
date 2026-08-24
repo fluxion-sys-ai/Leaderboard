@@ -516,7 +516,7 @@ _FR_BENCH = {   # benchmark harness — same regardless of model; (label, thinki
     "pinchbench": ("PinchBench · 116-task multi-turn agent · n_ctx 128K · judge DeepSeek-v3.1", "OFF (no_think — thinking zeroes agentic)"),
     "tau3":       ("τ³-bank · terminus agent · max_steps 100 · 97 tasks", "ON"),
     "terminal":   ("TerminalBench · terminus-2 agent · terminal-bench-core 0.1.1 · 24-task stratified sample (by difficulty, seed 42)", "ON"),
-    "swe":        ("SWE-bench Lite · Agentless (file→related→line→repair) · localize temp 0 · repair temp 0.8 ×1 · strat-50 (20-task) sample", "ON (localize/repair)"),
+    "swe":        ("SWE-bench Lite · Agentless (file→related→line→repair) · localize temp 0 · repair temp 0.8 ×1 · stratified sample (full: 20 instances · Q4: 51 instances)", "ON (localize/repair)"),
 }
 _FR_DISP = {"ifbench": "IFBench", "aime2026": "AIME26", "pinchbench": "PinchBench",
             "tau3": "τ³-bank", "terminal": "TerminalBench", "swe": "SWE-Lite"}

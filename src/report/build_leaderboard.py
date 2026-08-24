@@ -542,13 +542,24 @@ def _fr_spec(model_key, bench, precision):
         f'<b>thinking</b>: {think} <span class="rd">REC</span>',
         f'<b>harness</b>: {harness}',
     ]
-    if bench == "terminal":
-        # Per-task native agent timeout (terminal-bench-core 0.1.1 `max_agent_timeout_sec`), NOT a
-        # global override. Most of the 24 sample tasks allow 900s (15 min); a couple allow 1800s (30 min).
-        # (An earlier Q4 run wrongly capped every task at 600s — corrected 2026-08-23 to honor native.)
-        parts.append('<b>agent timeout</b>: per-task <b>native</b> (terminal-bench default) — '
-                     '900s (15 min) for most tasks, up to 1800s (30 min); <b>no global cap</b> '
-                     '<span class="rd">REC</span>')
+    # Per-benchmark timeout / generation limit (what bounds each task's runtime).
+    _BENCH_TIMEOUT = {
+        # terminal-bench-core 0.1.1 max_agent_timeout_sec (per-task native, NOT a global override; an
+        # earlier Q4 run wrongly capped all tasks at 600s — corrected 2026-08-23 to honor native):
+        "terminal":   "per-task <b>native</b> (terminal-bench default) — 900s (15 min) most tasks, up to 1800s (30 min); <b>no global cap</b>",
+        # PinchBench per-task timeout_seconds (task-defined; most tasks 180s):
+        "pinchbench": "per-task (task-defined): <b>180s median</b>, up to 300s · judge timeout 300s",
+        # Agentless SWE: each localize/repair is one LLM call (urllib 900s on OpenRouter full; Q4-local
+        # server uncapped) + Docker eval bounded by the SWE-bench harness:
+        "swe":        "per-LLM-call <b>900s</b> (OpenRouter full; Q4-local uncapped) · Docker eval per SWE-bench harness",
+        # Single-turn reasoning benches: bounded by the generation budget + the API request timeout:
+        "ifbench":    "max generation up to <b>81920 tokens</b> · API request 900s (single-turn)",
+        "aime2026":   "max generation ≥32768 reasoning tokens · API request 900s (single-turn)",
+        # tau3 agentic: bounded by max agent steps + API request timeout:
+        "tau3":       "max <b>100 agent steps</b> · API request 900s",
+    }
+    if bench in _BENCH_TIMEOUT:
+        parts.append(f'<b>timeout / limit</b>: {_BENCH_TIMEOUT[bench]} <span class="rd">REC</span>')
     if bench == "pinchbench" and precision == "q4":
         parts.append('<i>note: 87/116 tasks hit the ~300s/task timeout on long CSV/log/meeting '
                      'analysis (Q4-local throughput), which depresses this score.</i>')

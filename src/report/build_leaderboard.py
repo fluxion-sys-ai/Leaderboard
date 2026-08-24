@@ -542,6 +542,13 @@ def _fr_spec(model_key, bench, precision):
         f'<b>thinking</b>: {think} <span class="rd">REC</span>',
         f'<b>harness</b>: {harness}',
     ]
+    if bench == "terminal":
+        # Per-task native agent timeout (terminal-bench-core 0.1.1 `max_agent_timeout_sec`), NOT a
+        # global override. Most of the 24 sample tasks allow 900s (15 min); a couple allow 1800s (30 min).
+        # (An earlier Q4 run wrongly capped every task at 600s — corrected 2026-08-23 to honor native.)
+        parts.append('<b>agent timeout</b>: per-task <b>native</b> (terminal-bench default) — '
+                     '900s (15 min) for most tasks, up to 1800s (30 min); <b>no global cap</b> '
+                     '<span class="rd">REC</span>')
     if bench == "pinchbench" and precision == "q4":
         parts.append('<i>note: 87/116 tasks hit the ~300s/task timeout on long CSV/log/meeting '
                      'analysis (Q4-local throughput), which depresses this score.</i>')

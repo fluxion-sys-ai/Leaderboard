@@ -644,9 +644,11 @@ def _frontier_tab() -> str:
         cur = ";cursor:pointer" if spec else ""
         return f'<td class="sc bar" data-v="{v:.4f}" style="{heat_bar(v)}{cur}"{a}>{v * 100:.1f}</td>'
 
-    # ── Table 1: full-precision (OpenRouter). τ³ is full-precision only, so it lives here. ──
+    # ── Table 1: full-precision (OpenRouter). τ³-bank column TEMPORARILY HIDDEN (user request,
+    #    2026-08-24 — tau3 runs are incomplete/paused). Re-add the <th>τ³-bank</th> header + the
+    #    tau3_cell(...) line below to restore it. ──
     full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
-                 '<th>PinchBench</th><th>τ³-bank</th><th>Terminal</th>'
+                 '<th>PinchBench</th><th>Terminal</th>'
                  '<th>SWE-Lite</th></tr>')
     full_body = []
     for disp, full, q4, tkey, note in FR:
@@ -657,7 +659,7 @@ def _frontier_tab() -> str:
                          f'<td class="ml">{disp}</td>'
                          + fc("ifbench", score_of(cf, "ifbench")) + fc("aime2026", score_of(cf, "aime2026"))
                          + fc("pinchbench", score_of(cf, "pinchbench"))
-                         + tau3_cell(_tau3(tkey), mk=f"{disp} · τ³-bank · full", spec=_fr_spec(tkey, "tau3", "full"))
+                         # + tau3_cell(_tau3(tkey), mk=f"{disp} · τ³-bank · full", spec=_fr_spec(tkey, "tau3", "full"))  # HIDDEN
                          + fc("terminal", _terminal(tkey))
                          + fc("swe", swe_score_of(cf))   # SWE-bench Lite (Agentless, strat-50)
                          + '</tr>')

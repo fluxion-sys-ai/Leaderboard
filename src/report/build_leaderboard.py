@@ -523,60 +523,39 @@ _FR_DISP = {"ifbench": "IFBench", "aime2026": "AIME26", "pinchbench": "PinchBenc
 def _fr_spec(model_key, bench, precision):
     """Composed params HTML for one Frontier cell. Every knob is tagged REC (vendor-recommended)
     or DEF (vendor/model default) so it's explicit which values produced this score."""
+    # Clean, scannable card: precision · sampling(+thinking) · timeout · task set. All values are
+    # vendor-recommended (REC) — nothing custom.
     samp = _FR_SAMP.get(model_key, "")
-    serve = (_FR_FULL_SERVE.get(model_key, "OpenRouter") if precision == "full"
-             else "local A100-40GB · llama.cpp · Q4_K_M GGUF")
-    harness, think = _FR_BENCH.get(bench, (bench, "ON"))
+    serve = (_FR_FULL_SERVE.get(model_key, "OpenRouter") if precision == "full" else "local A100 · Q4_K_M")
+    _, think = _FR_BENCH.get(bench, (bench, "ON"))
     if bench == "swe" and model_key == "muse" and precision == "full":
-        samp += " · reasoning effort xhigh"
-    # temperature: 1.0 (vendor-recommended thinking-mode temp) everywhere except SWE, where
-    # Agentless fixes it per stage (localize greedy 0.0, repair 0.8)
-    temp = ("localize 0.0 · repair 0.8 <span class='rd'>REC</span>" if bench == "swe"
-            else "1.0 <span class='rd'>REC</span>")
+        samp += " · reasoning xhigh"
+    temp = "localize 0 · repair 0.8" if bench == "swe" else "1.0"
     parts = [
-        '<div class="sp-src">params used: <b>vendor-recommended sampling + vendor/model defaults</b> '
-        '— nothing custom</div>',
-        f'<b>precision</b>: {precision.upper()} · {serve} <span class="rd df">DEF</span>',
-        f'<b>temperature</b>: {temp}',
-        f'<b>sampling</b>: {samp} <span class="rd">REC</span>',
-        f'<b>thinking</b>: {think} <span class="rd">REC</span>',
-        f'<b>harness</b>: {harness}',
+        f'<b>precision:</b> {precision.upper()} · {serve}',
+        f'<b>sampling:</b> temp {temp} · {samp} · thinking {think} <span class="rd">REC</span>',
     ]
-    # Per-benchmark timeout / generation limit (what bounds each task's runtime).
-    _BENCH_TIMEOUT = {
-        # terminal-bench-core 0.1.1 max_agent_timeout_sec (per-task native, NOT a global override; an
-        # earlier Q4 run wrongly capped all tasks at 600s — corrected 2026-08-23 to honor native):
-        "terminal":   "per-task <b>native</b> (terminal-bench default) — 900s (15 min) most tasks, up to 1800s (30 min); <b>no global cap</b>",
-        # PinchBench per-task timeout_seconds (task-defined; most tasks 180s):
-        "pinchbench": "per-task (task-defined): <b>180s median</b>, up to 300s · judge timeout 300s",
-        # Agentless SWE: each localize/repair is one LLM call (urllib 900s on OpenRouter full; Q4-local
-        # server uncapped) + Docker eval bounded by the SWE-bench harness:
-        "swe":        "per-LLM-call <b>900s</b> (OpenRouter full; Q4-local uncapped) · Docker eval per SWE-bench harness",
-        # Single-turn reasoning benches: bounded by the generation budget + the API request timeout:
-        "ifbench":    "max generation up to <b>81920 tokens</b> · API request 900s (single-turn)",
-        "aime2026":   "max generation ≥32768 reasoning tokens · API request 900s (single-turn)",
-        # tau3 agentic: bounded by max agent steps + API request timeout:
-        "tau3":       "max <b>100 agent steps</b> · API request 900s",
+    _TIMEOUT = {
+        "terminal":   "native per-task, 900–1800s",
+        "pinchbench": "per-task 180s (up to 300s)",
+        "swe":        "per-call 900s · Docker eval",
+        "ifbench":    "up to 81,920 gen tokens",
+        "aime2026":   "up to 81,920 gen tokens",
+        "tau3":       "max 100 agent steps",
     }
-    if bench in _BENCH_TIMEOUT:
-        parts.append(f'<b>timeout / limit</b>: {_BENCH_TIMEOUT[bench]} <span class="rd">REC</span>')
+    if bench in _TIMEOUT:
+        parts.append(f'<b>timeout:</b> {_TIMEOUT[bench]}')
     if bench == "terminal":
-        # Which task set produced this number? Q4 cells switch to the FULL 80-task set once
-        # terminal_full.json exists (written by the tb_full80 orchestrator); everything else is the
-        # fixed 24-task stratified sample. Say it explicitly so full vs sampled is never ambiguous.
         full80 = False
         if precision == "q4":
             q4dir = {"qwen38": "qwen3.8-27b-q4f", "muse": "muse-glimmer-30b-q4f",
                      "qwen27": "qwen3.6-27b-q4f", "qwen35": "qwen3.5-35b-a3b-q4f",
                      "gemma": "gemma-4-31b-q4f"}.get(model_key)
             full80 = bool(q4dir and (REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json").exists())
-        samp = ("<b>FULL set — 79 tasks</b> (the whole terminal-bench-core 0.1.1 set; play-zork excluded "
-                "— broken Docker setup)" if full80
-                else "<b>24-task stratified sample</b> (by difficulty, seed 42) — subset of the full 80")
-        parts.append(f'<b>task set</b>: {samp}')
+        parts.append('<b>task set:</b> ' + ('full 79/80 (play-zork excluded — broken container)'
+                                            if full80 else '24-task stratified sample'))
     if bench == "pinchbench" and precision == "q4":
-        parts.append('<i>note: 87/116 tasks hit the ~300s/task timeout on long CSV/log/meeting '
-                     'analysis (Q4-local throughput), which depresses this score.</i>')
+        parts.append('<span class="sp-note">~300s Q4 timeout depresses this on long-context tasks</span>')
     return '<br>'.join(parts)
 
 

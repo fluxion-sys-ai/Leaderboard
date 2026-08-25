@@ -794,11 +794,11 @@ th{position:sticky;top:0;background:var(--s2);font-size:10px;font-weight:600;col
 th.so{cursor:pointer;user-select:none}th.so:hover{color:var(--acc)}
 th[data-dir=desc]::after{content:" ▾";color:var(--acc)}th[data-dir=asc]::after{content:" ▴";color:var(--acc)}
 tr.grp th{background:var(--s1);text-align:center;color:var(--acc2);position:static;font-size:9.5px}
-th.ml,td.ml{text-align:left}
+th.ml,td.ml{text-align:left;width:1%;white-space:nowrap;padding-right:14px}
 td{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;font-size:12px}
-td.ml{font-family:'Sora',sans-serif;font-weight:600;font-size:11px}
+td.ml{font-family:'Sora',sans-serif;font-weight:600;font-size:12.5px}
 td.sz{color:var(--mut);font-weight:500}
-td.sc{width:48px;border-radius:5px;font-size:15px;font-weight:600}
+td.sc{width:48px;border-radius:5px}
 td.av{font-weight:700;background:var(--s2);border-radius:5px}
 td.av.big{font-size:13.5px}
 .na{color:var(--mut)!important;background:transparent!important;font-weight:400!important}

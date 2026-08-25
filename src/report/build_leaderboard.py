@@ -653,9 +653,9 @@ def _frontier_tab() -> str:
     # ── Table 1: full-precision (OpenRouter). τ³-bank column TEMPORARILY HIDDEN (user request,
     #    2026-08-24 — tau3 runs are incomplete/paused). Re-add the <th>τ³-bank</th> header + the
     #    tau3_cell(...) line below to restore it. ──
-    full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME</th>'
-                 '<th>Pinch</th><th>Term</th>'
-                 '<th>SWE</th></tr>')
+    full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME 2026</th>'
+                 '<th>PinchBench</th><th>Terminal-Bench</th>'
+                 '<th>SWE-bench Lite</th></tr>')
     full_body = []
     for disp, full, q4, tkey, note in FR:
         cf = allc.get(full, {})
@@ -671,8 +671,8 @@ def _frontier_tab() -> str:
                          + '</tr>')
 
     # ── Table 2: Q4-local (A100). IFBench + AIME + PinchBench (no Q4 τ³). ──
-    q4_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME</th><th>Pinch</th>'
-               '<th>Term</th><th>SWE</th></tr>')
+    q4_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME 2026</th><th>PinchBench</th>'
+               '<th>Terminal-Bench</th><th>SWE-bench Lite</th></tr>')
     q4_body = []
     for disp, full, q4, tkey, note in FR:
         ft = f' <span class="flag" title="{html.escape(note)}">⚑</span>' if note else ''
@@ -789,7 +789,7 @@ nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 table{border-collapse:separate;border-spacing:0;width:auto;max-width:100%;white-space:nowrap}
 th,td{padding:6px 5px;text-align:right;border-bottom:1px solid var(--bd)}
 tbody tr:last-child td{border-bottom:none}
-th{position:sticky;top:0;background:var(--s2);font-size:10px;font-weight:600;color:var(--mut);
+th{position:sticky;top:0;background:var(--s2);font-size:9.5px;font-weight:600;color:var(--mut);white-space:normal;line-height:1.2;
  text-transform:uppercase;letter-spacing:.04em;z-index:2}
 th.so{cursor:pointer;user-select:none}th.so:hover{color:var(--acc)}
 th[data-dir=desc]::after{content:" ▾";color:var(--acc)}th[data-dir=asc]::after{content:" ▴";color:var(--acc)}

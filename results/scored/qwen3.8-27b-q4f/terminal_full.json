@@ -1,0 +1,1 @@
+{"score": 0.3418, "metric": "terminal_full_acc", "benchmark": "terminal", "n": 79, "resolved": 27, "note": "full-80 minus excluded tasks (24-sample + backfill merged)"}

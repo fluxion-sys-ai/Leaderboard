@@ -653,9 +653,9 @@ def _frontier_tab() -> str:
     # ── Table 1: full-precision (OpenRouter). τ³-bank column TEMPORARILY HIDDEN (user request,
     #    2026-08-24 — tau3 runs are incomplete/paused). Re-add the <th>τ³-bank</th> header + the
     #    tau3_cell(...) line below to restore it. ──
-    full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th>'
-                 '<th>PinchBench</th><th>Terminal</th>'
-                 '<th>SWE-Lite</th></tr>')
+    full_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME</th>'
+                 '<th>Pinch</th><th>Term</th>'
+                 '<th>SWE</th></tr>')
     full_body = []
     for disp, full, q4, tkey, note in FR:
         cf = allc.get(full, {})
@@ -671,8 +671,8 @@ def _frontier_tab() -> str:
                          + '</tr>')
 
     # ── Table 2: Q4-local (A100). IFBench + AIME + PinchBench (no Q4 τ³). ──
-    q4_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME26</th><th>PinchBench</th>'
-               '<th>Terminal</th><th>SWE-Lite</th></tr>')
+    q4_head = ('<tr><th class="ml">Model</th><th>IFBench</th><th>AIME</th><th>Pinch</th>'
+               '<th>Term</th><th>SWE</th></tr>')
     q4_body = []
     for disp, full, q4, tkey, note in FR:
         ft = f' <span class="flag" title="{html.escape(note)}">⚑</span>' if note else ''
@@ -787,7 +787,7 @@ nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 .dimh:first-child{margin-top:4px}
 .scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:11px;background:var(--s1)}
 table{border-collapse:separate;border-spacing:0;width:auto;max-width:100%;white-space:nowrap}
-th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--bd)}
+th,td{padding:6px 5px;text-align:right;border-bottom:1px solid var(--bd)}
 tbody tr:last-child td{border-bottom:none}
 th{position:sticky;top:0;background:var(--s2);font-size:10px;font-weight:600;color:var(--mut);
  text-transform:uppercase;letter-spacing:.04em;z-index:2}
@@ -798,7 +798,7 @@ th.ml,td.ml{text-align:left;width:1%;white-space:nowrap;padding-right:14px}
 td{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;font-size:12px}
 td.ml{font-family:'Sora',sans-serif;font-weight:600;font-size:12.5px}
 td.sz{color:var(--mut);font-weight:500}
-td.sc{width:48px;border-radius:5px}
+td.sc{width:38px;border-radius:5px}
 td.av{font-weight:700;background:var(--s2);border-radius:5px}
 td.av.big{font-size:13.5px}
 .na{color:var(--mut)!important;background:transparent!important;font-weight:400!important}

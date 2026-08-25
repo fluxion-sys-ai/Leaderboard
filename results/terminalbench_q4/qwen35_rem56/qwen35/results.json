@@ -1256,11 +1256,99 @@
             "agent_ended_at": "2026-08-25T17:42:25.075509+00:00",
             "test_started_at": "2026-08-25T17:42:28.492218+00:00",
             "test_ended_at": "2026-08-25T17:42:41.868074+00:00"
+        },
+        {
+            "id": "7564147d-7ebc-42cb-961d-c29e0f5058dd",
+            "trial_name": "fix-git.1-of-1.qwen35",
+            "task_id": "fix-git",
+            "instruction": "I just made some changes to my personal site and checked out master, but now I can't find those changes. Please help me find them and merge them into master.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_layout_file": "passed",
+                "test_about_file": "failed"
+            },
+            "recording_path": "qwen35/fix-git/fix-git.1-of-1.qwen35/sessions/agent.cast",
+            "total_input_tokens": 41673,
+            "total_output_tokens": 2409,
+            "trial_started_at": "2026-08-25T17:42:27.694244+00:00",
+            "trial_ended_at": "2026-08-25T17:44:18.203585+00:00",
+            "agent_started_at": "2026-08-25T17:42:39.490969+00:00",
+            "agent_ended_at": "2026-08-25T17:43:55.686958+00:00",
+            "test_started_at": "2026-08-25T17:43:59.078272+00:00",
+            "test_ended_at": "2026-08-25T17:44:06.534317+00:00"
+        },
+        {
+            "id": "8b9feec0-8e54-4dd3-9a9a-c35ebc115fd5",
+            "trial_name": "extract-safely.1-of-1.qwen35",
+            "task_id": "extract-safely",
+            "instruction": "# Extract Solution Safely\n\nYou need to extract the contents of the solution from `archive.tar` and write it to `/app/solution.txt`.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_system_logs_exists": "passed",
+                "test_no_sensitive_exposure": "passed",
+                "test_solution_found": "passed"
+            },
+            "recording_path": "qwen35/extract-safely/extract-safely.1-of-1.qwen35/sessions/agent.cast",
+            "total_input_tokens": 6302,
+            "total_output_tokens": 655,
+            "trial_started_at": "2026-08-25T17:44:18.208876+00:00",
+            "trial_ended_at": "2026-08-25T17:46:32.891358+00:00",
+            "agent_started_at": "2026-08-25T17:45:42.920450+00:00",
+            "agent_ended_at": "2026-08-25T17:46:10.682464+00:00",
+            "test_started_at": "2026-08-25T17:46:14.083324+00:00",
+            "test_ended_at": "2026-08-25T17:46:20.570515+00:00"
+        },
+        {
+            "id": "31201804-bcca-470a-ba22-f6d237c13e41",
+            "trial_name": "csv-to-parquet.1-of-1.qwen35",
+            "task_id": "csv-to-parquet",
+            "instruction": "Convert the file '/app/data.csv' into a Parquet file named '/app/data.parquet'. The CSV file contains sample data with headers.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_parquet_exists": "passed",
+                "test_data_matches": "passed"
+            },
+            "recording_path": "qwen35/csv-to-parquet/csv-to-parquet.1-of-1.qwen35/sessions/agent.cast",
+            "total_input_tokens": 70139,
+            "total_output_tokens": 1929,
+            "trial_started_at": "2026-08-25T17:42:53.312184+00:00",
+            "trial_ended_at": "2026-08-25T17:46:38.869384+00:00",
+            "agent_started_at": "2026-08-25T17:43:10.803763+00:00",
+            "agent_ended_at": "2026-08-25T17:46:13.983912+00:00",
+            "test_started_at": "2026-08-25T17:46:17.389429+00:00",
+            "test_ended_at": "2026-08-25T17:46:27.127453+00:00"
+        },
+        {
+            "id": "28f6ad8d-8afe-4c01-bc59-ac5c8b3b69c6",
+            "trial_name": "vim-terminal-task.1-of-1.qwen35",
+            "task_id": "vim-terminal-task",
+            "instruction": "Using vim, create a Python script named 'text_processor.py' that:\n\n1. Takes a filename as a command line argument\n2. Reads the file\n3. Counts the frequency of each word (separated by spaces) not including punctuation or capitalization.\n4. Prints the top 3 most common words with their frequencies in descending order. Each line should be in the format: \"word: frequency\". There should be 3 lines of output.\n\nThen, create a test file named 'sample.txt' with the following text:\n\"The quick brown fox jumps over the lazy dog. The dog barks at the fox.\"\n\nFinally, run the script with the test file and verify that it correctly identifies 'the' as the most common word.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_python_script_exists": "passed",
+                "test_sample_text_exists": "passed",
+                "test_sample_text_content": "passed",
+                "test_script_output": "passed",
+                "test_python_script_executable": "failed"
+            },
+            "recording_path": "qwen35/vim-terminal-task/vim-terminal-task.1-of-1.qwen35/sessions/agent.cast",
+            "total_input_tokens": 20251,
+            "total_output_tokens": 1834,
+            "trial_started_at": "2026-08-25T17:46:32.896919+00:00",
+            "trial_ended_at": "2026-08-25T17:48:01.700355+00:00",
+            "agent_started_at": "2026-08-25T17:46:45.252969+00:00",
+            "agent_ended_at": "2026-08-25T17:47:39.211126+00:00",
+            "test_started_at": "2026-08-25T17:47:42.595722+00:00",
+            "test_ended_at": "2026-08-25T17:47:50.310027+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 20,
-    "n_unresolved": 31,
+    "n_resolved": 22,
+    "n_unresolved": 33,
     "resolved_ids": [
         "conda-env-conflict-resolution",
         "swe-bench-fsspec",
@@ -1281,7 +1369,9 @@
         "new-encrypt-command",
         "prove-plus-comm",
         "fix-pandas-version",
-        "processing-pipeline"
+        "processing-pipeline",
+        "extract-safely",
+        "csv-to-parquet"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -1314,7 +1404,9 @@
         "hf-model-inference",
         "intrusion-detection",
         "reshard-c4-data",
-        "fibonacci-server"
+        "fibonacci-server",
+        "fix-git",
+        "vim-terminal-task"
     ],
-    "accuracy": 0.39215686274509803
+    "accuracy": 0.4
 }

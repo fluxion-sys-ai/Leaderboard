@@ -515,7 +515,7 @@ _FR_BENCH = {   # benchmark harness — same regardless of model; (label, thinki
     "aime2026":   ("AIME 2026 · 30 problems (competition math) · rec sampling", "ON"),
     "pinchbench": ("PinchBench · 116-task multi-turn agent · n_ctx 128K · judge DeepSeek-v3.1", "OFF (no_think — thinking zeroes agentic)"),
     "tau3":       ("τ³-bank · terminus agent · max_steps 100 · 97 tasks", "ON"),
-    "terminal":   ("TerminalBench · terminus-2 agent · terminal-bench-core 0.1.1 · 24-task stratified sample (by difficulty, seed 42)", "ON"),
+    "terminal":   ("TerminalBench · terminus-2 agent · terminal-bench-core 0.1.1", "ON"),
     "swe":        ("SWE-bench Lite · Agentless (file→related→line→repair) · localize temp 0 · repair temp 0.8 ×1 · stratified sample (full: 20 instances · Q4: 51 instances)", "ON (localize/repair)"),
 }
 _FR_DISP = {"ifbench": "IFBench", "aime2026": "AIME26", "pinchbench": "PinchBench",
@@ -560,6 +560,20 @@ def _fr_spec(model_key, bench, precision):
     }
     if bench in _BENCH_TIMEOUT:
         parts.append(f'<b>timeout / limit</b>: {_BENCH_TIMEOUT[bench]} <span class="rd">REC</span>')
+    if bench == "terminal":
+        # Which task set produced this number? Q4 cells switch to the FULL 80-task set once
+        # terminal_full.json exists (written by the tb_full80 orchestrator); everything else is the
+        # fixed 24-task stratified sample. Say it explicitly so full vs sampled is never ambiguous.
+        full80 = False
+        if precision == "q4":
+            q4dir = {"qwen38": "qwen3.8-27b-q4f", "muse": "muse-glimmer-30b-q4f",
+                     "qwen27": "qwen3.6-27b-q4f", "qwen35": "qwen3.5-35b-a3b-q4f",
+                     "gemma": "gemma-4-31b-q4f"}.get(model_key)
+            full80 = bool(q4dir and (REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json").exists())
+        samp = ("<b>FULL set — 79 tasks</b> (the whole terminal-bench-core 0.1.1 set; play-zork excluded "
+                "— broken Docker setup)" if full80
+                else "<b>24-task stratified sample</b> (by difficulty, seed 42) — subset of the full 80")
+        parts.append(f'<b>task set</b>: {samp}')
     if bench == "pinchbench" and precision == "q4":
         parts.append('<i>note: 87/116 tasks hit the ~300s/task timeout on long CSV/log/meeting '
                      'analysis (Q4-local throughput), which depresses this score.</i>')
@@ -613,6 +627,19 @@ def _frontier_tab() -> str:
 
     def _terminal_q4(key):
         # TerminalBench Q4-local (terminus-2 vs local llama-server) accuracy.
+        # FULL-80 override: if a full-run score exists (results/scored/<q4dir>/terminal_full.json,
+        # written by tb_full80_supervisor once the 24-sample + backfill are merged), show that instead
+        # of the 24-sample — it's the more robust full-set number. Currently only qwen3.8 (mk qwen38).
+        try:
+            q4dir = {"qwen38": "qwen3.8-27b-q4f", "muse": "muse-glimmer-30b-q4f",
+                     "qwen27": "qwen3.6-27b-q4f", "qwen35": "qwen3.5-35b-a3b-q4f",
+                     "gemma": "gemma-4-31b-q4f"}.get(key)
+            if q4dir:
+                fp = REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json"
+                if fp.exists():
+                    return json.load(open(fp)).get("score")
+        except Exception:
+            pass
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
             if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials until complete

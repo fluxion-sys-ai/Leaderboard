@@ -730,14 +730,14 @@ def build() -> str:
 {_universal_html()}
 {_deviations_html()}
 <nav>
-<button class="tab on" data-v="v1" onclick="tab(this)">Benchmarks</button>
+<button class="tab on" data-v="v4" onclick="tab(this)">Frontier · full vs Q4</button>
+<button class="tab" data-v="v1" onclick="tab(this)">Benchmarks</button>
 <button class="tab" data-v="v2" onclick="tab(this)">Dimensions</button>
 <button class="tab" data-v="v3" onclick="tab(this)">Averages &amp; charts</button>
-<button class="tab" data-v="v4" onclick="tab(this)">Frontier · full vs Q4</button>
 </nav>
-<div id="v1" class="view on"><div class="scroll">{_bench_table(rows)}</div></div>
+<div id="v4" class="view on"><div class="scroll">{_frontier_tab()}</div></div>
+<div id="v1" class="view"><div class="scroll">{_bench_table(rows)}</div></div>
 <div id="v2" class="view">{_dim_tables(rows)}</div>
-<div id="v4" class="view"><div class="scroll">{_frontier_tab()}</div></div>
 <div id="v3" class="view">
 <h3 class="dimh">Capability vs size<span class="mut"> · green = best at its size</span></h3>
 {_pareto_svg(rows)}

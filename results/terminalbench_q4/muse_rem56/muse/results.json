@@ -1319,11 +1319,35 @@
             "agent_ended_at": "2026-08-25T10:11:47.736200+00:00",
             "test_started_at": "2026-08-25T10:11:51.145060+00:00",
             "test_ended_at": "2026-08-25T10:11:57.892656+00:00"
+        },
+        {
+            "id": "0752abfe-f79d-4394-a2be-bec337ff9108",
+            "trial_name": "vim-terminal-task.1-of-1.muse",
+            "task_id": "vim-terminal-task",
+            "instruction": "Using vim, create a Python script named 'text_processor.py' that:\n\n1. Takes a filename as a command line argument\n2. Reads the file\n3. Counts the frequency of each word (separated by spaces) not including punctuation or capitalization.\n4. Prints the top 3 most common words with their frequencies in descending order. Each line should be in the format: \"word: frequency\". There should be 3 lines of output.\n\nThen, create a test file named 'sample.txt' with the following text:\n\"The quick brown fox jumps over the lazy dog. The dog barks at the fox.\"\n\nFinally, run the script with the test file and verify that it correctly identifies 'the' as the most common word.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_python_script_exists": "passed",
+                "test_sample_text_exists": "passed",
+                "test_sample_text_content": "passed",
+                "test_script_output": "passed",
+                "test_python_script_executable": "failed"
+            },
+            "recording_path": "muse/vim-terminal-task/vim-terminal-task.1-of-1.muse/sessions/agent.cast",
+            "total_input_tokens": 2441,
+            "total_output_tokens": 636,
+            "trial_started_at": "2026-08-25T10:11:21.429230+00:00",
+            "trial_ended_at": "2026-08-25T10:13:20.306347+00:00",
+            "agent_started_at": "2026-08-25T10:11:34.008386+00:00",
+            "agent_ended_at": "2026-08-25T10:12:57.824515+00:00",
+            "test_started_at": "2026-08-25T10:13:01.214164+00:00",
+            "test_ended_at": "2026-08-25T10:13:08.916158+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 27,
-    "n_unresolved": 27,
+    "n_unresolved": 28,
     "resolved_ids": [
         "eval-mteb.hard",
         "swe-bench-astropy-2",
@@ -1380,7 +1404,8 @@
         "raman-fitting",
         "cartpole-rl-training",
         "gpt2-codegolf",
-        "intrusion-detection"
+        "intrusion-detection",
+        "vim-terminal-task"
     ],
-    "accuracy": 0.5
+    "accuracy": 0.4909090909090909
 }

@@ -132,6 +132,10 @@ def swe_score_of(row: dict):
     # pipeline crash, so show it (with a footnote) rather than hide it behind the completed-count guard.
     if c.get("genuine_zero"):
         return c.get("score")
+    # majority-vote rescore writes {score,resolved,total,selection} with resolved_ids only (no
+    # completed_ids) — it's a finished, trusted score, so don't hide it behind the completed-count guard.
+    if str(c.get("selection") or "").startswith("majority_vote"):
+        return c.get("score")
     return c.get("score") if completed >= SWE_MIN_COMPLETED else None
 
 

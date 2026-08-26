@@ -560,17 +560,34 @@ def _fr_spec(model_key, bench, precision):
                                             if full80 else '24-task stratified sample'))
     if bench == "swe":
         inst = "51 (strat51)" if precision == "q4" else "20 (strat50)"
-        sel = ("whole-function code-fence recovery + majority vote"
-               if (model_key == "qwen35" and precision == "q4")
-               else "majority vote over non-empty patches")
-        parts.append('<b>pipeline:</b> Agentless — 3-stage localize (file→related→line) → repair → select → SWE-bench Docker eval')
-        parts.append('<b>repair samples:</b> 10 / bug (1 greedy + 9 @ temp 0.8), 1 edit-loc set '
-                     '<span class="rd">DEF</span> — Agentless code-gen default (--max_samples 10). '
-                     'Full official run = 40 (4 edit-loc sets × 10).')
-        parts.append('<b>reproduction tests:</b> not used (Agentless repro-test default = --max_samples 40)')
+        # Read the ACTUAL selection method recorded in this cell's score so the card always matches the
+        # number shown (majority-vote vs the full repair-10 + repro-tests-40 + rerank pipeline).
+        _swedir = {"qwen38": "qwen3.8-27b", "muse": "muse-glimmer-30b", "qwen27": "qwen3.6-27b",
+                   "qwen35": ("qwen3.5-35b-a3b" if precision == "q4" else "qwen3.6-35b-a3b"),
+                   "gemma": "gemma-4-31b"}.get(model_key, "")
+        _prec = "q4f" if precision == "q4" else "full"
+        _selraw = ""
+        try:
+            _selraw = str(json.load(open(REPO_ROOT / "results" / "scored" / f"{_swedir}-{_prec}"
+                                         / "swebench_lite.json")).get("selection") or "")
+        except Exception:
+            pass
+        _repro = "reproduction" in _selraw
+        _wf = "whole-function" in _selraw or "wholefunc" in _selraw
+        parts.append('<b>pipeline:</b> Agentless — 3-stage localize (file→related→line) → repair → '
+                     + ('regression + reproduction-test rerank' if _repro else 'select') + ' → SWE-bench Docker eval')
+        parts.append('<b>repair samples:</b> 10 / bug (1 greedy + 9 @ temp 0.8) '
+                     '<span class="rd">DEF</span> — repair.py --max_samples 10')
+        if _repro:
+            parts.append('<b>reproduction tests:</b> 40 / bug (1 greedy + 39) '
+                         '<span class="rd">DEF</span> — generate_reproduction_tests.py --max_samples 40')
+            parts.append('<b>selection:</b> rerank.py --regression --reproduction (test-based, full Agentless)')
+        else:
+            parts.append('<b>reproduction tests:</b> not used (Agentless default = --max_samples 40)')
+            parts.append('<b>selection:</b> ' + ('whole-function code-fence recovery + majority vote' if _wf
+                                                 else 'majority vote over non-empty patches'))
         parts.append('<b>localize:</b> temp 0 · 1 sample set · top_n 3 files · context ±10 lines')
         parts.append('<b>max_tokens:</b> repair 1024 (non-thinking) / 32,768 (thinking) · localize ≤ 8,192')
-        parts.append(f'<b>selection:</b> {sel}')
         parts.append(f'<b>instances:</b> {inst} · eval: SWE-bench Docker harness (retry-on-error)')
     if bench == "pinchbench" and precision == "q4":
         parts.append('<span class="sp-note">~300s Q4 timeout depresses this on long-context tasks</span>')

@@ -708,6 +708,38 @@ def _frontier_tab() -> str:
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'
+    # --- Terminal-Bench timeout experiment: native vs 2x. The 2x runs did NOT help (controlled A/B on
+    #     qwen3.8's timeout-prone tasks: identical 25% either way). Full-model 2x runs were aborted
+    #     mid-experiment (Docker networking issue) — task counts noted so it's clear they're partial. ---
+    timeout_chart = (
+        '<div style="margin-top:24px;padding:14px 16px;border:1px solid #2a2a3a;border-radius:8px;'
+        'background:#15151f;max-width:600px">'
+        '<div style="font-size:13px;font-weight:600;color:#e6e6f0">Terminal-Bench — does a longer timeout help? '
+        '<span class="mut" style="font-weight:400">No.</span></div>'
+        '<div style="font-size:11px;color:#9a9ab0;margin:3px 0 10px">Controlled A/B on qwen3.8’s '
+        'timeout-prone tasks (Q4, 4 tasks): a 2× timeout converted <b>zero</b> timeouts into solves.</div>'
+        '<svg width="330" height="140" viewBox="0 0 330 140" font-family="system-ui" role="img" '
+        'aria-label="native 25% vs 2x 25%, no difference">'
+        '<line x1="46" y1="112" x2="312" y2="112" stroke="#3a3a4a"/>'
+        '<line x1="46" y1="62" x2="312" y2="62" stroke="#22222e" stroke-dasharray="3"/>'
+        '<line x1="46" y1="12" x2="312" y2="12" stroke="#22222e" stroke-dasharray="3"/>'
+        '<text x="40" y="115" fill="#7a7a90" font-size="9" text-anchor="end">0%</text>'
+        '<text x="40" y="65" fill="#7a7a90" font-size="9" text-anchor="end">25%</text>'
+        '<text x="40" y="15" fill="#7a7a90" font-size="9" text-anchor="end">50%</text>'
+        '<rect x="90" y="62" width="64" height="50" fill="#5b8def" rx="2"/>'
+        '<text x="122" y="56" fill="#e6e6f0" font-size="11" text-anchor="middle" font-weight="600">25%</text>'
+        '<text x="122" y="127" fill="#b6b6c6" font-size="10.5" text-anchor="middle">native timeout</text>'
+        '<rect x="204" y="62" width="64" height="50" fill="#e0a458" rx="2"/>'
+        '<text x="236" y="56" fill="#e6e6f0" font-size="11" text-anchor="middle" font-weight="600">25%</text>'
+        '<text x="236" y="127" fill="#b6b6c6" font-size="10.5" text-anchor="middle">2× timeout</text>'
+        '</svg>'
+        '<div style="font-size:10.5px;color:#8a8a9c;margin-top:8px;line-height:1.5">'
+        '<b>Result:</b> native 1/4 = 2× 1/4 — timeouts stayed timeouts (qwen3.8 is verbose; it burns the '
+        'extra time on longer generations, not more actions). The 16k per-turn token cap was likewise a wash.<br>'
+        '<b>Note — full-model 2× runs were aborted</b> mid-experiment (Docker networking issue), so only the '
+        'controlled A/B is clean. Tasks run before abort: qwen3.8 <b>21/24</b> full-prec &amp; <b>3/24</b> Q4; '
+        'muse/qwen27/qwen35/gemma <b>0–3/24</b>. The native-timeout scores in the tables above are the reported ones.'
+        '</div></div>')
     return (
         '<h3 class="dimh">Frontier — Muse Glimmer reproduction'
         '<span class="mut"> · vendor-recommended sampling · scores ×100 · '
@@ -715,7 +747,8 @@ def _frontier_tab() -> str:
         f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
         f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
         f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
-        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>')
+        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>'
+        + timeout_chart)
 
 
 def build() -> str:

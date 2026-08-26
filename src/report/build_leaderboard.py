@@ -520,7 +520,7 @@ _FR_BENCH = {   # benchmark harness — same regardless of model; (label, thinki
     "pinchbench": ("PinchBench · 116-task multi-turn agent · n_ctx 128K · judge DeepSeek-v3.1", "OFF (no_think — thinking zeroes agentic)"),
     "tau3":       ("τ³-bank · terminus agent · max_steps 100 · 97 tasks", "ON"),
     "terminal":   ("TerminalBench · terminus-2 agent · terminal-bench-core 0.1.1", "ON"),
-    "swe":        ("SWE-bench Lite · Agentless (file→related→line→repair) · localize temp 0 · repair temp 0.8 ×1 · stratified sample (full: 20 instances · Q4: 51 instances)", "ON (localize/repair)"),
+    "swe":        ("SWE-bench Lite · Agentless pipeline (localize → repair → select → Docker eval)", "ON (localize/repair)"),
 }
 _FR_DISP = {"ifbench": "IFBench", "aime2026": "AIME26", "pinchbench": "PinchBench",
             "tau3": "τ³-bank", "terminal": "TerminalBench", "swe": "SWE-Lite"}
@@ -558,6 +558,20 @@ def _fr_spec(model_key, bench, precision):
             full80 = bool(q4dir and (REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json").exists())
         parts.append('<b>task set:</b> ' + ('full 79/80 (play-zork excluded — broken container)'
                                             if full80 else '24-task stratified sample'))
+    if bench == "swe":
+        inst = "51 (strat51)" if precision == "q4" else "20 (strat50)"
+        sel = ("whole-function code-fence recovery + majority vote"
+               if (model_key == "qwen35" and precision == "q4")
+               else "majority vote over non-empty patches")
+        parts.append('<b>pipeline:</b> Agentless — 3-stage localize (file→related→line) → repair → select → SWE-bench Docker eval')
+        parts.append('<b>repair samples:</b> 10 / bug (1 greedy + 9 @ temp 0.8), 1 edit-loc set '
+                     '<span class="rd">DEF</span> — Agentless code-gen default (--max_samples 10). '
+                     'Full official run = 40 (4 edit-loc sets × 10).')
+        parts.append('<b>reproduction tests:</b> not used (Agentless repro-test default = --max_samples 40)')
+        parts.append('<b>localize:</b> temp 0 · 1 sample set · top_n 3 files · context ±10 lines')
+        parts.append('<b>max_tokens:</b> repair 1024 (non-thinking) / 32,768 (thinking) · localize ≤ 8,192')
+        parts.append(f'<b>selection:</b> {sel}')
+        parts.append(f'<b>instances:</b> {inst} · eval: SWE-bench Docker harness (retry-on-error)')
     if bench == "pinchbench" and precision == "q4":
         parts.append('<span class="sp-note">~300s Q4 timeout depresses this on long-context tasks</span>')
     return '<br>'.join(parts)

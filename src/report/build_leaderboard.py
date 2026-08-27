@@ -727,6 +727,69 @@ def _terminal_2x_bars() -> str:
             + svg + cap)
 
 
+def _q4_swe_bars() -> str:
+    """Bar chart: Q4 SWE-bench Lite score per model, colored by which selection config produced it
+    (NEW repair-10+repro-40+rerank vs OLD majority-vote). Reads live scored files."""
+    dirs = {"Muse 30B": "muse-glimmer-30b-q4f", "Qwen3.8-27B": "qwen3.8-27b-q4f",
+            "Qwen3.6-27B": "qwen3.6-27b-q4f", "Qwen3.6-35B": "qwen3.5-35b-a3b-q4f",
+            "Gemma-4-31B": "gemma-4-31b-q4f"}
+    rows = []
+    for disp, d in dirs.items():
+        try:
+            j = json.load(open(REPO_ROOT / "results" / "scored" / d / "swebench_lite.json"))
+            sc = j.get("score")
+            sel = str(j.get("selection") or "")
+            new = ("reproduction" in sel or "rerank" in sel)
+            if sc is not None:
+                rows.append((disp, sc, new))
+        except Exception:
+            pass
+    rows.sort(key=lambda r: -r[1])   # descending for easy comparison
+    W, H, padL, padB, padT = 780, 300, 40, 52, 30
+    plotH = H - padB - padT
+    n = max(len(rows), 1)
+    slot = (W - padL - 16) / n
+    bw = slot * 0.5
+
+    def yv(v):
+        return padT + plotH * (1 - v)
+
+    grid = []
+    for g in (0, 10, 20, 30, 40):
+        gy = yv(g / 100)
+        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
+        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
+    bars, xlabels = [], []
+    for i, (disp, sc, new) in enumerate(rows):
+        cx = padL + slot * i + slot * 0.5
+        col = "var(--acc2)" if new else "#e0a458"
+        bars.append(f'<rect x="{cx-bw/2:.1f}" y="{yv(sc):.1f}" width="{bw:.1f}" height="{plotH*sc:.1f}" '
+                    f'rx="2" fill="{col}"/>')
+        bars.append(f'<text x="{cx:.1f}" y="{yv(sc)-4:.1f}" text-anchor="middle" font-size="10.5" '
+                    f'font-weight="600" fill="{col}">{sc*100:.1f}</text>')
+        xlabels.append(f'<text x="{cx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" '
+                       f'fill="var(--tx)">{disp}</text>')
+        xlabels.append(f'<text x="{cx:.1f}" y="{H-padB+29:.1f}" text-anchor="middle" font-size="8.5" '
+                       f'fill="var(--mut)">{"repro-40" if new else "majority-vote"}</text>')
+    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
+              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">NEW · repair-10 + repro-40 + rerank</text>'
+              f'<rect x="{padL+230}" y="6" width="11" height="11" rx="2" fill="#e0a458"/>'
+              f'<text x="{padL+246}" y="15" font-size="11" fill="var(--tx)">OLD · majority-vote over 10</text>')
+    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
+           f'aria-label="Q4 SWE-bench Lite score per model, percent resolved">'
+           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+    cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
+           'border-left:3px solid var(--acc2);padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
+           '<b>Not apples-to-apples yet.</b> Only <b style="color:var(--acc2)">qwen3.8, qwen3.6-27b, gemma</b> '
+           'ran the new repair-10 + repro-40 + rerank pipeline. <b style="color:#e0a458">Muse (29.4) and '
+           'qwen3.6-35B (2.0)</b> are still on the old majority-vote config, so their bars aren\'t directly '
+           'comparable. qwen3.6-35B is a real floor — its Q4 MoE emits prose instead of the SEARCH/REPLACE '
+           'edit format, yielding ~0 parseable patches.</div>')
+    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Q4 SWE-bench Lite '
+            '<span class="mut">· local A100 · % resolved · colored by selection config</span></div>'
+            + svg + cap)
+
+
 def _frontier_tab() -> str:
     """Frontier tab — Muse Glimmer reproduction: full-precision (OpenRouter) vs Q4 (local),
     on the recommended-limit benches. Renders whatever is scored so far; '·' = still running."""
@@ -880,7 +943,7 @@ def _frontier_tab() -> str:
         f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
         f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
         f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>'
-        + _terminal_2x_bars())
+        + _terminal_2x_bars() + _q4_swe_bars())
 
 
 def build() -> str:

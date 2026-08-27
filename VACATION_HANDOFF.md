@@ -1,5 +1,14 @@
 # Vacation handoff — 2026-08-27
 
+## ⏳ PENDING (do when all SWE runs finish): fix the SWE denominators
+Every SWE-Lite % is currently `solved ÷ wrong-task-count` (full used 20, Q4 used 51; the real
+eval sets are ~36–48 per model). The **solved counts are correct**; only the divisor is wrong.
+Final step: recompute each SWE cell as **solved ÷ actual-tasks-evaluated** (the `total_instances`
+in each model's gold report `*.agentless_*_sel.json`), so the repro-40 numbers are correct and
+comparable. Approved by the operator ("do that fraction thing after you're done"). This is a
+scoring fix only — the 10/40 generation params stay as-is. Real ballpark once fixed: full ~20–28%.
+
+
 Status snapshot taken before the operator went on vacation. Everything below runs **unattended**:
 the cron watchdog + GPU keeper respawn any dead/stalled loop, and the board auto-rebuilds and pushes
 to GitHub Pages every ~10 min. Say **"update"** on return for fresh numbers.

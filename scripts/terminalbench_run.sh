@@ -20,7 +20,9 @@ NTASKS="${2:-}"
 # never overflows. Muse & Gemma get reasoning:{effort:high} (else Gemma runs non-thinking).
 case "$KEY" in
   muse)   MODEL="openrouter/meta/muse-glimmer-30b"
-          export TB_MODEL_PARAMS='{"top_p":0.95,"extra_body":{"top_k":64,"reasoning":{"effort":"high"},"provider":{"quantizations":["bf16"],"order":["DeepInfra"],"allow_fallbacks":false}}}' ;;
+          # bf16 full-precision via Parasail (DeepInfra's muse endpoint 404s; Parasail is the working bf16
+          # provider used by the SWE config). allow_fallbacks:true so a busy Parasail routes to another bf16.
+          export TB_MODEL_PARAMS='{"top_p":0.95,"extra_body":{"top_k":64,"reasoning":{"effort":"high"},"provider":{"quantizations":["bf16"],"order":["Parasail","DeepInfra"],"allow_fallbacks":true}}}' ;;
   gemma)  MODEL="openrouter/google/gemma-4-31b-it"
           # CoreWeave first: it honours the reasoning param via litellm (OpenInference serves
           # gemma NON-thinking through litellm — verified 2026-08-13). Both are true bf16.
@@ -34,21 +36,27 @@ case "$KEY" in
   *) echo "unknown model key: $KEY"; exit 2 ;;
 esac
 
-OUT="$REPO/results/terminalbench/$KEY"
+OUT="${TB_OUT:-$REPO/results/terminalbench/$KEY}"   # TB_OUT overrides output dir (e.g. infra-backfill side dir)
 # Stratified terminal sample: run the SAME fixed 24-task subset (configs/terminal_sample.txt,
 # stratified by difficulty, seed 42) that the Q4 track uses, so full and Q4 share one denominator.
+# TB_SAMPLE_FILE overrides it (e.g. the infra-backfill's short list of just-the-errored task-ids).
 # Falls back to full-80 (or --n-tasks N) only if the sample file is absent.
-SAMPLE_FILE="$REPO/configs/terminal_sample.txt"
+SAMPLE_FILE="${TB_SAMPLE_FILE:-$REPO/configs/terminal_sample.txt}"
 EXPECT=$(grep -cE "[^[:space:]]" "$SAMPLE_FILE" 2>/dev/null || echo 80); [ "${EXPECT:-0}" -gt 0 ] || EXPECT=80
 # stale-run guard: a prior run dir that is INCOMPLETE (<EXPECT) and not owned by a live tb process is
 # stale (e.g. a killed partial + leftover tb.lock). tb refuses/misbehaves on a locked/stale run-id
 # dir, so the terminal re-run would never reach EXPECT and downstream gates (other-4 pinch) block
 # forever. Back it up and clear it. Complete dirs are never touched.
-RUNDIR="$OUT/$KEY"
+# run-id controls BOTH the output subdir AND tb's docker container names (<task>-1-of-1-<run-id>).
+# When a Q4 GPU run and this full run share run-id "$KEY", they build identically-named containers and
+# collide (one deletes the other's container -> 404 -> unknown_agent_error). TB_RUNID lets a concurrent
+# run take a distinct namespace so the two never collide. Defaults to $KEY (back-compat, solo runs).
+RUNID="${TB_RUNID:-$KEY}"
+RUNDIR="$OUT/$RUNID"
 if [ -d "$RUNDIR" ]; then
   DONE_N=$([ -f "$RUNDIR/results.json" ] && python3 -c "import json;d=json.load(open('$RUNDIR/results.json'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null || echo 0)
-  if [ "${DONE_N:-0}" -lt "$EXPECT" ] && ! pgrep -f "tb run .*terminalbench/$KEY" >/dev/null 2>&1; then
-    BK="$OUT/_stale_${KEY}_$(date +%s)"; mv "$RUNDIR" "$BK" 2>/dev/null && echo "[tb-full] cleared stale/incomplete run dir ($DONE_N/$EXPECT) -> $BK"
+  if [ "${DONE_N:-0}" -lt "$EXPECT" ] && ! pgrep -f "tb run .*terminalbench/$RUNID" >/dev/null 2>&1; then
+    BK="$OUT/_stale_${RUNID}_$(date +%s)"; mv "$RUNDIR" "$BK" 2>/dev/null && echo "[tb-full] cleared stale/incomplete run dir ($DONE_N/$EXPECT) -> $BK"
   fi
 fi
 mkdir -p "$OUT"
@@ -65,6 +73,7 @@ exec tb run \
   --model "$MODEL" \
   "${TARGS[@]}" \
   --output-path "$OUT" \
-  --run-id "$KEY" \
+  --run-id "$RUNID" \
   --n-concurrent 2 \
+  --global-timeout-multiplier ${TB_MULT:-1.0} \
   --cleanup

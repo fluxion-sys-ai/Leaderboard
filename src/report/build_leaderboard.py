@@ -744,11 +744,10 @@ def _q4_swe_bars() -> str:
     def _real_repro(k):   # did this model actually produce USABLE reproduction tests (not just a raw stub)?
         import glob as _g
         for f in _g.glob(str(REPO_ROOT / "results" / "swe_agentless" / k /
-                             "reproduction_test_samples" / "*normalized_reproduction_test.jsonl")):
+                             "reproduction_test_samples" / "*reproduction_test.jsonl")):
             try:
                 for line in open(f):
-                    line = line.strip()
-                    if line and '"test_patch"' in line:
+                    if '"test_patch"' in line:
                         return True
             except Exception:
                 pass
@@ -811,13 +810,13 @@ def _q4_swe_bars() -> str:
            + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
     cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
            'border-left:3px solid var(--acc2);padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
-           '<b>The rerank didn\'t change the score where it genuinely ran.</b> Only <b>qwen3.8</b> and '
-           '<b>qwen3.6-27b</b> generated real reproduction tests (8,400 / 2,200 test snippets); their rerank '
+           '<b>The rerank didn\'t change the score where it genuinely ran.</b> <b>qwen3.8</b> and '
+           '<b>qwen3.6-27b</b> generated real reproduction tests (9,920 / 2,200 test patches); their rerank '
            'ran but landed at the same score as majority-vote (13/51, 8/51) — it didn\'t pick different '
-           'winning patches. <b style="color:#e0a458">Gemma, Muse, and qwen3.6-35B have no NEW bar</b>: '
-           'their reproduction-test generation produced nothing usable, so the pipeline fell back to '
-           'majority-vote (not a genuine repro-40 result). qwen3.6-35B also emits prose instead of the '
-           'edit format (~0 parseable patches).</div>')
+           'winning patches. <b style="color:#e0a458">The other three have no NEW bar for different reasons:</b> '
+           'Gemma and Muse produced <i>zero</i> usable reproduction tests (pipeline fell back to majority-vote); '
+           'qwen3.6-35B did generate tests but its final selection stayed majority-vote and it\'s pinned at a '
+           '~2% floor anyway (emits prose, not the SEARCH/REPLACE edit format → almost no parseable patches).</div>')
     return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Q4 SWE-bench Lite — does repro-40 '
             'rerank help? <span class="mut">· local A100 · 51-instance sample · % resolved</span></div>'
             + svg + cap)

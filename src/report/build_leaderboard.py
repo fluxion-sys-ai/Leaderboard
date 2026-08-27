@@ -826,6 +826,67 @@ def _q4_swe_bars() -> str:
             + svg + cap)
 
 
+def _full_swe_bars() -> str:
+    """Grouped bar chart: full-precision SWE-bench Lite, OLD majority-vote vs NEW repro-40 selection,
+    BOTH scored on the SAME strat-20 sample so it's a fair comparison (the repro-40 run covered a larger
+    ~47-instance set; here its resolved patches are counted only on the strat-20 instances the old
+    majority-vote baseline used). Values are pinned — these runs are complete/immutable.
+      OLD = majority-vote resolved on strat-20 (qwen35 = wholefunc recovery).
+      NEW = repro-40 rerank's resolved patches intersected with strat-20 (qwen35 had no repro-40 run)."""
+    N = 20
+    models = [("qwen38", "Qwen3.8-27B", 5, 3), ("muse", "Muse 30B", 5, 4),
+              ("qwen27", "Qwen3.6-27B", 3, 2), ("gemma", "Gemma-4-31B", 5, 4),
+              ("qwen35", "Qwen3.6-35B", 2, None)]   # qwen35: old=wholefunc 2/20; new=no repro-40 run
+    W, H, padL, padB, padT = 780, 300, 40, 52, 30
+    plotH = H - padB - padT
+    n = len(models)
+    groupW = (W - padL - 16) / n
+    bw = groupW * 0.30
+    MAXV = 0.40
+
+    def yv(v):
+        return padT + plotH * (1 - v / MAXV)
+
+    grid = []
+    for g in (0, 10, 20, 30, 40):
+        gy = yv(g / 100)
+        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
+        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
+    bars, xlabels = [], []
+    for i, (k, disp, old_r, new_r) in enumerate(models):
+        gx = padL + groupW * i + groupW * 0.5
+        ov = old_r / N
+        bx = gx - bw - 2
+        bars.append(f'<rect x="{bx:.1f}" y="{yv(ov):.1f}" width="{bw:.1f}" height="{plotH*ov/MAXV:.1f}" rx="2" fill="#e0a458"/>')
+        bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(ov)-4:.1f}" text-anchor="middle" font-size="10" fill="#e0a458">{ov*100:.0f}</text>')
+        bx2 = gx + 2
+        if new_r is not None:
+            nv = new_r / N
+            bars.append(f'<rect x="{bx2:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv/MAXV:.1f}" rx="2" fill="var(--acc2)"/>')
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" font-size="10" fill="var(--acc2)">{nv*100:.0f}</text>')
+        else:
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
+                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">no repro-40 run</text>')
+        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" fill="var(--tx)">{disp}</text>')
+    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="#e0a458"/>'
+              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">OLD · majority-vote over 10</text>'
+              f'<rect x="{padL+205}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
+              f'<text x="{padL+221}" y="15" font-size="11" fill="var(--tx)">NEW · repair-10 + repro-40 + rerank</text>')
+    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
+           f'aria-label="Full-precision SWE-bench Lite, majority-vote vs repro-40, percent resolved on strat-20">'
+           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+    cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
+           'border-left:3px solid #e0a458;padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
+           '<b>repro-40 did NOT beat majority-vote here.</b> On the same 20-task sample, the reproduction-test '
+           'rerank picked patches that resolved <i>fewer</i> bugs than the simple majority vote '
+           '(qwen3.8 25→15, qwen27 15→10, muse/gemma 25→20) — so the main table keeps the better '
+           '<b>majority-vote</b> number as the headline. (The 65–75% seen briefly earlier was a denominator '
+           'bug, not real improvement.) qwen3.6-35B has no repro-40 run; its old bar is whole-function recovery.</div>')
+    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Full-precision SWE-bench Lite — does '
+            'repro-40 rerank help? <span class="mut">· OpenRouter · strat-20 sample · % resolved</span></div>'
+            + svg + cap)
+
+
 def _frontier_tab() -> str:
     """Frontier tab — Muse Glimmer reproduction: full-precision (OpenRouter) vs Q4 (local),
     on the recommended-limit benches. Renders whatever is scored so far; '·' = still running."""
@@ -982,7 +1043,7 @@ def _frontier_tab() -> str:
         f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
         f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
         f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>'
-        + _terminal_2x_bars() + _q4_swe_bars())
+        + _terminal_2x_bars() + _q4_swe_bars() + _full_swe_bars())
 
 
 def build() -> str:

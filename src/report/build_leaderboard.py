@@ -540,7 +540,7 @@ def _fr_spec(model_key, bench, precision):
         f'<b>sampling:</b> temp {temp} · {samp} · thinking {think} <span class="rd">REC</span>',
     ]
     _TIMEOUT = {
-        "terminal":   "native per-task, 900–1800s",
+        "terminal":   "2× global timeout (backfill-corrected); muse = native (2× provider outage)",
         "pinchbench": "per-task 180s (up to 300s)",
         "swe":        "per-call 900s · Docker eval",
         "ifbench":    "up to 81,920 gen tokens",
@@ -631,7 +631,17 @@ def _frontier_tab() -> str:
         return (None, False)
 
     def _terminal(key):
-        # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy. Full-precision.
+        # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy, full-precision, at the 2×
+        # global timeout (backfill-corrected side-dir run). Falls back to the native run if a model has
+        # no 2× data (e.g. muse — its OpenRouter provider was unavailable during the 2× run).
+        rid = {"qwen38": "or2x", "qwen27": "qwen272x", "qwen35": "qwen352x", "gemma": "gemma2x"}.get(key)
+        if rid:
+            try:
+                d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full" / rid / "results.json"))
+                if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
+                    return _terminal_sample_acc(d)
+            except Exception:
+                pass
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
             if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials
@@ -654,6 +664,14 @@ def _frontier_tab() -> str:
                     return json.load(open(fp)).get("score")
         except Exception:
             pass
+        # 2× global-timeout run (Q4 local) — currently only qwen3.8 (gpu2x). Prefer it over native.
+        if key == "qwen38":
+            try:
+                d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / "qwen38_2x24" / "gpu2x" / "results.json"))
+                if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
+                    return _terminal_sample_acc(d)
+            except Exception:
+                pass
         try:
             d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
             if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials until complete
@@ -725,88 +743,14 @@ def _frontier_tab() -> str:
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'
-    # --- Terminal-Bench 2x-timeout experiment (CLEAN re-run). Computed LIVE from the 2x side-dir results
-    #     vs each model's native run, both scored on the SAME fixed 24-task stratified sample, so this
-    #     updates automatically as backfills/lanes finish. (The earlier "2x is worse" panel was on runs
-    #     trashed by a docker run-id collision; distinct run-ids fixed it and 2x now clearly helps.) ---
-    import os as _os, json as _json
-    def _tscore(path, sample):
-        try: r = _json.load(open(path))['results']
-        except Exception: return None
-        if sample: r = [x for x in r if x.get('task_id') in sample]
-        if not r: return None
-        return (round(100 * sum(1 for x in r if x.get('is_resolved')) / len(r)), len(r))
-    try:
-        _samp = {l.strip() for l in open('configs/terminal_sample.txt') if l.strip()}
-    except Exception:
-        _samp = set()
-    _cmp = [
-        ("qwen3.8 · full",  "results/terminalbench/qwen38_2x_full/or2x/results.json",      "results/terminalbench/qwen38/qwen38/results.json"),
-        ("qwen3.8 · Q4",    "results/terminalbench_q4/qwen38_2x24/gpu2x/results.json",      "results/terminalbench_q4/qwen38/qwen38/results.json"),
-        ("qwen3.6-27b · full","results/terminalbench/qwen27_2x_full/qwen272x/results.json", "results/terminalbench/qwen27/qwen27/results.json"),
-        ("qwen3.5-35b · full","results/terminalbench/qwen35_2x_full/qwen352x/results.json", "results/terminalbench/qwen35/qwen35/results.json"),
-        ("gemma-4-31b · full","results/terminalbench/gemma_2x_full/gemma2x/results.json",   "results/terminalbench/gemma/gemma/results.json"),
-    ]
-    _rows = []
-    for label, p2x, pnat in _cmp:
-        s2 = _tscore(p2x, _samp)
-        if s2 is None:
-            continue
-        p2v, n2 = s2
-        sn = _tscore(pnat, _samp)
-        if sn is None:
-            nvs, delta, col = "n/a", "—", "#9a9ab0"
-        else:
-            nv, _ = sn
-            d = p2v - nv
-            nvs = f"{nv}%"
-            delta = ("+" if d >= 0 else "") + f"{d}pt"
-            col = "#5bd97a" if d > 0 else ("#e0a458" if d == 0 else "#e06a6a")
-        part = "" if n2 >= 24 else f' <span class="mut" style="font-size:9px">({n2}/24)</span>'
-        _rows.append(
-            f'<tr><td style="padding:3px 10px 3px 0">{label}</td>'
-            f'<td style="text-align:right;color:#9a9ab0">{nvs}</td>'
-            f'<td style="text-align:right;font-weight:600">{p2v}%{part}</td>'
-            f'<td style="text-align:right;font-weight:600;color:{col}">{delta}</td></tr>')
-    timeout_chart = (
-        '<div style="margin-top:24px;padding:14px 16px;border:1px solid #2a2a3a;border-radius:8px;'
-        'background:#15151f;max-width:600px">'
-        '<div style="font-size:13px;font-weight:600;color:#e6e6f0">Terminal-Bench — does a 2× timeout help? '
-        '<span class="mut" style="font-weight:400">Yes for full-precision, no for Q4.</span></div>'
-        '<div style="font-size:11px;color:#9a9ab0;margin:3px 0 10px">Native vs 2× global timeout, terminus-2, '
-        'same 24-task stratified sample (backfill-corrected for container-race errors). Scores in %.</div>'
-        '<table style="font-size:11.5px;color:#e6e6f0;border-collapse:collapse">'
-        '<thead><tr style="color:#7a7a90;font-size:10px">'
-        '<th style="text-align:left;padding-right:10px">model</th><th style="text-align:right">native</th>'
-        '<th style="text-align:right">2× timeout</th><th style="text-align:right">Δ</th></tr></thead>'
-        f'<tbody>{"".join(_rows)}</tbody></table>'
-        '<div style="font-size:10.5px;color:#8a8a9c;margin-top:8px;line-height:1.5">'
-        '<b>Full-precision (OpenRouter):</b> 2× lifts qwen3.8 sharply (native 33% → <b>62%</b>) and helps '
-        'qwen3.6-27b too — a longer budget lets these models finish timeout-prone tasks. '
-        '<b>Q4 (local):</b> flat (33% → 33%) — the quantized model doesn’t convert the extra time into solves.<br>'
-        '<b>Method note:</b> the earlier "2× is worse" reading was on runs trashed by a docker run-id collision; '
-        'giving each run a distinct run-id fixed the container race, and the corrected re-run shows the gain. '
-        'Main table scores use native timeout.'
-        '</div></div>')
-    # Prominent note: surface the headline 2x-timeout finding at the TOP of the (default) Frontier tab,
-    # right under the header, with the comparison chart, before the score tables.
-    note = (
-        '<div style="margin:8px 0 4px;padding:10px 14px;border-left:3px solid #5bd97a;'
-        'background:#15211a;border-radius:6px;max-width:600px;font-size:11.5px;color:#cfe8d6;line-height:1.5">'
-        '<b style="color:#e6e6f0">📊 Note — 2× TerminalBench timeout:</b> giving the agent double the '
-        'per-task time <b>lifts full-precision qwen3.8 from 33% → 62%</b> (+29pt); the Q4 quantized model '
-        'stays flat (33% → 33%). See the per-model comparison below. Main table scores use the '
-        '<b>native</b> timeout.</div>')
     return (
         '<h3 class="dimh">Frontier — Muse Glimmer reproduction'
         '<span class="mut"> · vendor-recommended sampling · scores ×100 · '
         '<b>click a number to see its exact params</b></span></h3>'
-        + note
-        + timeout_chart
-        + f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
-        + f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
-        + f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
-        + f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>')
+        f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
+        f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
+        f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
+        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>')
 
 
 def build() -> str:

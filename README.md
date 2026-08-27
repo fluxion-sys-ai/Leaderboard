@@ -38,8 +38,7 @@ with 5 benchmarks doesn't out-vote one with 1. Ranked best-first.
 | 16 | llama-3.2-3b | 3B | **44.1** |
 | 17 | llama-xlam-2-8b-fc | 8B | **40.1** |
 
-*Live snapshot — a full run is grinding through the remaining PinchBench/grid reruns, so numbers
-shift as they land (the dashboard auto-refreshes). The interactive version — per-dimension splits,
+*The dashboard auto-refreshes as reruns land. The interactive version — per-dimension splits,
 per-score settings on click, heat-maps, light/dark — is [`leaderboard.html`](leaderboard.html),
 served at **https://fluxion-sys-ai.github.io/Leaderboard/**.*
 
@@ -219,8 +218,8 @@ full-precision vs Q4-local** comparison across 5 frontier 30B-class models and 5
 |---|---|
 | IFBench, AIME'26 | direct; thinking ON; `max_tokens` 81,920 |
 | PinchBench (116-task multi-turn agent) | **no_think** (thinking-ON zeroes agentic pinch); DeepSeek-chat-v3.1 judge |
-| TerminalBench (terminus-2, terminal-bench-core, 80 tasks) | thinking ON; 40-min per-task timeout |
-| SWE-bench Lite (Agentless, stratified-50, seed 42) | localize temp 0 / repair temp 0.8; single greedy repair sample |
+| TerminalBench (terminus-2, terminal-bench-core; 24-task stratified sample) | thinking ON; native per-task timeout **and** a 2× global-timeout variant (see *Current experiments*) |
+| SWE-bench Lite (Agentless; full strat-20, Q4 strat-51, seed 42) | localize temp 0 / repair temp 0.8; `repair --max_samples 10` + `reproduction-tests --max_samples 40` + reproduction-only rerank (see *Current experiments*) |
 
 Per-model sampling: Muse/Gemma `temp 1.0 / top_p 0.95 / top_k 64`; Qwen `1.0 / 0.95 / 20` + presence
 (27B & 3.8 = 0.0, 35B = 1.5; SWE uses the coding recipe → presence 0.0 for all Qwen). Muse/Gemma
@@ -229,6 +228,33 @@ reasoning is `high`/`xhigh` (agentic/coding).
 **Runner scripts** (`scripts/`): `pinchbench_{full,q4}_run.sh`, `terminalbench_{,q4_}run.sh`,
 `swe_agentless_{,q4_}run.sh`. Locally-served agentic models are reached through an **`edgelocal`**
 (llama.cpp) or **`vllmfull`** (vLLM fp8) OpenAI-compatible provider registered in `openclaw.json`.
+
+### Current experiments (agentic tab)
+
+Two config sweeps are running on top of the base Frontier grid. Both compare a **new** setting
+against the **old** one per model, side-by-side, and *never overwrite* the old number with a
+fallback — an interrupted/empty run shows "pending", not a stale score.
+
+**1. TerminalBench — does a 2× per-task timeout help?** Re-run each model with
+`--global-timeout-multiplier 2.0` (double the per-task budget) vs the native timeout, on the same
+24-task sample. These are genuine independent reruns (distinct run-ids, different token counts and
+solved-task sets — verified, not regrades).
+- **Full-precision qwen3.8: 33 → 62% (+29pt)** — the clear win; extra time converts near-solves.
+- **Q4 qwen3.8 & muse: 33.3 → 41.7% (+8.4)** — 2× also helps the quantized models.
+- Other models land ~flat: 2× clears most timeouts but the freed runs often fail a *different* way
+  rather than solving, so gains and losses net even.
+- Scripts: `tb_2x_full_all.sh` (OpenRouter full-precision, rolling-2, credit-floored),
+  `tb_2x_q4_rest.sh` (local-GPU Q4, sequential). **No infra-backfills** — the 2× rerun is kept clean.
+
+**2. SWE-bench Lite — reproduction-test rerank vs majority-vote.** Old selection took a majority
+vote over 10 repair samples; the new one adds `generate_reproduction_tests --max_samples 40` and
+**reranks patches by which pass a generated reproduction test** (regression step omitted — its
+passing-set gen is unreliable on Q4).
+- Where the model generates *real* reproduction tests (qwen3.8, qwen3.6-27b), the rerank runs but
+  lands at the **same score** as majority-vote — it selects the same winning patches (a real result,
+  not a bug). Models that emit no usable tests fall back and are flagged "rerun pending", not scored.
+- Scripts: `swe_or_select_all.sh` (OpenRouter full-precision, sequential, waits for the terminal
+  lanes), `swe_full_select_all.sh` (local-GPU Q4, after the Q4 terminal runs).
 
 **Unattended automation** — self-healing shell loops saturate the single GPU (sequential) and
 OpenRouter (parallel):

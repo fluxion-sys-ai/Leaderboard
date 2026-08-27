@@ -494,11 +494,51 @@
             "agent_ended_at": "2026-08-27T04:04:24.871094+00:00",
             "test_started_at": "2026-08-27T04:04:28.312569+00:00",
             "test_ended_at": "2026-08-27T04:04:42.860725+00:00"
+        },
+        {
+            "id": "fec572db-df09-403a-8ea7-d1c044eb942d",
+            "trial_name": "oom.1-of-1.qwen352x",
+            "task_id": "oom",
+            "instruction": "I want you to cache the `albert/albert-base-v2` model and tokenizer from huggingface so that I can use it offline when I'm on my next flight.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_offline_model_load": "failed"
+            },
+            "recording_path": "qwen352x/oom/oom.1-of-1.qwen352x/sessions/agent.cast",
+            "total_input_tokens": 3345,
+            "total_output_tokens": 588,
+            "trial_started_at": "2026-08-27T04:04:56.962611+00:00",
+            "trial_ended_at": "2026-08-27T04:15:27.771631+00:00",
+            "agent_started_at": "2026-08-27T04:13:49.550329+00:00",
+            "agent_ended_at": "2026-08-27T04:15:00.625597+00:00",
+            "test_started_at": "2026-08-27T04:15:04.026946+00:00",
+            "test_ended_at": "2026-08-27T04:15:13.348372+00:00"
+        },
+        {
+            "id": "1cc9f1c1-ebb4-43dc-a455-06ec52c847c5",
+            "trial_name": "security-vulhub-minio.1-of-1.qwen352x",
+            "task_id": "security-vulhub-minio",
+            "instruction": "Access the MinIO credentials that are stored in the environment variables\non the nodes and print them to the file `/app/result.txt`.\n\nMinIO is running on node1:9000.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_command_output_content": "failed"
+            },
+            "recording_path": "qwen352x/security-vulhub-minio/security-vulhub-minio.1-of-1.qwen352x/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-08-27T04:00:48.679381+00:00",
+            "trial_ended_at": "2026-08-27T04:18:24.217886+00:00",
+            "agent_started_at": "2026-08-27T04:01:02.024079+00:00",
+            "agent_ended_at": "2026-08-27T04:18:02.226666+00:00",
+            "test_started_at": "2026-08-27T04:18:05.664251+00:00",
+            "test_ended_at": "2026-08-27T04:18:11.496198+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 10,
-    "n_unresolved": 12,
+    "n_unresolved": 14,
     "resolved_ids": [
         "eval-mteb",
         "blind-maze-explorer-algorithm.easy",
@@ -523,7 +563,9 @@
         "polyglot-c-py",
         "sanitize-git-repo.hard",
         "write-compressor",
-        "raman-fitting.easy"
+        "raman-fitting.easy",
+        "oom",
+        "security-vulhub-minio"
     ],
-    "accuracy": 0.45454545454545453
+    "accuracy": 0.4166666666666667
 }

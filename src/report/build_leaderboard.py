@@ -494,8 +494,17 @@ def _terminal_sample_acc(d: dict):
     samp = _terminal_sample()
     if not samp:
         return d.get("accuracy")
-    resolved = set(d.get("resolved_ids", []))
-    ran = resolved | set(d.get("unresolved_ids", []))
+    # Derive resolved/ran from the AUTHORITATIVE results array — the infra-backfill re-grades tasks and
+    # updates results[]/n_resolved but NOT the resolved_ids/unresolved_ids summary lists, so those lists
+    # go stale (showed the pre-backfill score, e.g. 45.8% instead of the corrected 62.5%). Fall back to
+    # the summary lists only if results[] is absent.
+    results = d.get("results")
+    if results is not None:
+        resolved = {x["task_id"] for x in results if x.get("is_resolved")}
+        ran = {x["task_id"] for x in results}
+    else:
+        resolved = set(d.get("resolved_ids", []))
+        ran = resolved | set(d.get("unresolved_ids", []))
     if not set(samp).issubset(ran):        # not every sample task present → don't understate; fall back
         return d.get("accuracy")
     return sum(1 for t in samp if t in resolved) / len(samp)

@@ -673,10 +673,12 @@ def _frontier_tab() -> str:
                     return json.load(open(fp)).get("score")
         except Exception:
             pass
-        # 2× global-timeout run (Q4 local) — currently only qwen3.8 (gpu2x). Prefer it over native.
-        if key == "qwen38":
+        # 2× global-timeout run (Q4 local), preferred over native. run-id per model.
+        rid2x = {"qwen38": "gpu2x", "muse": "museq2x", "qwen27": "qwen27q2x",
+                 "qwen35": "qwen35q2x", "gemma": "gemmaq2x"}.get(key)
+        if rid2x:
             try:
-                d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / "qwen38_2x24" / "gpu2x" / "results.json"))
+                d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{key}_2x24" / rid2x / "results.json"))
                 if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
                     return _terminal_sample_acc(d)
             except Exception:

@@ -578,8 +578,8 @@ def _fr_spec(model_key, bench, precision):
     # precision) is complete — the number shown then comes from it; otherwise it's the NATIVE timeout run
     # (the original score). This keeps the card honest: it never claims 2× for a native score.
     _is2x = (_has_2x_q4(model_key) if precision == "q4" else _has_2x_full(model_key))
-    _term_timeout = ("2× global timeout (native ×2, terminus-2)" if _is2x
-                     else "native per-task timeout (terminus-2) — model's 2× run not yet done")
+    _term_timeout = ('<b style="color:#5bd97a">● NEW — 2× global timeout</b> (native ×2)' if _is2x
+                     else '<b style="color:#e0a458">● OLD — native per-task timeout</b> (2× run not done yet)')
     _TIMEOUT = {
         "terminal":   _term_timeout,
         "pinchbench": "per-task 180s (up to 300s)",
@@ -613,24 +613,21 @@ def _fr_spec(model_key, bench, precision):
                                          / "swebench_lite.json")).get("selection") or "")
         except Exception:
             pass
-        _repro = "reproduction" in _selraw
+        _repro = "reproduction" in _selraw or "rerank" in _selraw
         _wf = "whole-function" in _selraw or "wholefunc" in _selraw
-        parts.append('<b>pipeline:</b> Agentless — 3-stage localize (file→related→line) → repair → '
-                     + ('reproduction-test rerank' if _repro else 'select') + ' → SWE-bench Docker eval')
-        parts.append('<b>repair samples:</b> 10 / bug (1 greedy + 9 @ temp 0.8) '
-                     '<span class="rd">DEF</span> — repair.py --max_samples 10')
+        # Clear NEW-vs-OLD badge first, then a short concise config list (no wall of text).
         if _repro:
-            parts.append('<b>reproduction tests:</b> 40 / bug (1 greedy + 39) '
-                         '<span class="rd">DEF</span> — generate_reproduction_tests.py --max_samples 40')
-            parts.append('<b>selection:</b> rerank.py --reproduction (reproduction-test rerank; '
-                         'regression omitted — its passing-set gen is unreliable on the local Q4 server)')
+            parts.append('<b style="color:#5bd97a">● NEW config — repair-10 + repro-40 + rerank</b>')
+            parts.append('repair.py <b>--max_samples 10</b> (1 greedy + 9)')
+            parts.append('generate_reproduction_tests.py <b>--max_samples 40</b> (1 greedy + 39)')
+            parts.append('rerank.py <b>--reproduction</b> (test-based selection; regression omitted)')
         else:
-            parts.append('<b>reproduction tests:</b> not used (Agentless default = --max_samples 40)')
-            parts.append('<b>selection:</b> ' + ('whole-function code-fence recovery + majority vote' if _wf
-                                                 else 'majority vote over non-empty patches'))
-        parts.append('<b>localize:</b> temp 0 · 1 sample set · top_n 3 files · context ±10 lines')
-        parts.append('<b>max_tokens:</b> repair 1024 (non-thinking) / 32,768 (thinking) · localize ≤ 8,192')
-        parts.append(f'<b>instances:</b> {inst} · eval: SWE-bench Docker harness (retry-on-error)')
+            parts.append('<b style="color:#e0a458">● OLD config — majority-vote over 10 (repro-40 not run yet)</b>')
+            parts.append('repair.py <b>--max_samples 10</b> (1 greedy + 9)')
+            parts.append('selection: <b>majority vote</b> over non-empty patches — no reproduction tests'
+                         + (' (whole-function recovery)' if _wf else ''))
+        parts.append(f'<span class="mut">pipeline: Agentless localize→repair→select→SWE-bench Docker eval · '
+                     f'{inst} instances · max_tokens repair 1,024 / 32,768 (thinking)</span>')
     if bench == "pinchbench" and precision == "q4":
         parts.append('<span class="sp-note">~300s Q4 timeout depresses this on long-context tasks</span>')
     return '<br>'.join(parts)

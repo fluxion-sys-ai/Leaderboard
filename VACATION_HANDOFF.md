@@ -1,5 +1,19 @@
 # Vacation handoff — 2026-08-27
 
+## 📋 SWE improvement — diagnosis + options (post-vacation, nothing broken now)
+repro-40 rerank does NOT beat majority-vote (it's equal-or-worse) — a clean negative result, now
+shown honestly in the full-precision SWE chart. Root cause investigated:
+- **The real bottleneck is patch GENERATION, not selection.** For qwen3.8-full on the 20-task sample,
+  **10 of 20 bugs get NO usable patch** across all 10 repair samples → score is capped ~50% before
+  selection matters. Reranking can't help where there's no candidate.
+- Among the ~10 patchable bugs, repro-40 resolved fewer than majority-vote (3 vs 5) because the
+  model's generated **reproduction tests are unreliable** (passing the model's own test ≠ passing gold).
+- Options to try later (highest payoff first): (1) attack generation — more repair samples + higher
+  temp diversity, better localization; (2) whole-function recovery to salvage empty patches
+  (`swe_wholefunc_postprocess.py` — lifted qwen35 0→10%; payoff uncertain for qwen3.8 since its empties
+  may be genuine no-output); (3) drop repro-40, keep majority-vote (or add Agentless's "filter to tests
+  that fail on buggy code first" step). **Board stays on majority-vote meanwhile — it's the better number.**
+
 ## ⏳ PENDING (do when all SWE runs finish): fix the SWE denominators
 Every SWE-Lite % is currently `solved ÷ wrong-task-count` (full used 20, Q4 used 51; the real
 eval sets are ~36–48 per model). The **solved counts are correct**; only the divisor is wrong.

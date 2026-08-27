@@ -549,7 +549,7 @@ def _fr_spec(model_key, bench, precision):
         f'<b>sampling:</b> temp {temp} · {samp} · thinking {think} <span class="rd">REC</span>',
     ]
     _TIMEOUT = {
-        "terminal":   "2× global timeout (backfill-corrected); muse = native (2× provider outage)",
+        "terminal":   "2× global timeout, backfill-corrected · blank = 2× run not yet complete (or unavailable)",
         "pinchbench": "per-task 180s (up to 300s)",
         "swe":        "per-call 900s · Docker eval",
         "ifbench":    "up to 81,920 gen tokens",
@@ -640,55 +640,36 @@ def _frontier_tab() -> str:
         return (None, False)
 
     def _terminal(key):
-        # TerminalBench (terminus-2, terminal-bench-core==0.1.1) accuracy, full-precision, at the 2×
-        # global timeout (backfill-corrected side-dir run). Falls back to the native run if a model has
-        # no 2× data (e.g. muse — its OpenRouter provider was unavailable during the 2× run).
+        # TerminalBench full-precision at the 2× global timeout (backfill-corrected side-dir run). This
+        # column shows ONLY the 2× score — if a model has no COMPLETED 2× run it returns None (blank),
+        # never native, so the "2×" label is always truthful. (muse's full-prec 2× never ran — provider
+        # outage — so it stays blank here.)
         rid = {"qwen38": "or2x", "qwen27": "qwen272x", "qwen35": "qwen352x", "gemma": "gemma2x"}.get(key)
-        if rid:
-            try:
-                d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full" / rid / "results.json"))
-                if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
-                    return _terminal_sample_acc(d)
-            except Exception:
-                pass
-        try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
-            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials
-            return _terminal_sample_acc(d)   # score over the 24-task stratified sample (subset of the 80)
-        except Exception:
+        if not rid:
             return None
-
-    def _terminal_q4(key):
-        # TerminalBench Q4-local (terminus-2 vs local llama-server) accuracy.
-        # FULL-80 override: if a full-run score exists (results/scored/<q4dir>/terminal_full.json,
-        # written by tb_full80_supervisor once the 24-sample + backfill are merged), show that instead
-        # of the 24-sample — it's the more robust full-set number. Currently only qwen3.8 (mk qwen38).
         try:
-            q4dir = {"qwen38": "qwen3.8-27b-q4f", "muse": "muse-glimmer-30b-q4f",
-                     "qwen27": "qwen3.6-27b-q4f", "qwen35": "qwen3.5-35b-a3b-q4f",
-                     "gemma": "gemma-4-31b-q4f"}.get(key)
-            if q4dir:
-                fp = REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json"
-                if fp.exists():
-                    return json.load(open(fp)).get("score")
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full" / rid / "results.json"))
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
+                return _terminal_sample_acc(d)
         except Exception:
             pass
-        # 2× global-timeout run (Q4 local), preferred over native. run-id per model.
+        return None
+
+    def _terminal_q4(key):
+        # TerminalBench Q4-local at the 2× global timeout. Same rule: ONLY the 2× score, else None (blank).
+        # Currently only qwen3.8 (gpu2x) is complete; muse/qwen27/qwen35/gemma Q4 2× runs are in progress
+        # and fill in as they finish. No native fallback and no full-80 override here — both are NOT 2×.
         rid2x = {"qwen38": "gpu2x", "muse": "museq2x", "qwen27": "qwen27q2x",
                  "qwen35": "qwen35q2x", "gemma": "gemmaq2x"}.get(key)
-        if rid2x:
-            try:
-                d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{key}_2x24" / rid2x / "results.json"))
-                if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
-                    return _terminal_sample_acc(d)
-            except Exception:
-                pass
-        try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
-            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials until complete
-            return _terminal_sample_acc(d)   # same 24-task stratified sample as full, for consistency
-        except Exception:
+        if not rid2x:
             return None
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{key}_2x24" / rid2x / "results.json"))
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
+                return _terminal_sample_acc(d)
+        except Exception:
+            pass
+        return None
 
     def cell(v, bar=False, mk=None, spec=None):
         if v is None:

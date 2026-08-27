@@ -72,24 +72,25 @@
       "test_ended_at": "2026-08-26T22:54:43.790418+00:00"
     },
     {
-      "id": "344d4a0c-2792-4997-beaa-22b2f904a5ac",
+      "id": "44f010bb-6177-4a5d-9609-69d9981d9763",
       "trial_name": "download-youtube.1-of-1.gpu2xib",
       "task_id": "download-youtube",
       "instruction": "Download the first video ever uploaded to YouTube as an mp4. Then, trim the video to the final 10 seconds and save it as `result.mp4`.",
-      "is_resolved": false,
-      "failure_mode": "unknown_agent_error",
+      "is_resolved": true,
+      "failure_mode": "unset",
       "parser_results": {
-        "../tests/test_outputs.py": "failed"
+        "test_output_file_exists": "passed",
+        "test_correct_video": "passed"
       },
       "recording_path": "gpu2xib/download-youtube/download-youtube.1-of-1.gpu2xib/sessions/agent.cast",
-      "total_input_tokens": null,
-      "total_output_tokens": null,
-      "trial_started_at": "2026-08-27T08:47:54.568569+00:00",
-      "trial_ended_at": "2026-08-27T08:49:04.755581+00:00",
-      "agent_started_at": "2026-08-27T08:47:59.701818+00:00",
-      "agent_ended_at": "2026-08-27T08:48:36.895873+00:00",
-      "test_started_at": "2026-08-27T08:48:40.287393+00:00",
-      "test_ended_at": "2026-08-27T08:48:50.836722+00:00"
+      "total_input_tokens": 59279,
+      "total_output_tokens": 1603,
+      "trial_started_at": "2026-08-27T08:56:04.851581+00:00",
+      "trial_ended_at": "2026-08-27T09:01:03.255088+00:00",
+      "agent_started_at": "2026-08-27T08:56:09.696644+00:00",
+      "agent_ended_at": "2026-08-27T09:00:38.792890+00:00",
+      "test_started_at": "2026-08-27T09:00:42.182104+00:00",
+      "test_ended_at": "2026-08-27T09:00:50.259809+00:00"
     },
     {
       "id": "d8109e7d-5748-4f46-9bbe-fe637c993939",
@@ -207,29 +208,29 @@
       "test_ended_at": "2026-08-26T23:33:34.254252+00:00"
     },
     {
-      "id": "153d0e22-7613-43b2-82bf-8ad71e101e30",
+      "id": "fae25aaa-7c51-45bb-a7fe-bfdbb80cf04f",
       "trial_name": "decommissioning-service-with-sensitive-data.1-of-1.gpu2xib",
       "task_id": "decommissioning-service-with-sensitive-data",
       "instruction": "You are tasked with securely decommissioning a legacy service.\nThe service has sensitive user data located in the directory '/opt/sensitive_service_data/'.\nIts configuration file is at '/etc/service_config.ini'.\nIts PID (Process ID) file is at '/tmp/service.pid'.\n\nYour objectives are, IN ORDER:\n1. Create a TAR GZ archive of the entire '/opt/sensitive_service_data/' directory.\n    Name this intermediate archive 'sensitive_files.tar.gz' and place it in your current working directory.\n2. Encrypt the 'sensitive_files.tar.gz' archive using GPG symmetric encryption with the AES256 cipher.\n    The passphrase to use for encryption is 't-bench-passphrase'.\n    Store the final encrypted archive as '/app/service_archive.gpg'.\n3. Securely delete all original files within the '/opt/sensitive_service_data/' directory. Each file must be overwritten at least 3 times using 'shred' and then removed. After all files inside are shredded and removed, delete the now-empty '/opt/sensitive_service_data/' directory itself.\n4. Delete the service configuration and PID file.\n5. CRITICAL: No unencrypted sensitive data or archives should remain on the system in accessible locations.\n\nPerform all archive creation and encryption tasks in your current working directory.\nAdherence to the order of operations is crucial for security.",
-      "is_resolved": false,
-      "failure_mode": "unknown_agent_error",
+      "is_resolved": true,
+      "failure_mode": "unset",
       "parser_results": {
+        "test_original_sensitive_data_is_gone": "passed",
+        "test_config_file_is_gone": "passed",
+        "test_pid_file_is_gone": "passed",
+        "test_encrypted_archive_exists": "passed",
         "test_intermediate_unencrypted_archive_is_gone": "passed",
-        "test_original_sensitive_data_is_gone": "failed",
-        "test_config_file_is_gone": "failed",
-        "test_pid_file_is_gone": "failed",
-        "test_encrypted_archive_exists": "failed",
-        "test_archive_is_correctly_encrypted_and_contains_data": "failed"
+        "test_archive_is_correctly_encrypted_and_contains_data": "passed"
       },
       "recording_path": "gpu2xib/decommissioning-service-with-sensitive-data/decommissioning-service-with-sensitive-data.1-of-1.gpu2xib/sessions/agent.cast",
-      "total_input_tokens": null,
-      "total_output_tokens": null,
-      "trial_started_at": "2026-08-27T08:47:54.569045+00:00",
-      "trial_ended_at": "2026-08-27T08:49:06.870075+00:00",
-      "agent_started_at": "2026-08-27T08:48:08.081534+00:00",
-      "agent_ended_at": "2026-08-27T08:48:44.132432+00:00",
-      "test_started_at": "2026-08-27T08:48:47.547068+00:00",
-      "test_ended_at": "2026-08-27T08:48:54.988660+00:00"
+      "total_input_tokens": 51033,
+      "total_output_tokens": 4427,
+      "trial_started_at": "2026-08-27T08:49:22.863496+00:00",
+      "trial_ended_at": "2026-08-27T08:55:48.377747+00:00",
+      "agent_started_at": "2026-08-27T08:49:34.712152+00:00",
+      "agent_ended_at": "2026-08-27T08:55:24.937418+00:00",
+      "test_started_at": "2026-08-27T08:55:28.412347+00:00",
+      "test_ended_at": "2026-08-27T08:55:36.317622+00:00"
     },
     {
       "id": "b2af4416-c3a6-4206-ad33-de1a58ea806e",
@@ -536,8 +537,8 @@
     }
   ],
   "pass_at_k": {},
-  "n_resolved": 8,
-  "n_unresolved": 16,
+  "n_resolved": 10,
+  "n_unresolved": 14,
   "resolved_ids": [
     "eval-mteb",
     "count-dataset-tokens",

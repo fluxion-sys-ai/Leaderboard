@@ -728,31 +728,39 @@ def _terminal_2x_bars() -> str:
 
 
 def _q4_swe_bars() -> str:
-    """Bar chart: Q4 SWE-bench Lite score per model, colored by which selection config produced it
-    (NEW repair-10+repro-40+rerank vs OLD majority-vote). Reads live scored files."""
-    dirs = {"Muse 30B": "muse-glimmer-30b-q4f", "Qwen3.8-27B": "qwen3.8-27b-q4f",
-            "Qwen3.6-27B": "qwen3.6-27b-q4f", "Qwen3.6-35B": "qwen3.5-35b-a3b-q4f",
-            "Gemma-4-31B": "gemma-4-31b-q4f"}
-    rows = []
-    for disp, d in dirs.items():
+    """Grouped bar chart: Q4 SWE-bench Lite per model, OLD selection (majority-vote over 10) vs
+    NEW selection (repair-10 + repro-40 + rerank). Same 51-instance denominator.
+
+    OLD baseline = the majority-vote score, resolved/51 (recovered from the scored-file git history;
+    for qwen38/qwen27/gemma the later repro-40 run overwrote it in the live file, so it's pinned here —
+    these runs are complete and immutable). NEW = read LIVE from the scored file, present only when its
+    recorded selection is the repro-40 rerank; models still on majority-vote show no NEW bar (like a
+    model with no 2× run), and auto-fill if/when a valid repro-40 run lands."""
+    models = [("qwen38", "Qwen3.8-27B", "qwen3.8-27b-q4f"), ("qwen27", "Qwen3.6-27B", "qwen3.6-27b-q4f"),
+              ("qwen35", "Qwen3.6-35B", "qwen3.5-35b-a3b-q4f"), ("gemma", "Gemma-4-31B", "gemma-4-31b-q4f"),
+              ("muse", "Muse 30B", "muse-glimmer-30b-q4f")]
+    OLD = {"qwen38": 13/51, "qwen27": 8/51, "qwen35": 1/51, "gemma": 11/51, "muse": 15/51}
+
+    def _new(d):   # live repro-40 score, or None if this model hasn't got a valid repro-40 run
         try:
             j = json.load(open(REPO_ROOT / "results" / "scored" / d / "swebench_lite.json"))
-            sc = j.get("score")
             sel = str(j.get("selection") or "")
-            new = ("reproduction" in sel or "rerank" in sel)
-            if sc is not None:
-                rows.append((disp, sc, new))
+            if "reproduction" in sel or "rerank" in sel:
+                return j.get("score")
         except Exception:
             pass
-    rows.sort(key=lambda r: -r[1])   # descending for easy comparison
+        return None
+
+    data = [(disp, OLD.get(k), _new(d)) for k, disp, d in models]
     W, H, padL, padB, padT = 780, 300, 40, 52, 30
     plotH = H - padB - padT
-    n = max(len(rows), 1)
-    slot = (W - padL - 16) / n
-    bw = slot * 0.5
+    n = len(data)
+    groupW = (W - padL - 16) / n
+    bw = groupW * 0.30
+    MAXV = 0.40   # y-axis tops at 40%
 
     def yv(v):
-        return padT + plotH * (1 - v)
+        return padT + plotH * (1 - v / MAXV)
 
     grid = []
     for g in (0, 10, 20, 30, 40):
@@ -760,33 +768,42 @@ def _q4_swe_bars() -> str:
         grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
         grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
     bars, xlabels = [], []
-    for i, (disp, sc, new) in enumerate(rows):
-        cx = padL + slot * i + slot * 0.5
-        col = "var(--acc2)" if new else "#e0a458"
-        bars.append(f'<rect x="{cx-bw/2:.1f}" y="{yv(sc):.1f}" width="{bw:.1f}" height="{plotH*sc:.1f}" '
-                    f'rx="2" fill="{col}"/>')
-        bars.append(f'<text x="{cx:.1f}" y="{yv(sc)-4:.1f}" text-anchor="middle" font-size="10.5" '
-                    f'font-weight="600" fill="{col}">{sc*100:.1f}</text>')
-        xlabels.append(f'<text x="{cx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" '
+    for i, (disp, ov, nv) in enumerate(data):
+        gx = padL + groupW * i + groupW * 0.5
+        if ov is not None:
+            bx = gx - bw - 2
+            bars.append(f'<rect x="{bx:.1f}" y="{yv(ov):.1f}" width="{bw:.1f}" height="{plotH*ov/MAXV:.1f}" '
+                        f'rx="2" fill="#e0a458"/>')
+            bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(ov)-4:.1f}" text-anchor="middle" font-size="10" '
+                        f'fill="#e0a458">{ov*100:.1f}</text>')
+        bx2 = gx + 2
+        if nv is not None:
+            bars.append(f'<rect x="{bx2:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv/MAXV:.1f}" '
+                        f'rx="2" fill="var(--acc2)"/>')
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" font-size="10" '
+                        f'fill="var(--acc2)">{nv*100:.1f}</text>')
+        else:
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
+                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">no repro-40 run</text>')
+        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" '
                        f'fill="var(--tx)">{disp}</text>')
-        xlabels.append(f'<text x="{cx:.1f}" y="{H-padB+29:.1f}" text-anchor="middle" font-size="8.5" '
-                       f'fill="var(--mut)">{"repro-40" if new else "majority-vote"}</text>')
-    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
-              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">NEW · repair-10 + repro-40 + rerank</text>'
-              f'<rect x="{padL+230}" y="6" width="11" height="11" rx="2" fill="#e0a458"/>'
-              f'<text x="{padL+246}" y="15" font-size="11" fill="var(--tx)">OLD · majority-vote over 10</text>')
+    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="#e0a458"/>'
+              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">OLD · majority-vote over 10</text>'
+              f'<rect x="{padL+205}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
+              f'<text x="{padL+221}" y="15" font-size="11" fill="var(--tx)">NEW · repair-10 + repro-40 + rerank</text>')
     svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
-           f'aria-label="Q4 SWE-bench Lite score per model, percent resolved">'
+           f'aria-label="Q4 SWE-bench Lite, majority-vote vs repro-40 selection, percent resolved">'
            + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
     cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
            'border-left:3px solid var(--acc2);padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
-           '<b>Not apples-to-apples yet.</b> Only <b style="color:var(--acc2)">qwen3.8, qwen3.6-27b, gemma</b> '
-           'ran the new repair-10 + repro-40 + rerank pipeline. <b style="color:#e0a458">Muse (29.4) and '
-           'qwen3.6-35B (2.0)</b> are still on the old majority-vote config, so their bars aren\'t directly '
-           'comparable. qwen3.6-35B is a real floor — its Q4 MoE emits prose instead of the SEARCH/REPLACE '
-           'edit format, yielding ~0 parseable patches.</div>')
-    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Q4 SWE-bench Lite '
-            '<span class="mut">· local A100 · % resolved · colored by selection config</span></div>'
+           '<b>The new selection didn\'t change the score.</b> For every model that ran both '
+           '(<b>qwen3.8, qwen3.6-27b, gemma</b>), repair-10 + repro-40 + rerank resolved the <i>exact same '
+           'instances</i> as majority-vote (13/51, 8/51, 11/51) — the reproduction-test rerank picked the '
+           'same winning patches. <b style="color:#e0a458">Muse and qwen3.6-35B have no repro-40 bar yet</b>: '
+           'muse\'s repro-40 came back empty (guard kept the old score); the 35B emits prose instead of the '
+           'edit format (~0 parseable patches).</div>')
+    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Q4 SWE-bench Lite — does repro-40 '
+            'rerank help? <span class="mut">· local A100 · 51-instance sample · % resolved</span></div>'
             + svg + cap)
 
 

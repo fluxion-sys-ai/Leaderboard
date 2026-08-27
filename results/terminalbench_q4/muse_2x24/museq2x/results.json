@@ -362,17 +362,84 @@
             "agent_ended_at": "2026-08-27T19:11:36.954478+00:00",
             "test_started_at": "2026-08-27T19:11:40.368792+00:00",
             "test_ended_at": "2026-08-27T19:11:52.331420+00:00"
+        },
+        {
+            "id": "ca1105d0-db4c-467a-9aea-31af86b8ca8b",
+            "trial_name": "sqlite-with-gcov.1-of-1.museq2x",
+            "task_id": "sqlite-with-gcov",
+            "instruction": "Compile SQLite in /app/sqlite with gcov instrumentation and make it available in the PATH.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_sqlite_compiled": "passed",
+                "test_sqlite_in_path": "passed",
+                "test_gcov_enabled": "passed"
+            },
+            "recording_path": "museq2x/sqlite-with-gcov/sqlite-with-gcov.1-of-1.museq2x/sessions/agent.cast",
+            "total_input_tokens": 718159,
+            "total_output_tokens": 7300,
+            "trial_started_at": "2026-08-27T19:03:58.011493+00:00",
+            "trial_ended_at": "2026-08-27T19:16:02.380959+00:00",
+            "agent_started_at": "2026-08-27T19:04:02.782569+00:00",
+            "agent_ended_at": "2026-08-27T19:15:39.686328+00:00",
+            "test_started_at": "2026-08-27T19:15:43.088673+00:00",
+            "test_ended_at": "2026-08-27T19:15:50.184669+00:00"
+        },
+        {
+            "id": "1475b5d7-a2ff-4880-a1cf-2defb3415d71",
+            "trial_name": "configure-git-webserver.1-of-1.museq2x",
+            "task_id": "configure-git-webserver",
+            "instruction": "Configure a git server so that I can run on my computer\n    git clone user@server:/git/server\n    echo \"hello world\" > hello.html\n    git add index.html\n    git commit -m \"add index\"\n    git push origin webserver\nAnd have this data then be pushed to a webserver running on port 8080 so if I run\n    curl https://server:8080/hello.html\nthen I see the output \"hello world\"",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_hello_file_exists_example": "passed"
+            },
+            "recording_path": "museq2x/configure-git-webserver/configure-git-webserver.1-of-1.museq2x/sessions/agent.cast",
+            "total_input_tokens": 195441,
+            "total_output_tokens": 5923,
+            "trial_started_at": "2026-08-27T19:12:04.436653+00:00",
+            "trial_ended_at": "2026-08-27T19:18:19.444451+00:00",
+            "agent_started_at": "2026-08-27T19:12:09.079554+00:00",
+            "agent_ended_at": "2026-08-27T19:17:27.588169+00:00",
+            "test_started_at": "2026-08-27T19:17:30.992199+00:00",
+            "test_ended_at": "2026-08-27T19:18:04.599080+00:00"
+        },
+        {
+            "id": "c0a85c4f-1c7c-443b-a7a0-89a031ea285b",
+            "trial_name": "sanitize-git-repo.hard.1-of-1.museq2x",
+            "task_id": "sanitize-git-repo.hard",
+            "instruction": "Please help sanitize my github repository \"dclm\" of all API keys.\n\nPlease find and remove all such information and replace it with placeholder values as follows:\n\nFor example:\n- If an AWS_ACCESS_KEY_ID is found, replace the actual value with <your-aws-access-key-id>\n- If a Huggingface token is found, replace the actual value with <your-huggingface-token>\n\nPlease ensure that the sensitive values are not present in the repository after the sanitization.\nThe placeholder values should be consistent across the repository and should be kept.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_removal_of_secret_information": "passed",
+                "test_correct_replacement_of_secret_information": "passed",
+                "test_no_other_files_changed": "passed"
+            },
+            "recording_path": "museq2x/sanitize-git-repo.hard/sanitize-git-repo.hard.1-of-1.museq2x/sessions/agent.cast",
+            "total_input_tokens": 397811,
+            "total_output_tokens": 7440,
+            "trial_started_at": "2026-08-27T19:18:19.449387+00:00",
+            "trial_ended_at": "2026-08-27T19:23:24.595843+00:00",
+            "agent_started_at": "2026-08-27T19:18:44.829716+00:00",
+            "agent_ended_at": "2026-08-27T19:23:01.840545+00:00",
+            "test_started_at": "2026-08-27T19:23:05.232749+00:00",
+            "test_ended_at": "2026-08-27T19:23:12.461844+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 5,
+    "n_resolved": 8,
     "n_unresolved": 11,
     "resolved_ids": [
         "blind-maze-explorer-algorithm.hard",
         "eval-mteb",
         "pytorch-model-cli.hard",
         "fix-permissions",
-        "create-bucket"
+        "create-bucket",
+        "sqlite-with-gcov",
+        "configure-git-webserver",
+        "sanitize-git-repo.hard"
     ],
     "unresolved_ids": [
         "blind-maze-explorer-algorithm.easy",
@@ -387,5 +454,5 @@
         "decommissioning-service-with-sensitive-data",
         "security-vulhub-minio"
     ],
-    "accuracy": 0.3125
+    "accuracy": 0.42105263157894735
 }

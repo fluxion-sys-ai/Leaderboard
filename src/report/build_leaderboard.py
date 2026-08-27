@@ -727,6 +727,22 @@ def _terminal_2x_bars() -> str:
             + svg + cap)
 
 
+def _q4_real_repro(k) -> bool:
+    """True if this Q4 model has USABLE reproduction tests on disk (a genuine repro-40 run).
+    False → its repro-40 was never completed (interrupted / empty); any score on file is the OLD
+    majority-vote fallback, which we WITHHOLD (show 'rerun pending') rather than present as the result."""
+    import glob as _g
+    for f in _g.glob(str(REPO_ROOT / "results" / "swe_agentless" / k /
+                         "reproduction_test_samples" / "*reproduction_test.jsonl")):
+        try:
+            for line in open(f):
+                if '"test_patch"' in line:
+                    return True
+        except Exception:
+            pass
+    return False
+
+
 def _q4_swe_bars() -> str:
     """Grouped bar chart: Q4 SWE-bench Lite per model, OLD selection (majority-vote over 10) vs
     NEW selection (repair-10 + repro-40 + rerank). Same 51-instance denominator.
@@ -741,20 +757,8 @@ def _q4_swe_bars() -> str:
               ("muse", "Muse 30B", "muse-glimmer-30b-q4f")]
     OLD = {"qwen38": 13/51, "qwen27": 8/51, "qwen35": 1/51, "gemma": 11/51, "muse": 15/51}
 
-    def _real_repro(k):   # did this model actually produce USABLE reproduction tests (not just a raw stub)?
-        import glob as _g
-        for f in _g.glob(str(REPO_ROOT / "results" / "swe_agentless" / k /
-                             "reproduction_test_samples" / "*reproduction_test.jsonl")):
-            try:
-                for line in open(f):
-                    if '"test_patch"' in line:
-                        return True
-            except Exception:
-                pass
-        return False
-
     def _new(k, d):   # live repro-40 score — ONLY if the rerank had real tests to work with
-        if not _real_repro(k):
+        if not _q4_real_repro(k):
             return None   # empty repro tests → rerank fell back to majority; not a genuine repro-40 result
         try:
             j = json.load(open(REPO_ROOT / "results" / "scored" / d / "swebench_lite.json"))
@@ -963,7 +967,10 @@ def _frontier_tab() -> str:
                        # temp0+no_think (NOT rec), so they're pulled; this reads the rec-params redo.
                        + qc("pinchbench", score_of(cq, "pinchbench"))
                        + qc("terminal", _terminal_q4(tkey))
-                       + qc("swe", swe_score_of(cq))
+                       + (qc("swe", swe_score_of(cq)) if _q4_real_repro(tkey) else
+                          '<td class="sc na" data-v="-1" title="repro-40 rerun pending — old '
+                          'majority-vote score withheld (interrupted run; being redone with the new '
+                          'params)">⟳</td>')
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

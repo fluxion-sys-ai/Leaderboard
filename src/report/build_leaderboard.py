@@ -514,7 +514,7 @@ def _terminal_sample_acc(d: dict):
 
 # run-id of each model's 2× terminal side-dir run (full-precision vs local Q4). Used to (a) prefer the
 # 2× score when its run is complete and (b) let the card state 2× vs native per model.
-_RID_FULL = {"qwen38": "or2x", "qwen27": "qwen272x", "qwen35": "qwen352x", "gemma": "gemma2x"}
+_RID_FULL = {"qwen38": "or2x", "qwen27": "qwen272x", "qwen35": "qwen352x", "gemma": "gemma2x", "muse": "muse2x"}
 _RID_Q4   = {"qwen38": "gpu2x", "muse": "museq2x", "qwen27": "qwen27q2x", "qwen35": "qwen35q2x", "gemma": "gemmaq2x"}
 
 def _has_2x_full(key) -> bool:
@@ -719,7 +719,8 @@ def _terminal_2x_bars() -> str:
            'mostly fail a <i>different</i> way rather than solving — only a few timeouts convert to solves, '
            'offset by a similar number of previously-solved tasks lost to run-to-run variance, so the score '
            'nets flat. Only <b style="color:var(--acc2)">Qwen3.8 (+29pt, 33→62)</b> had a consistent net gain. '
-           '<span class="mut">Caveats: Muse has no full-precision 2× run (provider outage); Gemma\'s 2× run '
+           '<span class="mut">Caveats: Muse\'s full-precision 2× run now runs (via Parasail bf16; the earlier '
+           'provider 404 is fixed) — its bar fills in when it completes. Gemma\'s 2× run '
            'hit agent errors on 9 tasks, so its flat number is the least reliable. Effective timeout bump '
            'measured ≈1.5–1.75× in the logs, not a clean 2.0×.</span></div>')
     return ('<div style="font-weight:600;margin:26px 0 4px;font-size:13px">Does a 2× timeout help? '

@@ -132,9 +132,11 @@ def swe_score_of(row: dict):
     # pipeline crash, so show it (with a footnote) rather than hide it behind the completed-count guard.
     if c.get("genuine_zero"):
         return c.get("score")
-    # majority-vote rescore writes {score,resolved,total,selection} with resolved_ids only (no
-    # completed_ids) — it's a finished, trusted score, so don't hide it behind the completed-count guard.
-    if str(c.get("selection") or "").startswith("majority_vote"):
+    # Any recorded SELECTION method — majority-vote, whole-function recovery, or the repro-40 rerank —
+    # is a finished, trusted score written with resolved_ids only (no completed_ids). Show it rather than
+    # hide it behind the completed-count guard (which is only for raw/partial runs with no selection).
+    _sel = str(c.get("selection") or "")
+    if _sel.startswith("majority_vote") or "reproduction" in _sel or "rerank" in _sel or "wholefunc" in _sel or "whole-function" in _sel:
         return c.get("score")
     return c.get("score") if completed >= SWE_MIN_COMPLETED else None
 
@@ -510,6 +512,30 @@ def _terminal_sample_acc(d: dict):
     return sum(1 for t in samp if t in resolved) / len(samp)
 
 
+# run-id of each model's 2× terminal side-dir run (full-precision vs local Q4). Used to (a) prefer the
+# 2× score when its run is complete and (b) let the card state 2× vs native per model.
+_RID_FULL = {"qwen38": "or2x", "qwen27": "qwen272x", "qwen35": "qwen352x", "gemma": "gemma2x"}
+_RID_Q4   = {"qwen38": "gpu2x", "muse": "museq2x", "qwen27": "qwen27q2x", "qwen35": "qwen35q2x", "gemma": "gemmaq2x"}
+
+def _has_2x_full(key) -> bool:
+    rid = _RID_FULL.get(key)
+    if not rid: return False
+    try:
+        d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full" / rid / "results.json"))
+        return (d.get("n_resolved", 0) + d.get("n_unresolved", 0)) >= _terminal_min()
+    except Exception:
+        return False
+
+def _has_2x_q4(key) -> bool:
+    rid = _RID_Q4.get(key)
+    if not rid: return False
+    try:
+        d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{key}_2x24" / rid / "results.json"))
+        return (d.get("n_resolved", 0) + d.get("n_unresolved", 0)) >= _terminal_min()
+    except Exception:
+        return False
+
+
 # ── Frontier tab: the exact params behind each cell (click a number to inspect) ──
 _FR_SAMP = {   # vendor-recommended sampling knobs, from the run scripts
     "muse":   "top_p 0.95 · top_k 64",
@@ -548,8 +574,14 @@ def _fr_spec(model_key, bench, precision):
         f'<b>precision:</b> {precision.upper()} · {serve}',
         f'<b>sampling:</b> temp {temp} · {samp} · thinking {think} <span class="rd">REC</span>',
     ]
+    # Terminal timeout label is PER MODEL: "2× global timeout" only if this model's 2× run (this
+    # precision) is complete — the number shown then comes from it; otherwise it's the NATIVE timeout run
+    # (the original score). This keeps the card honest: it never claims 2× for a native score.
+    _is2x = (_has_2x_q4(model_key) if precision == "q4" else _has_2x_full(model_key))
+    _term_timeout = ("2× global timeout (native ×2, terminus-2)" if _is2x
+                     else "native per-task timeout (terminus-2) — model's 2× run not yet done")
     _TIMEOUT = {
-        "terminal":   "2× global timeout, backfill-corrected · blank = 2× run not yet complete (or unavailable)",
+        "terminal":   _term_timeout,
         "pinchbench": "per-task 180s (up to 300s)",
         "swe":        "per-call 900s · Docker eval",
         "ifbench":    "up to 81,920 gen tokens",
@@ -641,36 +673,49 @@ def _frontier_tab() -> str:
         return (None, False)
 
     def _terminal(key):
-        # TerminalBench full-precision at the 2× global timeout (backfill-corrected side-dir run). This
-        # column shows ONLY the 2× score — if a model has no COMPLETED 2× run it returns None (blank),
-        # never native, so the "2×" label is always truthful. (muse's full-prec 2× never ran — provider
-        # outage — so it stays blank here.)
-        rid = {"qwen38": "or2x", "qwen27": "qwen272x", "qwen35": "qwen352x", "gemma": "gemma2x"}.get(key)
-        if not rid:
-            return None
-        try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full" / rid / "results.json"))
-            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
+        # TerminalBench full-precision. Show the 2× score if that run is COMPLETE, else the NATIVE score
+        # (never blank a model that has a native run). The CARD (_fr_spec) says which timeout config
+        # produced the shown number, per model — that's the only thing that differs 2× vs native.
+        if _has_2x_full(key):
+            rid = _RID_FULL[key]
+            try:
+                d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full" / rid / "results.json"))
                 return _terminal_sample_acc(d)
+            except Exception:
+                pass
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None  # hide partials
+            return _terminal_sample_acc(d)
         except Exception:
-            pass
-        return None
+            return None
 
     def _terminal_q4(key):
-        # TerminalBench Q4-local at the 2× global timeout. Same rule: ONLY the 2× score, else None (blank).
-        # Currently only qwen3.8 (gpu2x) is complete; muse/qwen27/qwen35/gemma Q4 2× runs are in progress
-        # and fill in as they finish. No native fallback and no full-80 override here — both are NOT 2×.
-        rid2x = {"qwen38": "gpu2x", "muse": "museq2x", "qwen27": "qwen27q2x",
-                 "qwen35": "qwen35q2x", "gemma": "gemmaq2x"}.get(key)
-        if not rid2x:
-            return None
-        try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{key}_2x24" / rid2x / "results.json"))
-            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) >= _terminal_min():
+        # TerminalBench Q4-local. 2× score if complete, else native (full-80 override if present). Card
+        # states the config. Only qwen3.8 Q4 has a complete 2× run so far; the rest show native until
+        # their 2× runs finish, then auto-switch.
+        if _has_2x_q4(key):
+            rid = _RID_Q4[key]
+            try:
+                d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{key}_2x24" / rid / "results.json"))
                 return _terminal_sample_acc(d)
+            except Exception:
+                pass
+        q4dir = {"qwen38": "qwen3.8-27b-q4f", "muse": "muse-glimmer-30b-q4f", "qwen27": "qwen3.6-27b-q4f",
+                 "qwen35": "qwen3.5-35b-a3b-q4f", "gemma": "gemma-4-31b-q4f"}.get(key)
+        try:
+            if q4dir:
+                fp = REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json"
+                if fp.exists():
+                    return json.load(open(fp)).get("score")
         except Exception:
             pass
-        return None
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / key / key / "results.json"))
+            if (d.get("n_resolved",0)+d.get("n_unresolved",0)) < _terminal_min(): return None
+            return _terminal_sample_acc(d)
+        except Exception:
+            return None
 
     def cell(v, bar=False, mk=None, spec=None):
         if v is None:

@@ -286,7 +286,7 @@ FINETUNE = {
 # ── cell renderers (data-v drives client-side sort; -1 sinks blanks) ──
 def sc(v, model=None, key=None, bar=False):   # 0..1 benchmark score — click shows this score's config
     if v is None:
-        return '<td class="sc na" data-v="-1">·</td>'
+        return '<td class="sc na" data-v="-1" title="not run yet">\u2014</td>'
     spec = cell_title(model, key) if (model and key) else ""
     over = ' ◆ non-default' if (model and key and _has_override(model, key)) else ""
     attrs = (f' title="{html.escape(spec)}" data-spec="{html.escape(spec + over)}"'
@@ -570,18 +570,45 @@ def _fr_spec(model_key, bench, precision):
     if bench == "swe" and model_key == "muse" and precision == "full":
         samp += " · reasoning xhigh"
     temp = "localize 0 · repair 0.8" if bench == "swe" else "1.0"
-    parts = [
-        f'<b>precision:</b> {precision.upper()} · {serve}',
-        f'<b>sampling:</b> temp {temp} · {samp} · thinking {think} <span class="rd">REC</span>',
-    ]
-    # Terminal timeout label is PER MODEL: "2× global timeout" only if this model's 2× run (this
-    # precision) is complete — the number shown then comes from it; otherwise it's the NATIVE timeout run
-    # (the original score). This keeps the card honest: it never claims 2× for a native score.
-    _is2x = (_has_2x_q4(model_key) if precision == "q4" else _has_2x_full(model_key))
-    _term_timeout = ('<b style="color:#5bd97a">● NEW — 2× global timeout</b> (native ×2)' if _is2x
-                     else '<b style="color:#e0a458">● OLD — native per-task timeout</b> (2× run not done yet)')
+
+    def _badge(is_new, new_txt, old_txt):
+        # One clean pill at the TOP of the card saying whether the shown number is the NEW config
+        # or still the OLD one — this is the only thing that differs, so it leads.
+        col = "#0c2418;background:#4EC98F" if is_new else "#2a1d08;background:#e0a458"
+        tag = "NEW" if is_new else "OLD"
+        return (f'<b style="color:{col};padding:2px 8px;border-radius:6px;font-size:11px;'
+                f'letter-spacing:.04em">{tag}</b> <b>{new_txt if is_new else old_txt}</b>')
+
+    parts = []
+    # ── Lead with the ONE thing that changed OLD→NEW for this bench (timeout / selection) ──
+    if bench == "terminal":
+        is2x = _has_2x_q4(model_key) if precision == "q4" else _has_2x_full(model_key)
+        parts.append(_badge(is2x, "2× global timeout (native ×2)",
+                             "native per-task timeout · 2× run not done yet"))
+    swe_ctx = None
+    if bench == "swe":
+        inst = "51 (strat51)" if precision == "q4" else "20 (strat50)"
+        # Read the ACTUAL selection recorded in this cell's score so the card always matches the number.
+        _swedir = {"qwen38": "qwen3.8-27b", "muse": "muse-glimmer-30b", "qwen27": "qwen3.6-27b",
+                   "qwen35": ("qwen3.5-35b-a3b" if precision == "q4" else "qwen3.6-35b-a3b"),
+                   "gemma": "gemma-4-31b"}.get(model_key, "")
+        _prec = "q4f" if precision == "q4" else "full"
+        _selraw = ""
+        try:
+            _selraw = str(json.load(open(REPO_ROOT / "results" / "scored" / f"{_swedir}-{_prec}"
+                                         / "swebench_lite.json")).get("selection") or "")
+        except Exception:
+            pass
+        _repro = "reproduction" in _selraw or "rerank" in _selraw
+        _wf = "whole-function" in _selraw or "wholefunc" in _selraw
+        swe_ctx = (inst, _repro, _wf)
+        parts.append(_badge(_repro, "repair-10 + repro-40 + rerank",
+                            "majority-vote over 10 · repro-40 not run yet"))
+
+    # ── Uniform, compact config lines (same order for every cell) ──
+    parts.append(f'<b>precision:</b> {precision.upper()} · {serve}')
+    parts.append(f'<b>sampling:</b> temp {temp} · {samp} · thinking {think} <span class="rd">REC</span>')
     _TIMEOUT = {
-        "terminal":   _term_timeout,
         "pinchbench": "per-task 180s (up to 300s)",
         "swe":        "per-call 900s · Docker eval",
         "ifbench":    "up to 81,920 gen tokens",
@@ -599,38 +626,98 @@ def _fr_spec(model_key, bench, precision):
             full80 = bool(q4dir and (REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json").exists())
         parts.append('<b>task set:</b> ' + ('full 79/80 (play-zork excluded — broken container)'
                                             if full80 else '24-task stratified sample'))
-    if bench == "swe":
-        inst = "51 (strat51)" if precision == "q4" else "20 (strat50)"
-        # Read the ACTUAL selection method recorded in this cell's score so the card always matches the
-        # number shown (majority-vote vs the full repair-10 + repro-tests-40 + rerank pipeline).
-        _swedir = {"qwen38": "qwen3.8-27b", "muse": "muse-glimmer-30b", "qwen27": "qwen3.6-27b",
-                   "qwen35": ("qwen3.5-35b-a3b" if precision == "q4" else "qwen3.6-35b-a3b"),
-                   "gemma": "gemma-4-31b"}.get(model_key, "")
-        _prec = "q4f" if precision == "q4" else "full"
-        _selraw = ""
-        try:
-            _selraw = str(json.load(open(REPO_ROOT / "results" / "scored" / f"{_swedir}-{_prec}"
-                                         / "swebench_lite.json")).get("selection") or "")
-        except Exception:
-            pass
-        _repro = "reproduction" in _selraw or "rerank" in _selraw
-        _wf = "whole-function" in _selraw or "wholefunc" in _selraw
-        # Clear NEW-vs-OLD badge first, then a short concise config list (no wall of text).
+    if bench == "swe" and swe_ctx:
+        inst, _repro, _wf = swe_ctx
         if _repro:
-            parts.append('<b style="color:#5bd97a">● NEW config — repair-10 + repro-40 + rerank</b>')
-            parts.append('repair.py <b>--max_samples 10</b> (1 greedy + 9)')
-            parts.append('generate_reproduction_tests.py <b>--max_samples 40</b> (1 greedy + 39)')
-            parts.append('rerank.py <b>--reproduction</b> (test-based selection; regression omitted)')
+            parts.append('<b>selection:</b> reproduction-test rerank <span class="mut">· repair --max_samples 10 · '
+                         'gen_reproduction_tests --max_samples 40 · rerank --reproduction (regression omitted)</span>')
         else:
-            parts.append('<b style="color:#e0a458">● OLD config — majority-vote over 10 (repro-40 not run yet)</b>')
-            parts.append('repair.py <b>--max_samples 10</b> (1 greedy + 9)')
-            parts.append('selection: <b>majority vote</b> over non-empty patches — no reproduction tests'
-                         + (' (whole-function recovery)' if _wf else ''))
-        parts.append(f'<span class="mut">pipeline: Agentless localize→repair→select→SWE-bench Docker eval · '
-                     f'{inst} instances · max_tokens repair 1,024 / 32,768 (thinking)</span>')
+            parts.append('<b>selection:</b> majority vote over 10 non-empty patches'
+                         + (' <span class="mut">(whole-function recovery)</span>' if _wf else ''))
+        parts.append(f'<span class="mut">pipeline: Agentless localize→repair→select→Docker eval · {inst} instances</span>')
     if bench == "pinchbench" and precision == "q4":
         parts.append('<span class="sp-note">~300s Q4 timeout depresses this on long-context tasks</span>')
     return '<br>'.join(parts)
+
+
+def _terminal_2x_bars() -> str:
+    """Grouped bar chart: full-precision TerminalBench, NATIVE timeout vs 2× global timeout.
+    Reads the live scored runs so it stays correct as runs finish (no hardcoded numbers)."""
+    models = [("qwen38", "Qwen3.8-27B"), ("qwen27", "Qwen3.6-27B"), ("qwen35", "Qwen3.6-35B"),
+              ("gemma", "Gemma-4-31B"), ("muse", "Muse 30B")]
+
+    def _nat(key):
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
+            return _terminal_sample_acc(d)
+        except Exception:
+            return None
+
+    def _two(key):
+        if not _has_2x_full(key):
+            return None
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full"
+                               / _RID_FULL[key] / "results.json"))
+            return _terminal_sample_acc(d)
+        except Exception:
+            return None
+
+    data = [(disp, _nat(k), _two(k)) for k, disp in models]
+    W, H, padL, padB, padT = 780, 300, 40, 52, 30
+    plotH = H - padB - padT
+    n = len(data)
+    groupW = (W - padL - 16) / n
+    bw = groupW * 0.30
+
+    def yv(v):
+        return padT + plotH * (1 - v)
+
+    grid = []
+    for g in (0, 25, 50, 75, 100):
+        gy = yv(g / 100)
+        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" '
+                    f'stroke="var(--bd)" stroke-width="1"/>')
+        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" '
+                    f'fill="var(--mut)">{g}</text>')
+    bars, xlabels = [], []
+    for i, (disp, nv, tv) in enumerate(data):
+        gx = padL + groupW * i + groupW * 0.5
+        if nv is not None:
+            bx = gx - bw - 2
+            bars.append(f'<rect x="{bx:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv:.1f}" '
+                        f'rx="2" fill="var(--acc)"/>')
+            bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" '
+                        f'font-size="10" fill="var(--mut)">{nv*100:.0f}</text>')
+        bx2 = gx + 2
+        if tv is not None:
+            bars.append(f'<rect x="{bx2:.1f}" y="{yv(tv):.1f}" width="{bw:.1f}" height="{plotH*tv:.1f}" '
+                        f'rx="2" fill="var(--acc2)"/>')
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(tv)-4:.1f}" text-anchor="middle" '
+                        f'font-size="10" fill="var(--acc2)">{tv*100:.0f}</text>')
+            if nv is not None and abs(tv - nv) > 0.001:
+                d = (tv - nv) * 100
+                bars.append(f'<text x="{gx:.1f}" y="{padT-10:.1f}" text-anchor="middle" font-size="10" '
+                            f'font-weight="700" fill="var(--acc2)">+{d:.0f}</text>')
+        else:
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
+                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">no 2× run</text>')
+        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" '
+                       f'fill="var(--tx)">{disp}</text>')
+    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="var(--acc)"/>'
+              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">native timeout</text>'
+              f'<rect x="{padL+128}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
+              f'<text x="{padL+144}" y="15" font-size="11" fill="var(--tx)">2× global timeout</text>')
+    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
+           f'aria-label="Full-precision TerminalBench, native vs 2x timeout, percent resolved">'
+           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+    cap = ('<div class="mut" style="margin:2px 0 20px;font-size:11.5px;max-width:840px">'
+           'A 2× per-task timeout lifts <b style="color:var(--acc2)">Qwen3.8 by +29pt (33→62)</b>; the '
+           'other models land at their native score — extra time doesn\'t convert to solves for them. '
+           'Muse has no full-precision 2× run (OpenRouter provider outage).</div>')
+    return ('<div style="font-weight:600;margin:26px 0 4px;font-size:13px">Does a 2× timeout help? '
+            '<span class="mut">· full-precision TerminalBench · 24-task sample · % resolved</span></div>'
+            + svg + cap)
 
 
 def _frontier_tab() -> str:
@@ -716,7 +803,7 @@ def _frontier_tab() -> str:
 
     def cell(v, bar=False, mk=None, spec=None):
         if v is None:
-            return '<td class="sc na" data-v="-1">·</td>'
+            return '<td class="sc na" data-v="-1" title="not run yet">\u2014</td>'
         style = heat_bar(v) if bar else heat(v)
         a = (f' data-mk="{html.escape(mk)}" data-spec="{html.escape(spec)}" onclick="showSpec(this,event)"'
              if spec else "")
@@ -726,7 +813,7 @@ def _frontier_tab() -> str:
     def tau3_cell(res, mk=None, spec=None):
         v, bad = res
         if v is None:
-            return '<td class="sc na" data-v="-1">·</td>'
+            return '<td class="sc na" data-v="-1" title="not run yet">\u2014</td>'
         if bad:  # wrong-param run: struck-through + ✗ + tooltip, no heat-bar (it's invalid)
             return ('<td class="sc" data-v="-1" title="INVALID — ran with wrong params '
                     '(max_steps 40 not 100, only 20 of 97 tasks, missing top_k/min_p and Muse/Gemma '
@@ -785,7 +872,8 @@ def _frontier_tab() -> str:
         f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
         f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
         f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
-        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>')
+        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>'
+        + _terminal_2x_bars())
 
 
 def build() -> str:
@@ -838,7 +926,7 @@ def build() -> str:
 <span class="lg" style="{heat(0.15)}">low</span>
 <span class="lg" style="{heat(0.5)}">mid</span>
 <span class="lg" style="{heat(0.9)}">high</span>
-<span class="mut">· shade is per-cell · · = no score</span>
+<span class="mut">· shade is per-cell · — = not run yet</span>
 </div>
 </div>
 <script>{JS}</script></body></html>"""

@@ -584,13 +584,14 @@ def _fr_spec(model_key, bench, precision):
         _repro = "reproduction" in _selraw
         _wf = "whole-function" in _selraw or "wholefunc" in _selraw
         parts.append('<b>pipeline:</b> Agentless — 3-stage localize (file→related→line) → repair → '
-                     + ('regression + reproduction-test rerank' if _repro else 'select') + ' → SWE-bench Docker eval')
+                     + ('reproduction-test rerank' if _repro else 'select') + ' → SWE-bench Docker eval')
         parts.append('<b>repair samples:</b> 10 / bug (1 greedy + 9 @ temp 0.8) '
                      '<span class="rd">DEF</span> — repair.py --max_samples 10')
         if _repro:
             parts.append('<b>reproduction tests:</b> 40 / bug (1 greedy + 39) '
                          '<span class="rd">DEF</span> — generate_reproduction_tests.py --max_samples 40')
-            parts.append('<b>selection:</b> rerank.py --regression --reproduction (test-based, full Agentless)')
+            parts.append('<b>selection:</b> rerank.py --reproduction (reproduction-test rerank; '
+                         'regression omitted — its passing-set gen is unreliable on the local Q4 server)')
         else:
             parts.append('<b>reproduction tests:</b> not used (Agentless default = --max_samples 40)')
             parts.append('<b>selection:</b> ' + ('whole-function code-fence recovery + majority vote' if _wf

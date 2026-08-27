@@ -711,10 +711,17 @@ def _terminal_2x_bars() -> str:
     svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
            f'aria-label="Full-precision TerminalBench, native vs 2x timeout, percent resolved">'
            + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
-    cap = ('<div class="mut" style="margin:2px 0 20px;font-size:11.5px;max-width:840px">'
-           'A 2× per-task timeout lifts <b style="color:var(--acc2)">Qwen3.8 by +29pt (33→62)</b>; the '
-           'other models land at their native score — extra time doesn\'t convert to solves for them. '
-           'Muse has no full-precision 2× run (OpenRouter provider outage).</div>')
+    cap = ('<div style="margin:6px 0 20px;font-size:11.5px;max-width:840px;line-height:1.5;'
+           'border-left:3px solid var(--acc2);padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
+           '<b>Why only Qwen3.8 moves.</b> These are genuine independent reruns (different run-ids/dates, '
+           'different token counts, different solved sets — not regrades). A 2× per-task timeout <b>does</b> '
+           'clear most timeouts (e.g. Qwen3.6-27B 12→6 timed-out tasks, Gemma 13→1), but the freed-up runs '
+           'mostly fail a <i>different</i> way rather than solving — only a few timeouts convert to solves, '
+           'offset by a similar number of previously-solved tasks lost to run-to-run variance, so the score '
+           'nets flat. Only <b style="color:var(--acc2)">Qwen3.8 (+29pt, 33→62)</b> had a consistent net gain. '
+           '<span class="mut">Caveats: Muse has no full-precision 2× run (provider outage); Gemma\'s 2× run '
+           'hit agent errors on 9 tasks, so its flat number is the least reliable. Effective timeout bump '
+           'measured ≈1.5–1.75× in the logs, not a clean 2.0×.</span></div>')
     return ('<div style="font-weight:600;margin:26px 0 4px;font-size:13px">Does a 2× timeout help? '
             '<span class="mut">· full-precision TerminalBench · 24-task sample · % resolved</span></div>'
             + svg + cap)

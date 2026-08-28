@@ -723,8 +723,81 @@ def _terminal_2x_bars() -> str:
            'provider 404 is fixed) — its bar fills in when it completes. Gemma\'s 2× run '
            'hit agent errors on 9 tasks, so its flat number is the least reliable. Effective timeout bump '
            'measured ≈1.5–1.75× in the logs, not a clean 2.0×.</span></div>')
-    return ('<div style="font-weight:600;margin:26px 0 4px;font-size:13px">Does a 2× timeout help? '
-            '<span class="mut">· full-precision TerminalBench · 24-task sample · % resolved</span></div>'
+    return ('<div style="font-weight:600;margin:26px 0 4px;font-size:13px">Full · Does a 2× timeout help? '
+            '<span class="mut">· OpenRouter · TerminalBench · 24-task sample · % resolved</span></div>'
+            + svg + cap)
+
+
+def _q4_terminal_2x_bars() -> str:
+    """Grouped bar chart: Q4 (local A100) TerminalBench, NATIVE timeout vs 2× global timeout.
+    Reads live scored runs (native = results/terminalbench_q4/<k>/<k>, 2× = <k>_2x24/<rid>)."""
+    models = [("qwen38", "Qwen3.8-27B"), ("qwen27", "Qwen3.6-27B"), ("qwen35", "Qwen3.6-35B"),
+              ("gemma", "Gemma-4-31B"), ("muse", "Muse 30B")]
+
+    def _nat(k):
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / k / k / "results.json"))
+            return _terminal_sample_acc(d)
+        except Exception:
+            return None
+
+    def _two(k):
+        if not _has_2x_q4(k):
+            return None
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{k}_2x24"
+                               / _RID_Q4[k] / "results.json"))
+            return _terminal_sample_acc(d)
+        except Exception:
+            return None
+
+    data = [(disp, _nat(k), _two(k)) for k, disp in models]
+    W, H, padL, padB, padT = 780, 300, 40, 52, 30
+    plotH = H - padB - padT
+    n = len(data)
+    groupW = (W - padL - 16) / n
+    bw = groupW * 0.30
+
+    def yv(v):
+        return padT + plotH * (1 - v)
+
+    grid = []
+    for g in (0, 25, 50, 75, 100):
+        gy = yv(g / 100)
+        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
+        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
+    bars, xlabels = [], []
+    for i, (disp, nv, tv) in enumerate(data):
+        gx = padL + groupW * i + groupW * 0.5
+        if nv is not None:
+            bx = gx - bw - 2
+            bars.append(f'<rect x="{bx:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv:.1f}" rx="2" fill="var(--acc)"/>')
+            bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" font-size="10" fill="var(--mut)">{nv*100:.0f}</text>')
+        bx2 = gx + 2
+        if tv is not None:
+            bars.append(f'<rect x="{bx2:.1f}" y="{yv(tv):.1f}" width="{bw:.1f}" height="{plotH*tv:.1f}" rx="2" fill="var(--acc2)"/>')
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(tv)-4:.1f}" text-anchor="middle" font-size="10" fill="var(--acc2)">{tv*100:.0f}</text>')
+            if nv is not None and abs(tv - nv) > 0.001:
+                d = (tv - nv) * 100
+                col = "var(--acc2)" if d > 0 else "#e0a458"
+                bars.append(f'<text x="{gx:.1f}" y="{padT-10:.1f}" text-anchor="middle" font-size="10" font-weight="700" fill="{col}">{d:+.0f}</text>')
+        else:
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
+                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">2× still running</text>')
+        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" fill="var(--tx)">{disp}</text>')
+    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="var(--acc)"/>'
+              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">native timeout</text>'
+              f'<rect x="{padL+128}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
+              f'<text x="{padL+144}" y="15" font-size="11" fill="var(--tx)">2× global timeout</text>')
+    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
+           f'aria-label="Q4 TerminalBench, native vs 2x timeout, percent resolved">'
+           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+    cap = ('<div class="mut" style="margin:6px 0 20px;font-size:11.5px;max-width:840px;line-height:1.5">'
+           '2× helps <b style="color:var(--acc2)">qwen3.8 & Muse (both 33→42, +8)</b> and qwen3.6-35b '
+           '(+4); qwen3.6-27b dipped (temp-1.0 run variance, not a real regression). Gemma\'s 2× run is '
+           'still in progress.</div>')
+    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Q4 · Does a 2× timeout help? '
+            '<span class="mut">· local A100 · TerminalBench · 24-task sample · % resolved</span></div>'
             + svg + cap)
 
 
@@ -1044,7 +1117,7 @@ def _frontier_tab() -> str:
         f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
         f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
         f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>'
-        + _terminal_2x_bars() + _q4_swe_bars() + _full_swe_bars())
+        + _terminal_2x_bars() + _q4_terminal_2x_bars() + _full_swe_bars() + _q4_swe_bars())
 
 
 def build() -> str:

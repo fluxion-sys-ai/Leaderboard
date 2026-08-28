@@ -136,7 +136,7 @@ def swe_score_of(row: dict):
     # is a finished, trusted score written with resolved_ids only (no completed_ids). Show it rather than
     # hide it behind the completed-count guard (which is only for raw/partial runs with no selection).
     _sel = str(c.get("selection") or "")
-    if _sel.startswith("majority_vote") or "reproduction" in _sel or "rerank" in _sel or "wholefunc" in _sel or "whole-function" in _sel:
+    if _sel.startswith("majority_vote") or "reproduction" in _sel or "repro-40" in _sel or "rerank" in _sel or "wholefunc" in _sel or "whole-function" in _sel or "recovery" in _sel:
         return c.get("score")
     return c.get("score") if completed >= SWE_MIN_COMPLETED else None
 

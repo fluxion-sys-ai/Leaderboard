@@ -48,22 +48,36 @@ while true; do
   # forever once a byte-identical rebuild made that gate false, and skipped the push too). Now: always
   # stage board files best-effort (unmatched score globs can't block), commit iff something is actually
   # staged (index-vs-HEAD, not unstaged-only), and ALWAYS push whenever local is ahead of origin.
-  timeout 30 git add docs/index.html leaderboard.html 2>/dev/null || true
+  # Stale-lock guard: a prior `timeout 30 git ...` that got KILLED mid-op can leave .git/index.lock,
+  # which then fails EVERY subsequent commit ("commit failed" loop). If no git is actually running and
+  # the lock is >2 min old, it's stale -> remove it so commits recover.
+  if [ -f .git/index.lock ] && ! pgrep -x git >/dev/null 2>&1; then
+    find .git/index.lock -mmin +2 -delete 2>/dev/null && log "removed stale .git/index.lock"
+  fi
+  timeout 60 git add docs/index.html leaderboard.html 2>/dev/null || true
+  # Stage ALL scored cells as source-of-truth (the HTML already renders them; this versions the raw
+  # scores too so the repo fully reflects the board): pinch, swe, ifbench, aime, terminal_bench.
   timeout 30 git add results/scored/*/pinchbench.json 2>/dev/null || true
   timeout 30 git add results/scored/*/swebench_lite.json 2>/dev/null || true
+  timeout 30 git add results/scored/*/ifbench.json 2>/dev/null || true
+  timeout 30 git add results/scored/*/aime2026.json 2>/dev/null || true
+  timeout 30 git add results/terminalbench*/*/*/results.json 2>/dev/null || true
+  timeout 30 git add results/scored/*/terminal_full.json 2>/dev/null || true   # full-80 terminal scores
   if ! git diff --cached --quiet 2>/dev/null; then
-    timeout 30 git_c commit -q -m "leaderboard: auto-refresh" 2>/dev/null && log "board committed" || log "commit failed"
+    # log the REAL error (was hidden by 2>/dev/null, which turned every failure into an opaque
+    # "commit failed" with no cause). Longer timeout so a big index can't get killed mid-commit.
+    if timeout 60 git -c user.name="aliixh" -c user.email="aliixhuang@gmail.com" commit -q -m "leaderboard: auto-refresh" 2>>"$LOG"; then log "board committed"; else log "commit failed (see error above)"; fi
   fi
   AHEAD=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
   if [ "${AHEAD:-0}" -gt 0 ]; then
     if timeout 90 git push origin main -q 2>>"$LOG"; then log "board pushed ($AHEAD commit(s))"; else log "PUSH FAILED/timed-out (will retry next pass)"; fi
   fi
   C=$(credits)
-  if [ -n "$C" ] && python3 -c "import sys;sys.exit(0 if float('$C')<20 else 1)" 2>/dev/null; then
+  if [ -n "$C" ] && python3 -c "import sys;sys.exit(0 if float('$C')<5 else 1)" 2>/dev/null; then
     if [ ! -f "$STOP_FLAG" ]; then
-      log "CREDIT GUARD: \$$C < \$20 — killing PAID (OpenRouter) runs; GPU/Q4 continues."
+      log "CREDIT GUARD: \$$C < \$5 — killing PAID (OpenRouter) runs; GPU/Q4 continues."
       touch "$STOP_FLAG"
-      for pid in $(ps -eo pid,args | grep -E "pinchbench_full_run|benchmark.py --model (openrouter|meta|qwen|google)|swe_agentless_run|run_benchmark.py --models-config configs/models_full" | grep -v grep | awk '{print $1}'); do kill -9 $pid 2>/dev/null; done
+      for pid in $(ps -eo pid,args | grep -E "pinchbench_full_run|benchmark.py --model (openrouter|meta|qwen|google)|swe_agentless_run|run_benchmark.py --models-config configs/models_full|tb run .*terminalbench/" | grep -v grep | awk '{print $1}'); do kill -9 $pid 2>/dev/null; done
     fi
   fi
   sleep 600   # 10 min

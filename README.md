@@ -219,7 +219,7 @@ full-precision vs Q4-local** comparison across 5 frontier 30B-class models and 5
 | IFBench, AIME'26 | direct; thinking ON; `max_tokens` 81,920 |
 | PinchBench (116-task multi-turn agent) | **no_think** (thinking-ON zeroes agentic pinch); DeepSeek-chat-v3.1 judge |
 | TerminalBench (terminus-2, terminal-bench-core; 24-task stratified sample) | thinking ON; native per-task timeout **and** a 2× global-timeout variant (see *Current experiments*) |
-| SWE-bench Lite (Agentless; full strat-20, Q4 strat-51, seed 42) | localize temp 0 / repair temp 0.8; `repair --max_samples 10` + `reproduction-tests --max_samples 40` + reproduction-only rerank (see *Current experiments*) |
+| SWE-bench Lite (Agentless; strat-51 sample, seed 42 — full & Q4 aligned) | localize temp 0 / repair temp 0.8; `repair --max_samples 10` + `reproduction-tests --max_samples 40` + reproduction-only rerank (see *Current experiments*) |
 
 Per-model sampling: Muse/Gemma `temp 1.0 / top_p 0.95 / top_k 64`; Qwen `1.0 / 0.95 / 20` + presence
 (27B & 3.8 = 0.0, 35B = 1.5; SWE uses the coding recipe → presence 0.0 for all Qwen). Muse/Gemma
@@ -250,11 +250,23 @@ solved-task sets — verified, not regrades).
 vote over 10 repair samples; the new one adds `generate_reproduction_tests --max_samples 40` and
 **reranks patches by which pass a generated reproduction test** (regression step omitted — its
 passing-set gen is unreliable on Q4).
-- Where the model generates *real* reproduction tests (qwen3.8, qwen3.6-27b), the rerank runs but
-  lands at the **same score** as majority-vote — it selects the same winning patches (a real result,
-  not a bug). Models that emit no usable tests fall back and are flagged "rerun pending", not scored.
-- Scripts: `swe_or_select_all.sh` (OpenRouter full-precision, sequential, waits for the terminal
-  lanes), `swe_full_select_all.sh` (local-GPU Q4, after the Q4 terminal runs).
+- **Result: repro-40 does not beat majority-vote** — where a model generates real reproduction tests
+  (qwen3.8, qwen3.6-27b) the rerank lands at the *same* score; where it doesn't, it falls back (shown
+  "rerun pending", not scored). A clean negative result.
+- **The real bottleneck is patch *generation*, not selection.** For ~half the bugs the model emits no
+  usable patch — and a parser bug was silently dropping *valid* ones (edits without a ```python fence,
+  or without the `### file` marker so Agentless couldn't place them). `swe_recover_dropped.py` re-parses
+  and re-applies those (inferring the file from the SEARCH text) → **qwen3.8 full SWE 25 → 35% (+10,
+  gold-verified)**. It's model-specific: other models' dropped patches are well-formed but *wrong*
+  (fail the gold tests), so they stay at their real capability ceiling.
+- **Denominator aligned:** full-precision SWE is re-run on the **same strat-51 sample as Q4**
+  (`swe_full_strat51_all.sh`) so the two precisions are directly comparable.
+- Scripts: `swe_or_select_all.sh` / `swe_full_select_all.sh` (repro-40 rerank; OpenRouter / local-GPU
+  Q4), `swe_recover_dropped.py` (+ `swe_recover_eval.sh`) for the dropped-patch recovery.
+
+**Comparison charts.** The bottom of the Frontier tab renders four old-vs-new grouped bar charts —
+Full & Q4 TerminalBench (native vs 2×) and Full & Q4 SWE-Lite (majority-vote vs repro-40) — all built
+by one shared `_grouped_bars_svg()` helper in `build_leaderboard.py`, reading live scored files.
 
 **Unattended automation** — self-healing shell loops saturate the single GPU (sequential) and
 OpenRouter (parallel):

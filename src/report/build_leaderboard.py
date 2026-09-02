@@ -640,30 +640,13 @@ def _fr_spec(model_key, bench, precision):
     return '<br>'.join(parts)
 
 
-def _terminal_2x_bars() -> str:
-    """Grouped bar chart: full-precision TerminalBench, NATIVE timeout vs 2× global timeout.
-    Reads the live scored runs so it stays correct as runs finish (no hardcoded numbers)."""
-    models = [("qwen38", "Qwen3.8-27B"), ("qwen27", "Qwen3.6-27B"), ("qwen35", "Qwen3.6-35B"),
-              ("gemma", "Gemma-4-31B"), ("muse", "Muse 30B")]
-
-    def _nat(key):
-        try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / key / key / "results.json"))
-            return _terminal_sample_acc(d)
-        except Exception:
-            return None
-
-    def _two(key):
-        if not _has_2x_full(key):
-            return None
-        try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / f"{key}_2x_full"
-                               / _RID_FULL[key] / "results.json"))
-            return _terminal_sample_acc(d)
-        except Exception:
-            return None
-
-    data = [(disp, _nat(k), _two(k)) for k, disp in models]
+def _grouped_bars_svg(data, *, aria, la, lb, ca, a_lab, lb_off, maxv, ticks, vfmt, delta=False, miss=""):
+    """Shared renderer for the Frontier grouped bar charts (native-vs-2× and old-vs-new SWE).
+    data: list of (label, val_a, val_b), vals as 0..1 fractions or None. Returns the <svg> string.
+      la/lb   = legend labels;  ca = left-bar colour (a_lab = its number colour); right bar is always
+      var(--acc2).  lb_off = x-offset of the 2nd legend swatch.  maxv/ticks = y-axis scale.
+      vfmt   = number format ('.0f' / '.1f').  delta = draw the signed +/- gain above the pair.
+      miss   = rotated label drawn when the right bar is absent (e.g. 'no 2× run')."""
     W, H, padL, padB, padT = 780, 300, 40, 52, 30
     plotH = H - padB - padT
     n = len(data)
@@ -671,46 +654,80 @@ def _terminal_2x_bars() -> str:
     bw = groupW * 0.30
 
     def yv(v):
-        return padT + plotH * (1 - v)
+        return padT + plotH * (1 - v / maxv)
 
     grid = []
-    for g in (0, 25, 50, 75, 100):
+    for g in ticks:
         gy = yv(g / 100)
-        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" '
-                    f'stroke="var(--bd)" stroke-width="1"/>')
-        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" '
-                    f'fill="var(--mut)">{g}</text>')
+        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
+        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
     bars, xlabels = [], []
-    for i, (disp, nv, tv) in enumerate(data):
+    for i, (disp, va, vb) in enumerate(data):
         gx = padL + groupW * i + groupW * 0.5
-        if nv is not None:
+        if va is not None:                                   # left bar (native / OLD)
             bx = gx - bw - 2
-            bars.append(f'<rect x="{bx:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv:.1f}" '
-                        f'rx="2" fill="var(--acc)"/>')
-            bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" '
-                        f'font-size="10" fill="var(--mut)">{nv*100:.0f}</text>')
+            bars.append(f'<rect x="{bx:.1f}" y="{yv(va):.1f}" width="{bw:.1f}" height="{plotH*va/maxv:.1f}" rx="2" fill="{ca}"/>')
+            bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(va)-4:.1f}" text-anchor="middle" font-size="10" fill="{a_lab}">{va*100:{vfmt}}</text>')
         bx2 = gx + 2
-        if tv is not None:
-            bars.append(f'<rect x="{bx2:.1f}" y="{yv(tv):.1f}" width="{bw:.1f}" height="{plotH*tv:.1f}" '
-                        f'rx="2" fill="var(--acc2)"/>')
-            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(tv)-4:.1f}" text-anchor="middle" '
-                        f'font-size="10" fill="var(--acc2)">{tv*100:.0f}</text>')
-            if nv is not None and abs(tv - nv) > 0.001:
-                d = (tv - nv) * 100
-                bars.append(f'<text x="{gx:.1f}" y="{padT-10:.1f}" text-anchor="middle" font-size="10" '
-                            f'font-weight="700" fill="var(--acc2)">+{d:.0f}</text>')
-        else:
+        if vb is not None:                                   # right bar (2× / NEW)
+            bars.append(f'<rect x="{bx2:.1f}" y="{yv(vb):.1f}" width="{bw:.1f}" height="{plotH*vb/maxv:.1f}" rx="2" fill="var(--acc2)"/>')
+            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(vb)-4:.1f}" text-anchor="middle" font-size="10" fill="var(--acc2)">{vb*100:{vfmt}}</text>')
+            if delta and va is not None and abs(vb - va) > 0.001:
+                dd = (vb - va) * 100
+                col = "var(--acc2)" if dd > 0 else "#e0a458"
+                bars.append(f'<text x="{gx:.1f}" y="{padT-10:.1f}" text-anchor="middle" font-size="10" font-weight="700" fill="{col}">{dd:+.0f}</text>')
+        elif miss:                                           # right bar absent -> reason marker
             bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
-                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">no 2× run</text>')
-        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" '
-                       f'fill="var(--tx)">{disp}</text>')
-    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="var(--acc)"/>'
-              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">native timeout</text>'
-              f'<rect x="{padL+128}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
-              f'<text x="{padL+144}" y="15" font-size="11" fill="var(--tx)">2× global timeout</text>')
-    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
-           f'aria-label="Full-precision TerminalBench, native vs 2x timeout, percent resolved">'
-           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">{miss}</text>')
+        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" fill="var(--tx)">{disp}</text>')
+    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="{ca}"/>'
+              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">{la}</text>'
+              f'<rect x="{padL+lb_off}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
+              f'<text x="{padL+lb_off+16}" y="15" font-size="11" fill="var(--tx)">{lb}</text>')
+    return (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
+            f'aria-label="{aria}">' + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+
+
+def _q4_real_repro(k) -> bool:
+    """True if this Q4 model has USABLE reproduction tests on disk (a genuine repro-40 run).
+    False -> its repro-40 was never completed (interrupted / empty); any score on file is the OLD
+    majority-vote fallback, which we WITHHOLD ('rerun pending') rather than present as the result."""
+    import glob as _g
+    for f in _g.glob(str(REPO_ROOT / "results" / "swe_agentless" / k /
+                         "reproduction_test_samples" / "*reproduction_test.jsonl")):
+        try:
+            for line in open(f):
+                if '"test_patch"' in line:
+                    return True
+        except Exception:
+            pass
+    return False
+
+
+def _terminal_2x_bars() -> str:
+    """Full-precision TerminalBench: native vs 2× timeout (live scored runs)."""
+    models = [("qwen38", "Qwen3.8-27B"), ("qwen27", "Qwen3.6-27B"), ("qwen35", "Qwen3.6-35B"),
+              ("gemma", "Gemma-4-31B"), ("muse", "Muse 30B")]
+
+    def _nat(k):
+        try:
+            return _terminal_sample_acc(json.load(open(REPO_ROOT / "results" / "terminalbench" / k / k / "results.json")))
+        except Exception:
+            return None
+
+    def _two(k):
+        if not _has_2x_full(k):
+            return None
+        try:
+            return _terminal_sample_acc(json.load(open(REPO_ROOT / "results" / "terminalbench"
+                                                       / f"{k}_2x_full" / _RID_FULL[k] / "results.json")))
+        except Exception:
+            return None
+
+    svg = _grouped_bars_svg([(d, _nat(k), _two(k)) for k, d in models],
+                            aria="Full-precision TerminalBench, native vs 2x timeout, percent resolved",
+                            la="native timeout", lb="2× global timeout", ca="var(--acc)", a_lab="var(--mut)",
+                            lb_off=128, maxv=1.0, ticks=(0, 25, 50, 75, 100), vfmt=".0f", delta=True, miss="no 2× run")
     cap = ('<div style="margin:6px 0 20px;font-size:11.5px;max-width:840px;line-height:1.5;'
            'border-left:3px solid var(--acc2);padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
            '<b>Why only Qwen3.8 moves.</b> These are genuine independent reruns (different run-ids/dates, '
@@ -729,15 +746,13 @@ def _terminal_2x_bars() -> str:
 
 
 def _q4_terminal_2x_bars() -> str:
-    """Grouped bar chart: Q4 (local A100) TerminalBench, NATIVE timeout vs 2× global timeout.
-    Reads live scored runs (native = results/terminalbench_q4/<k>/<k>, 2× = <k>_2x24/<rid>)."""
+    """Q4 (local A100) TerminalBench: native vs 2× timeout (live scored runs)."""
     models = [("qwen38", "Qwen3.8-27B"), ("qwen27", "Qwen3.6-27B"), ("qwen35", "Qwen3.6-35B"),
               ("gemma", "Gemma-4-31B"), ("muse", "Muse 30B")]
 
     def _nat(k):
         try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / k / k / "results.json"))
-            return _terminal_sample_acc(d)
+            return _terminal_sample_acc(json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / k / k / "results.json")))
         except Exception:
             return None
 
@@ -745,53 +760,15 @@ def _q4_terminal_2x_bars() -> str:
         if not _has_2x_q4(k):
             return None
         try:
-            d = json.load(open(REPO_ROOT / "results" / "terminalbench_q4" / f"{k}_2x24"
-                               / _RID_Q4[k] / "results.json"))
-            return _terminal_sample_acc(d)
+            return _terminal_sample_acc(json.load(open(REPO_ROOT / "results" / "terminalbench_q4"
+                                                       / f"{k}_2x24" / _RID_Q4[k] / "results.json")))
         except Exception:
             return None
 
-    data = [(disp, _nat(k), _two(k)) for k, disp in models]
-    W, H, padL, padB, padT = 780, 300, 40, 52, 30
-    plotH = H - padB - padT
-    n = len(data)
-    groupW = (W - padL - 16) / n
-    bw = groupW * 0.30
-
-    def yv(v):
-        return padT + plotH * (1 - v)
-
-    grid = []
-    for g in (0, 25, 50, 75, 100):
-        gy = yv(g / 100)
-        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
-        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
-    bars, xlabels = [], []
-    for i, (disp, nv, tv) in enumerate(data):
-        gx = padL + groupW * i + groupW * 0.5
-        if nv is not None:
-            bx = gx - bw - 2
-            bars.append(f'<rect x="{bx:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv:.1f}" rx="2" fill="var(--acc)"/>')
-            bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" font-size="10" fill="var(--mut)">{nv*100:.0f}</text>')
-        bx2 = gx + 2
-        if tv is not None:
-            bars.append(f'<rect x="{bx2:.1f}" y="{yv(tv):.1f}" width="{bw:.1f}" height="{plotH*tv:.1f}" rx="2" fill="var(--acc2)"/>')
-            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(tv)-4:.1f}" text-anchor="middle" font-size="10" fill="var(--acc2)">{tv*100:.0f}</text>')
-            if nv is not None and abs(tv - nv) > 0.001:
-                d = (tv - nv) * 100
-                col = "var(--acc2)" if d > 0 else "#e0a458"
-                bars.append(f'<text x="{gx:.1f}" y="{padT-10:.1f}" text-anchor="middle" font-size="10" font-weight="700" fill="{col}">{d:+.0f}</text>')
-        else:
-            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
-                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">2× still running</text>')
-        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" fill="var(--tx)">{disp}</text>')
-    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="var(--acc)"/>'
-              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">native timeout</text>'
-              f'<rect x="{padL+128}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
-              f'<text x="{padL+144}" y="15" font-size="11" fill="var(--tx)">2× global timeout</text>')
-    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
-           f'aria-label="Q4 TerminalBench, native vs 2x timeout, percent resolved">'
-           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+    svg = _grouped_bars_svg([(d, _nat(k), _two(k)) for k, d in models],
+                            aria="Q4 TerminalBench, native vs 2x timeout, percent resolved",
+                            la="native timeout", lb="2× global timeout", ca="var(--acc)", a_lab="var(--mut)",
+                            lb_off=128, maxv=1.0, ticks=(0, 25, 50, 75, 100), vfmt=".0f", delta=True, miss="2× still running")
     cap = ('<div class="mut" style="margin:6px 0 20px;font-size:11.5px;max-width:840px;line-height:1.5">'
            '2× helps <b style="color:var(--acc2)">qwen3.8 & Muse (both 33→42, +8)</b> and qwen3.6-35b '
            '(+4); qwen3.6-27b dipped (temp-1.0 run variance, not a real regression). Gemma\'s 2× run is '
@@ -801,39 +778,44 @@ def _q4_terminal_2x_bars() -> str:
             + svg + cap)
 
 
-def _q4_real_repro(k) -> bool:
-    """True if this Q4 model has USABLE reproduction tests on disk (a genuine repro-40 run).
-    False → its repro-40 was never completed (interrupted / empty); any score on file is the OLD
-    majority-vote fallback, which we WITHHOLD (show 'rerun pending') rather than present as the result."""
-    import glob as _g
-    for f in _g.glob(str(REPO_ROOT / "results" / "swe_agentless" / k /
-                         "reproduction_test_samples" / "*reproduction_test.jsonl")):
-        try:
-            for line in open(f):
-                if '"test_patch"' in line:
-                    return True
-        except Exception:
-            pass
-    return False
+def _full_swe_bars() -> str:
+    """Full-precision SWE-bench Lite: OLD majority-vote vs NEW repro-40, BOTH on the strat-20 sample
+    (fair matched comparison). Values pinned (runs complete/immutable). qwen35: old = wholefunc recovery,
+    no repro-40 run."""
+    N = 20
+    models = [("qwen38", "Qwen3.8-27B", 5, 3), ("muse", "Muse 30B", 5, 4),
+              ("qwen27", "Qwen3.6-27B", 3, 2), ("gemma", "Gemma-4-31B", 5, 4),
+              ("qwen35", "Qwen3.6-35B", 2, None)]
+    data = [(disp, old_r / N, (new_r / N if new_r is not None else None)) for _, disp, old_r, new_r in models]
+    svg = _grouped_bars_svg(data,
+                            aria="Full-precision SWE-bench Lite, majority-vote vs repro-40, percent resolved on strat-20",
+                            la="OLD · majority-vote over 10", lb="NEW · repair-10 + repro-40 + rerank",
+                            ca="#e0a458", a_lab="#e0a458", lb_off=205, maxv=0.40, ticks=(0, 10, 20, 30, 40),
+                            vfmt=".0f", delta=False, miss="no repro-40 run")
+    cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
+           'border-left:3px solid #e0a458;padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
+           '<b>repro-40 did NOT beat majority-vote here.</b> On the same 20-task sample, the reproduction-test '
+           'rerank picked patches that resolved <i>fewer</i> bugs than the simple majority vote '
+           '(qwen3.8 25→15, qwen27 15→10, muse/gemma 25→20) — so the main table keeps the better '
+           '<b>majority-vote</b> number as the headline. (The 65–75% seen briefly earlier was a denominator '
+           'bug, not real improvement.) qwen3.6-35B has no repro-40 run; its old bar is whole-function recovery.</div>')
+    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Full-precision SWE-bench Lite — does '
+            'repro-40 rerank help? <span class="mut">· OpenRouter · strat-20 sample · % resolved</span></div>'
+            + svg + cap)
 
 
 def _q4_swe_bars() -> str:
-    """Grouped bar chart: Q4 SWE-bench Lite per model, OLD selection (majority-vote over 10) vs
-    NEW selection (repair-10 + repro-40 + rerank). Same 51-instance denominator.
-
-    OLD baseline = the majority-vote score, resolved/51 (recovered from the scored-file git history;
-    for qwen38/qwen27/gemma the later repro-40 run overwrote it in the live file, so it's pinned here —
-    these runs are complete and immutable). NEW = read LIVE from the scored file, present only when its
-    recorded selection is the repro-40 rerank; models still on majority-vote show no NEW bar (like a
-    model with no 2× run), and auto-fill if/when a valid repro-40 run lands."""
+    """Q4 SWE-bench Lite: OLD majority-vote vs NEW repro-40, on the strat-51 sample. OLD baseline pinned
+    (resolved/51, from scored-file git history); NEW read LIVE from the scored file, shown only when a
+    genuine repro-40 run exists (real reproduction tests) — else no NEW bar."""
     models = [("qwen38", "Qwen3.8-27B", "qwen3.8-27b-q4f"), ("qwen27", "Qwen3.6-27B", "qwen3.6-27b-q4f"),
               ("qwen35", "Qwen3.6-35B", "qwen3.5-35b-a3b-q4f"), ("gemma", "Gemma-4-31B", "gemma-4-31b-q4f"),
               ("muse", "Muse 30B", "muse-glimmer-30b-q4f")]
     OLD = {"qwen38": 13/51, "qwen27": 8/51, "qwen35": 1/51, "gemma": 11/51, "muse": 15/51}
 
-    def _new(k, d):   # live repro-40 score — ONLY if the rerank had real tests to work with
+    def _new(k, d):
         if not _q4_real_repro(k):
-            return None   # empty repro tests → rerank fell back to majority; not a genuine repro-40 result
+            return None
         try:
             j = json.load(open(REPO_ROOT / "results" / "scored" / d / "swebench_lite.json"))
             sel = str(j.get("selection") or "")
@@ -844,48 +826,11 @@ def _q4_swe_bars() -> str:
         return None
 
     data = [(disp, OLD.get(k), _new(k, d)) for k, disp, d in models]
-    W, H, padL, padB, padT = 780, 300, 40, 52, 30
-    plotH = H - padB - padT
-    n = len(data)
-    groupW = (W - padL - 16) / n
-    bw = groupW * 0.30
-    MAXV = 0.40   # y-axis tops at 40%
-
-    def yv(v):
-        return padT + plotH * (1 - v / MAXV)
-
-    grid = []
-    for g in (0, 10, 20, 30, 40):
-        gy = yv(g / 100)
-        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
-        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
-    bars, xlabels = [], []
-    for i, (disp, ov, nv) in enumerate(data):
-        gx = padL + groupW * i + groupW * 0.5
-        if ov is not None:
-            bx = gx - bw - 2
-            bars.append(f'<rect x="{bx:.1f}" y="{yv(ov):.1f}" width="{bw:.1f}" height="{plotH*ov/MAXV:.1f}" '
-                        f'rx="2" fill="#e0a458"/>')
-            bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(ov)-4:.1f}" text-anchor="middle" font-size="10" '
-                        f'fill="#e0a458">{ov*100:.1f}</text>')
-        bx2 = gx + 2
-        if nv is not None:
-            bars.append(f'<rect x="{bx2:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv/MAXV:.1f}" '
-                        f'rx="2" fill="var(--acc2)"/>')
-            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" font-size="10" '
-                        f'fill="var(--acc2)">{nv*100:.1f}</text>')
-        else:
-            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
-                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">no repro-40 run</text>')
-        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" '
-                       f'fill="var(--tx)">{disp}</text>')
-    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="#e0a458"/>'
-              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">OLD · majority-vote over 10</text>'
-              f'<rect x="{padL+205}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
-              f'<text x="{padL+221}" y="15" font-size="11" fill="var(--tx)">NEW · repair-10 + repro-40 + rerank</text>')
-    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
-           f'aria-label="Q4 SWE-bench Lite, majority-vote vs repro-40 selection, percent resolved">'
-           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
+    svg = _grouped_bars_svg(data,
+                            aria="Q4 SWE-bench Lite, majority-vote vs repro-40 selection, percent resolved",
+                            la="OLD · majority-vote over 10", lb="NEW · repair-10 + repro-40 + rerank",
+                            ca="#e0a458", a_lab="#e0a458", lb_off=205, maxv=0.40, ticks=(0, 10, 20, 30, 40),
+                            vfmt=".1f", delta=False, miss="no repro-40 run")
     cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
            'border-left:3px solid var(--acc2);padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
            '<b>The rerank didn\'t change the score where it genuinely ran.</b> <b>qwen3.8</b> and '
@@ -897,67 +842,6 @@ def _q4_swe_bars() -> str:
            '~2% floor anyway (emits prose, not the SEARCH/REPLACE edit format → almost no parseable patches).</div>')
     return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Q4 SWE-bench Lite — does repro-40 '
             'rerank help? <span class="mut">· local A100 · 51-instance sample · % resolved</span></div>'
-            + svg + cap)
-
-
-def _full_swe_bars() -> str:
-    """Grouped bar chart: full-precision SWE-bench Lite, OLD majority-vote vs NEW repro-40 selection,
-    BOTH scored on the SAME strat-20 sample so it's a fair comparison (the repro-40 run covered a larger
-    ~47-instance set; here its resolved patches are counted only on the strat-20 instances the old
-    majority-vote baseline used). Values are pinned — these runs are complete/immutable.
-      OLD = majority-vote resolved on strat-20 (qwen35 = wholefunc recovery).
-      NEW = repro-40 rerank's resolved patches intersected with strat-20 (qwen35 had no repro-40 run)."""
-    N = 20
-    models = [("qwen38", "Qwen3.8-27B", 5, 3), ("muse", "Muse 30B", 5, 4),
-              ("qwen27", "Qwen3.6-27B", 3, 2), ("gemma", "Gemma-4-31B", 5, 4),
-              ("qwen35", "Qwen3.6-35B", 2, None)]   # qwen35: old=wholefunc 2/20; new=no repro-40 run
-    W, H, padL, padB, padT = 780, 300, 40, 52, 30
-    plotH = H - padB - padT
-    n = len(models)
-    groupW = (W - padL - 16) / n
-    bw = groupW * 0.30
-    MAXV = 0.40
-
-    def yv(v):
-        return padT + plotH * (1 - v / MAXV)
-
-    grid = []
-    for g in (0, 10, 20, 30, 40):
-        gy = yv(g / 100)
-        grid.append(f'<line x1="{padL}" y1="{gy:.1f}" x2="{W-8}" y2="{gy:.1f}" stroke="var(--bd)" stroke-width="1"/>')
-        grid.append(f'<text x="{padL-7}" y="{gy+3:.1f}" text-anchor="end" font-size="9" fill="var(--mut)">{g}</text>')
-    bars, xlabels = [], []
-    for i, (k, disp, old_r, new_r) in enumerate(models):
-        gx = padL + groupW * i + groupW * 0.5
-        ov = old_r / N
-        bx = gx - bw - 2
-        bars.append(f'<rect x="{bx:.1f}" y="{yv(ov):.1f}" width="{bw:.1f}" height="{plotH*ov/MAXV:.1f}" rx="2" fill="#e0a458"/>')
-        bars.append(f'<text x="{bx+bw/2:.1f}" y="{yv(ov)-4:.1f}" text-anchor="middle" font-size="10" fill="#e0a458">{ov*100:.0f}</text>')
-        bx2 = gx + 2
-        if new_r is not None:
-            nv = new_r / N
-            bars.append(f'<rect x="{bx2:.1f}" y="{yv(nv):.1f}" width="{bw:.1f}" height="{plotH*nv/MAXV:.1f}" rx="2" fill="var(--acc2)"/>')
-            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(nv)-4:.1f}" text-anchor="middle" font-size="10" fill="var(--acc2)">{nv*100:.0f}</text>')
-        else:
-            bars.append(f'<text x="{bx2+bw/2:.1f}" y="{yv(0)-6:.1f}" text-anchor="middle" font-size="8.5" '
-                        f'fill="var(--mut)" transform="rotate(-90 {bx2+bw/2:.1f} {yv(0)-6:.1f})">no repro-40 run</text>')
-        xlabels.append(f'<text x="{gx:.1f}" y="{H-padB+16:.1f}" text-anchor="middle" font-size="10.5" fill="var(--tx)">{disp}</text>')
-    legend = (f'<rect x="{padL}" y="6" width="11" height="11" rx="2" fill="#e0a458"/>'
-              f'<text x="{padL+16}" y="15" font-size="11" fill="var(--tx)">OLD · majority-vote over 10</text>'
-              f'<rect x="{padL+205}" y="6" width="11" height="11" rx="2" fill="var(--acc2)"/>'
-              f'<text x="{padL+221}" y="15" font-size="11" fill="var(--tx)">NEW · repair-10 + repro-40 + rerank</text>')
-    svg = (f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:840px;height:auto" role="img" '
-           f'aria-label="Full-precision SWE-bench Lite, majority-vote vs repro-40, percent resolved on strat-20">'
-           + "".join(grid) + legend + "".join(bars) + "".join(xlabels) + '</svg>')
-    cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
-           'border-left:3px solid #e0a458;padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
-           '<b>repro-40 did NOT beat majority-vote here.</b> On the same 20-task sample, the reproduction-test '
-           'rerank picked patches that resolved <i>fewer</i> bugs than the simple majority vote '
-           '(qwen3.8 25→15, qwen27 15→10, muse/gemma 25→20) — so the main table keeps the better '
-           '<b>majority-vote</b> number as the headline. (The 65–75% seen briefly earlier was a denominator '
-           'bug, not real improvement.) qwen3.6-35B has no repro-40 run; its old bar is whole-function recovery.</div>')
-    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Full-precision SWE-bench Lite — does '
-            'repro-40 rerank help? <span class="mut">· OpenRouter · strat-20 sample · % resolved</span></div>'
             + svg + cap)
 
 

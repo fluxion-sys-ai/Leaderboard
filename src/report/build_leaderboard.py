@@ -1011,7 +1011,8 @@ def build() -> str:
     # board — keep the two apart so a model isn't double-listed under two param regimes.
     cells = {m: r for m, r in load_cells().items()
              if m not in EXCLUDED and m not in HIDDEN
-             and not m.endswith("-full") and not m.endswith("-q4f")}
+             and not m.endswith("-full") and not m.endswith("-q4f")
+             and not m.endswith("-orf")}   # -orf = SWE working-dir artifact, not a real board model
     for m in STALE_PINCHBENCH:
         if m in cells:
             cells[m].pop("pinchbench", None)

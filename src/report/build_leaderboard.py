@@ -704,6 +704,23 @@ def _q4_real_repro(k) -> bool:
     return False
 
 
+def _q4_swe_cell(qc, tkey, cq) -> str:
+    """Q4 SWE-bench Lite cell for the Frontier table. If a genuine repro-40 run exists on disk, render
+    the normal clickable cell. Otherwise, if a score is still on file — the accepted majority-vote (or a
+    prior rerank whose repro artifacts weren't regenerated) — show that number flagged ⚑ 'majority-vote'
+    rather than hiding it, since the repro-40 rerank is known not to beat the vote on this benchmark.
+    Only a genuinely-absent score renders as '—'."""
+    if _q4_real_repro(tkey):
+        return qc("swe", swe_score_of(cq))
+    v = swe_score_of(cq)
+    if v is None:
+        return '<td class="sc na" data-v="-1" title="not run yet">—</td>'
+    t = ("majority-vote score — repro-40 rerun declined: the reproduction-test rerank does not beat "
+         "majority-vote on SWE-bench Lite, so the vote number stands (strat-51 sample)")
+    return (f'<td class="sc" data-v="{v:.4f}" style="{heat(v)}">{v * 100:.1f}'
+            f' <span class="flag" title="{html.escape(t)}">⚑</span></td>')
+
+
 def _terminal_2x_bars() -> str:
     """Full-precision TerminalBench: native vs 2× timeout (live scored runs)."""
     models = [("qwen38", "Qwen3.8-27B"), ("qwen27", "Qwen3.6-27B"), ("qwen35", "Qwen3.6-35B"),
@@ -998,10 +1015,7 @@ def _frontier_tab() -> str:
                        # temp0+no_think (NOT rec), so they're pulled; this reads the rec-params redo.
                        + qc("pinchbench", score_of(cq, "pinchbench"))
                        + qc("terminal", _terminal_q4(tkey))
-                       + (qc("swe", swe_score_of(cq)) if _q4_real_repro(tkey) else
-                          '<td class="sc na" data-v="-1" title="repro-40 rerun pending — old '
-                          'majority-vote score withheld (interrupted run; being redone with the new '
-                          'params)">⟳</td>')
+                       + _q4_swe_cell(qc, tkey, cq)
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

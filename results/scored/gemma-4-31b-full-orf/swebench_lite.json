@@ -1,7 +1,7 @@
 {
-  "score": 0.25,
+  "score": 0.09803921568627451,
   "metric": "swebench_lite_resolved_pct",
-  "n": 20,
+  "n": 51,
   "resolved": 5,
   "detail": {
     "resolved_ids": [
@@ -47,5 +47,6 @@
       "sympy__sympy-22840",
       "sympy__sympy-23262"
     ]
-  }
+  },
+  "total": 51
 }

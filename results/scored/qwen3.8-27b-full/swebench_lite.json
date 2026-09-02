@@ -1,19 +1,27 @@
 {
- "score": 0.35,
- "resolved": 7,
- "total": 20,
- "metric": "swebench_lite_resolved_pct",
- "benchmark": "swebench_lite",
- "selection": "repair-10 + repro-40 + dropped-patch recovery (gold-verified, strat-20)",
- "detail": {
-  "resolved_ids": [
-   "astropy__astropy-14995",
-   "django__django-13590",
-   "django__django-14787",
-   "mwaskom__seaborn-3010",
-   "scikit-learn__scikit-learn-10297",
-   "sympy__sympy-20212",
-   "sympy__sympy-23262"
-  ]
- }
+  "score": 0.2549019607843137,
+  "resolved": 13,
+  "total": 51,
+  "metric": "swebench_lite_resolved_pct",
+  "benchmark": "swebench_lite",
+  "selection": "rerank: reproduction-tests (--max_samples 40) over 10 repair samples (repair --max_samples 10)",
+  "repair_samples": 10,
+  "detail": {
+    "resolved_ids": [
+      "django__django-12284",
+      "mwaskom__seaborn-3010",
+      "sympy__sympy-13971",
+      "sympy__sympy-14774",
+      "pytest-dev__pytest-5227",
+      "django__django-14787",
+      "sympy__sympy-17022",
+      "django__django-14382",
+      "matplotlib__matplotlib-23964",
+      "django__django-15790",
+      "django__django-12708",
+      "sympy__sympy-20212",
+      "django__django-15851"
+    ],
+    "denominator_note": "strat-51 sample; no-patch/unresolved instances count as unresolved"
+  }
 }

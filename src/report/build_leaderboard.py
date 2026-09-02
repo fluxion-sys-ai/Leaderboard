@@ -779,28 +779,40 @@ def _q4_terminal_2x_bars() -> str:
 
 
 def _full_swe_bars() -> str:
-    """Full-precision SWE-bench Lite: OLD majority-vote vs NEW repro-40, BOTH on the strat-20 sample
-    (fair matched comparison). Values pinned (runs complete/immutable). qwen35: old = wholefunc recovery,
-    no repro-40 run."""
-    N = 20
-    models = [("qwen38", "Qwen3.8-27B", 5, 3), ("muse", "Muse 30B", 5, 4),
-              ("qwen27", "Qwen3.6-27B", 3, 2), ("gemma", "Gemma-4-31B", 5, 4),
-              ("qwen35", "Qwen3.6-35B", 2, None)]
-    data = [(disp, old_r / N, (new_r / N if new_r is not None else None)) for _, disp, old_r, new_r in models]
+    """SWE-bench Lite, full-precision (OpenRouter) vs Q4 (local), BOTH on the same strat-51 sample so
+    the two precisions are directly comparable. Read LIVE from the scored files (repair-10 + repro-40 +
+    rerank; no-patch instances count as unresolved / N=51). Q4 bar shown only for a genuine repro-40 run
+    (else 'rerun pending')."""
+    models = [("qwen38", "Qwen3.8-27B", "qwen3.8-27b-full", "qwen3.8-27b-q4f"),
+              ("muse", "Muse 30B", "muse-glimmer-30b-full", "muse-glimmer-30b-q4f"),
+              ("qwen27", "Qwen3.6-27B", "qwen3.6-27b-full", "qwen3.6-27b-q4f"),
+              ("gemma", "Gemma-4-31B", "gemma-4-31b-full", "gemma-4-31b-q4f"),
+              ("qwen35", "Qwen3.6-35B", "qwen3.6-35b-a3b-full", "qwen3.5-35b-a3b-q4f")]
+
+    def _sc(d):
+        try:
+            return json.load(open(REPO_ROOT / "results" / "scored" / d / "swebench_lite.json")).get("score")
+        except Exception:
+            return None
+
+    def _q4(k, d):
+        return _sc(d) if _q4_real_repro(k) else None
+
+    data = [(disp, _sc(fd), _q4(k, qd)) for k, disp, fd, qd in models]
     svg = _grouped_bars_svg(data,
-                            aria="Full-precision SWE-bench Lite, majority-vote vs repro-40, percent resolved on strat-20",
-                            la="OLD · majority-vote over 10", lb="NEW · repair-10 + repro-40 + rerank",
-                            ca="#e0a458", a_lab="#e0a458", lb_off=205, maxv=0.40, ticks=(0, 10, 20, 30, 40),
-                            vfmt=".0f", delta=False, miss="no repro-40 run")
+                            aria="SWE-bench Lite, full-precision vs Q4, percent resolved on strat-51",
+                            la="full precision (OpenRouter)", lb="Q4 (local A100)",
+                            ca="#e0a458", a_lab="#e0a458", lb_off=190, maxv=0.40, ticks=(0, 10, 20, 30, 40),
+                            vfmt=".1f", delta=False, miss="Q4 rerun pending")
     cap = ('<div style="margin:6px 0 8px;font-size:11.5px;max-width:840px;line-height:1.5;'
            'border-left:3px solid #e0a458;padding:8px 12px;background:var(--s1);border-radius:0 6px 6px 0">'
-           '<b>repro-40 did NOT beat majority-vote here.</b> On the same 20-task sample, the reproduction-test '
-           'rerank picked patches that resolved <i>fewer</i> bugs than the simple majority vote '
-           '(qwen3.8 25→15, qwen27 15→10, muse/gemma 25→20) — so the main table keeps the better '
-           '<b>majority-vote</b> number as the headline. (The 65–75% seen briefly earlier was a denominator '
-           'bug, not real improvement.) qwen3.6-35B has no repro-40 run; its old bar is whole-function recovery.</div>')
-    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">Full-precision SWE-bench Lite — does '
-            'repro-40 rerank help? <span class="mut">· OpenRouter · strat-20 sample · % resolved</span></div>'
+           '<b>Full precision and Q4 now share the same 51-instance sample</b> (previously full was scored '
+           'on a 20-instance set, which inflated it — e.g. Muse 16 resolved read as 16/20=80% instead of the '
+           'true 16/51≈31%). On the aligned set the two precisions are close: full is modestly ahead on Muse '
+           '(31 vs pending) and level with Q4 on Qwen3.8 (both 25.5%). The repro-40 rerank did not beat '
+           'majority-vote on either precision — these are the models\' real SWE ceiling, not a pipeline gain.</div>')
+    return ('<div style="font-weight:600;margin:22px 0 4px;font-size:13px">SWE-bench Lite — full precision vs Q4 '
+            '<span class="mut">· strat-51 sample (aligned) · % resolved</span></div>'
             + svg + cap)
 
 

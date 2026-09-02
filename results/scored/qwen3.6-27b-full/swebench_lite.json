@@ -1,1 +1,24 @@
-{"score": 0.15, "resolved": 3, "total": 20, "metric": "swebench_lite_resolved_pct", "benchmark": "swebench_lite", "selection": "majority_vote_over_10", "detail": {"resolved_ids": ["astropy__astropy-14995", "mwaskom__seaborn-3010", "scikit-learn__scikit-learn-10297"], "unresolved_ids": ["django__django-13551", "django__django-13590", "django__django-15902", "matplotlib__matplotlib-23476", "sympy__sympy-13177"], "completed_ids": ["astropy__astropy-14995", "django__django-13551", "django__django-13590", "django__django-15902", "matplotlib__matplotlib-23476", "mwaskom__seaborn-3010", "scikit-learn__scikit-learn-10297", "sympy__sympy-13177"]}}
+{
+  "score": 0.19607843137254902,
+  "resolved": 10,
+  "total": 51,
+  "metric": "swebench_lite_resolved_pct",
+  "benchmark": "swebench_lite",
+  "selection": "rerank: reproduction-tests (--max_samples 40) over 10 repair samples (repair --max_samples 10)",
+  "repair_samples": 10,
+  "detail": {
+    "resolved_ids": [
+      "django__django-12284",
+      "pytest-dev__pytest-5227",
+      "django__django-14787",
+      "sympy__sympy-17022",
+      "django__django-14999",
+      "matplotlib__matplotlib-23964",
+      "django__django-15790",
+      "django__django-12708",
+      "psf__requests-2674",
+      "django__django-15851"
+    ],
+    "denominator_note": "strat-51 sample; no-patch/unresolved instances count as unresolved"
+  }
+}

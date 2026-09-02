@@ -42,10 +42,12 @@ MODELNAME="${FULLNAME}-${PREC}"
 if [ "$KEY" = "qwen35" ] && [ "$PREC" = "q4f" ]; then
   SCORED_DIR="results/scored/qwen3.5-35b-a3b-q4f"; MODELNAME="qwen3.5-35b-a3b-q4f"
 fi
-# N (denominator) MUST equal the SAME instance count the ORIGINAL run scored (Q4=51), NOT strat50's 20,
-# else the before/after is on different sets and meaningless. Read it from the existing scored json.
-N=$(python3 -c "import json;d=json.load(open('$SCORED_DIR/swebench_lite.json'));print(d.get('total') or d.get('n') or 51)" 2>/dev/null); [ -n "${N:-}" ] || N=51
-echo "[rescore] denominator N=$N (from original $SCORED_DIR)"
+# N (denominator) MUST equal the strat-51 sample size (51) for BOTH precisions — full and Q4 now run the
+# SAME stratified 51-instance set, so scores are directly comparable. We read the size straight from the
+# canonical config (NOT from the existing scored json, which for legacy full runs still carried the old
+# strat-20 total=20 and silently inflated the score, e.g. 16 resolved shown as 16/20=80% instead of 16/51=31%).
+N=$(grep -c . configs/swe_lite_strat50_full51.txt 2>/dev/null); [ "${N:-0}" -ge 1 ] || N=51
+echo "[rescore] denominator N=$N (strat-51 sample; full & Q4 aligned)"
 # IDS (which instances to evaluate) is set AFTER the vote, from the bugs that actually have a patch.
 
 NS=$(ls "$REP"/output_*_processed.jsonl 2>/dev/null | wc -l)
@@ -116,7 +118,7 @@ fi
 # 4) BACKUP the old score, then write it with the ACTUAL selection method recorded (so the board card
 #    shows exactly which settings produced this number).
 case "$SELECT" in
-  prebuilt) SELLABEL="rerank: regression + reproduction-tests (--max_samples 40) over ${NS} repair samples" ;;
+  prebuilt) SELLABEL="rerank: reproduction-tests (--max_samples 40) over ${NS} repair samples (repair --max_samples 10)" ;;
   wholefunc) SELLABEL="whole-function code-fence recovery + majority vote over ${NS}" ;;
   *) SELLABEL="majority_vote_over_${NS}" ;;
 esac

@@ -379,11 +379,50 @@
             "agent_ended_at": "2026-09-03T04:47:13.898735+00:00",
             "test_started_at": "2026-09-03T04:47:17.636548+00:00",
             "test_ended_at": "2026-09-03T04:47:24.552855+00:00"
+        },
+        {
+            "id": "3a89a887-0c68-42a3-8dc6-1e819ec802b5",
+            "trial_name": "swe-bench-astropy-1.1-of-1.qwen38q56",
+            "task_id": "swe-bench-astropy-1",
+            "instruction": "Modeling's `separability_matrix` does not compute separability correctly for nested CompoundModels\nConsider the following model:\n\n```python\nfrom astropy.modeling import models as m\nfrom astropy.modeling.separable import separability_matrix\n\ncm = m.Linear1D(10) & m.Linear1D(5)\n```\n\nIt's separability matrix as you might expect is a diagonal:\n\n```python\n>>> separability_matrix(cm)\narray([[ True, False],\n[False, True]])\n```\n\nIf I make the model more complex:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, False],\n[False, False, False, True]])\n```\n\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\n\nIf however, I nest these compound models:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, True],\n[False, False, True, True]])\n```\nSuddenly the inputs and outputs are no longer separable?\n\nThis feels like a bug to me, but I might be missing something?",
+            "is_resolved": null,
+            "failure_mode": "parse_error",
+            "parser_results": null,
+            "recording_path": "qwen38q56/swe-bench-astropy-1/swe-bench-astropy-1.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T04:09:07.167583+00:00",
+            "trial_ended_at": "2026-09-03T04:51:54.200707+00:00",
+            "agent_started_at": "2026-09-03T04:09:12.811633+00:00",
+            "agent_ended_at": "2026-09-03T04:47:33.013905+00:00",
+            "test_started_at": "2026-09-03T04:47:36.722570+00:00",
+            "test_ended_at": "2026-09-03T04:51:37.089621+00:00"
+        },
+        {
+            "id": "1dfd77e2-c0d0-488e-9a1b-fe09260a5e15",
+            "trial_name": "train-fasttext.1-of-1.qwen38q56",
+            "task_id": "train-fasttext",
+            "instruction": "Can you train a fasttext model on the yelp data in the data/ folder?\n\nThe final model size needs to be less than 150MB but get at least 0.62 accuracy on a private test set.\n\nThe model should be saved as model.bin in the current directory.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_accuracy": "failed",
+                "test_model_size": "failed"
+            },
+            "recording_path": "qwen38q56/train-fasttext/train-fasttext.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T04:32:27.043020+00:00",
+            "trial_ended_at": "2026-09-03T04:58:20.506616+00:00",
+            "agent_started_at": "2026-09-03T04:32:35.568511+00:00",
+            "agent_ended_at": "2026-09-03T04:57:35.774856+00:00",
+            "test_started_at": "2026-09-03T04:57:40.003252+00:00",
+            "test_ended_at": "2026-09-03T04:58:06.410615+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 7,
-    "n_unresolved": 4,
+    "n_unresolved": 6,
     "resolved_ids": [
         "eval-mteb.hard",
         "swe-bench-astropy-2",
@@ -397,7 +436,9 @@
         "build-linux-kernel-qemu",
         "super-benchmark-upet",
         "conda-env-conflict-resolution",
-        "run-pdp11-code"
+        "run-pdp11-code",
+        "swe-bench-astropy-1",
+        "train-fasttext"
     ],
-    "accuracy": 0.6363636363636364
+    "accuracy": 0.5384615384615384
 }

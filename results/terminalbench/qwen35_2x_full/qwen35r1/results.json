@@ -1,33 +1,53 @@
 {
-    "id": "3d17272a-cf1a-46f6-8bd6-0a3c515c44f9",
+    "id": "73de8117-da13-46a0-b284-f355302f6207",
     "results": [
         {
-            "id": "62fc946f-c55d-4f7f-b041-675f65c68bdb",
+            "id": "1e05a96b-dd1c-45d7-b79f-49595b0affad",
             "trial_name": "super-benchmark-upet.1-of-1.qwen35r1",
             "task_id": "super-benchmark-upet",
             "instruction": "Train a roberta-base model on the RTE dataset using the UPET method with the `run.py` script. Report eval accuracy as a json structured as follows: {\"eval_accuracy\": 0.0} (replace 0.0 with the actual value).\n\nAdditional instructions:\n1. Run for only 1 epoch. 2. Set 5 examples per label, seed=42, and other hyperparameters taken from the example in the repository readme file.\n\nGit repository: https://github.com/wjn1996/UPET\nCommit hash: 4701c3c62441077cc44a6553bf6ae909d99b8351",
+            "is_resolved": null,
+            "failure_mode": "unknown_agent_error",
+            "parser_results": null,
+            "recording_path": null,
+            "total_input_tokens": null,
+            "total_output_tokens": null,
+            "trial_started_at": null,
+            "trial_ended_at": null,
+            "agent_started_at": null,
+            "agent_ended_at": null,
+            "test_started_at": null,
+            "test_ended_at": null
+        },
+        {
+            "id": "85884bba-9b39-42f2-80ab-230de1f55559",
+            "trial_name": "run-pdp11-code.1-of-1.qwen35r1",
+            "task_id": "run-pdp11-code",
+            "instruction": "In /app/data.hex is the output of hexdump on a binary file. Figure out what kind of file it is, then figure out how to run it, and tell me what the output of that program is.",
             "is_resolved": false,
-            "failure_mode": "unset",
+            "failure_mode": "agent_timeout",
             "parser_results": {
-                "test_right_output": "failed"
+                "test_out_file_exists": "failed",
+                "test_out_file_content": "failed"
             },
-            "recording_path": "qwen35r1/super-benchmark-upet/super-benchmark-upet.1-of-1.qwen35r1/sessions/agent.cast",
-            "total_input_tokens": 369192,
-            "total_output_tokens": 5126,
-            "trial_started_at": "2026-09-03T23:00:09.513296+00:00",
-            "trial_ended_at": "2026-09-03T23:05:41.011009+00:00",
-            "agent_started_at": "2026-09-03T23:00:14.111437+00:00",
-            "agent_ended_at": "2026-09-03T23:05:15.383761+00:00",
-            "test_started_at": "2026-09-03T23:05:18.769416+00:00",
-            "test_ended_at": "2026-09-03T23:05:25.762412+00:00"
+            "recording_path": "qwen35r1/run-pdp11-code/run-pdp11-code.1-of-1.qwen35r1/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T22:40:09.081426+00:00",
+            "trial_ended_at": "2026-09-03T23:18:56.617037+00:00",
+            "agent_started_at": "2026-09-03T22:40:13.713465+00:00",
+            "agent_ended_at": "2026-09-03T23:18:33.742401+00:00",
+            "test_started_at": "2026-09-03T23:18:37.173898+00:00",
+            "test_ended_at": "2026-09-03T23:18:44.552819+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 0,
-    "n_unresolved": 1,
+    "n_unresolved": 2,
     "resolved_ids": [],
     "unresolved_ids": [
-        "super-benchmark-upet"
+        "super-benchmark-upet",
+        "run-pdp11-code"
     ],
     "accuracy": 0.0
 }

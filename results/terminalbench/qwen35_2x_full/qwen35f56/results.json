@@ -20,14 +20,35 @@
             "agent_ended_at": "2026-09-03T19:23:34.594126+00:00",
             "test_started_at": "2026-09-03T19:23:38.940924+00:00",
             "test_ended_at": "2026-09-03T19:24:20.441863+00:00"
+        },
+        {
+            "id": "183652d8-23d7-4aad-9c12-bdbecb398aa0",
+            "trial_name": "build-linux-kernel-qemu.1-of-1.qwen35f56",
+            "task_id": "build-linux-kernel-qemu",
+            "instruction": "Build linux kernel linux-6.9 from source. I've created an initial ramfs for you, so once its built, all you should have to do is run qemu-system-x86_64 -kernel ./linux-6.9/arch/x86/boot/bzImage -initrd ramfs/initramfs.cpio.gz -append \"console=ttyS0\" -nographic.\nMake sure that you have linux-6.9/usr/gen_init_cpio so that I can generate the ramfs for you.\nTo prove you've built it from source, add\nprintk(KERN_INFO \"Hello, this is a custom kernel\");\nto the function start_kernel.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "../tests/test_outputs.py - TypeError: bad operand type for unary +: 'str'": "failed"
+            },
+            "recording_path": "qwen35f56/build-linux-kernel-qemu/build-linux-kernel-qemu.1-of-1.qwen35f56/sessions/agent.cast",
+            "total_input_tokens": 920933,
+            "total_output_tokens": 9106,
+            "trial_started_at": "2026-09-03T18:53:23.973627+00:00",
+            "trial_ended_at": "2026-09-03T19:34:28.644034+00:00",
+            "agent_started_at": "2026-09-03T18:53:28.300436+00:00",
+            "agent_ended_at": "2026-09-03T19:33:54.908565+00:00",
+            "test_started_at": "2026-09-03T19:33:58.645411+00:00",
+            "test_ended_at": "2026-09-03T19:34:09.406996+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 0,
-    "n_unresolved": 1,
+    "n_unresolved": 2,
     "resolved_ids": [],
     "unresolved_ids": [
-        "super-benchmark-upet"
+        "super-benchmark-upet",
+        "build-linux-kernel-qemu"
     ],
     "accuracy": 0.0
 }

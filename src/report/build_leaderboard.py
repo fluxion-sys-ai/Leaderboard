@@ -600,7 +600,7 @@ def _fr_spec(model_key, bench, precision):
                              "native per-task timeout · 2× run not done yet"))
     swe_ctx = None
     if bench == "swe":
-        inst = "51 (strat51)" if precision == "q4" else "20 (strat50)"
+        inst = "51 (strat51)"   # full & Q4 both aligned to the strat-51 sample
         # Read the ACTUAL selection recorded in this cell's score so the card always matches the number.
         _swedir = {"qwen38": "qwen3.8-27b", "muse": "muse-glimmer-30b", "qwen27": "qwen3.6-27b",
                    "qwen35": ("qwen3.5-35b-a3b" if precision == "q4" else "qwen3.6-35b-a3b"),
@@ -631,13 +631,9 @@ def _fr_spec(model_key, bench, precision):
     if bench in _TIMEOUT:
         parts.append(f'<b>timeout:</b> {_TIMEOUT[bench]}')
     if bench == "terminal":
-        full80 = False
-        if precision == "q4":
-            q4dir = {"qwen38": "qwen3.8-27b-q4f", "muse": "muse-glimmer-30b-q4f",
-                     "qwen27": "qwen3.6-27b-q4f", "qwen35": "qwen3.5-35b-a3b-q4f",
-                     "gemma": "gemma-4-31b-q4f"}.get(model_key)
-            full80 = bool(q4dir and (REPO_ROOT / "results" / "scored" / q4dir / "terminal_full.json").exists())
-        parts.append('<b>task set:</b> ' + ('full 79/80 (play-zork excluded — broken container)'
+        # full-80 shown once the merged run exists (24-sample + remaining-56, both at 2×); else 24-sample
+        full80 = _terminal_full80(model_key, q4=(precision == "q4")) is not None
+        parts.append('<b>task set:</b> ' + ('full 80-task set (terminal-bench-core 0.1.1)'
                                             if full80 else '24-task stratified sample'))
     if bench == "swe" and swe_ctx:
         inst, _repro, _wf = swe_ctx

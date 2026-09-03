@@ -218,7 +218,7 @@ full-precision vs Q4-local** comparison across 5 frontier 30B-class models and 5
 |---|---|
 | IFBench, AIME'26 | direct; thinking ON; `max_tokens` 81,920 |
 | PinchBench (116-task multi-turn agent) | **no_think** (thinking-ON zeroes agentic pinch); DeepSeek-chat-v3.1 judge |
-| TerminalBench (terminus-2, terminal-bench-core; 24-task stratified sample) | thinking ON; native per-task timeout **and** a 2× global-timeout variant (see *Current experiments*) |
+| TerminalBench (terminus-2, terminal-bench-core 0.1.1; full 80-task set, extended from the 24-task stratified sample) | thinking ON; 2× global-timeout variant; the board shows the full-80 score once a model's merged run lands, else the 24-sample score (see *Current experiments*) |
 | SWE-bench Lite (Agentless; strat-51 sample, seed 42 — full & Q4 aligned) | localize temp 0 / repair temp 0.8; `repair --max_samples 10` + `reproduction-tests --max_samples 40` + reproduction-only rerank (see *Current experiments*) |
 
 Per-model sampling: Muse/Gemma `temp 1.0 / top_p 0.95 / top_k 64`; Qwen `1.0 / 0.95 / 20` + presence

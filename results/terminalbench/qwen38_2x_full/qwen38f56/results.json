@@ -420,11 +420,32 @@
             "agent_ended_at": "2026-09-03T21:12:29.686665+00:00",
             "test_started_at": "2026-09-03T21:12:33.674529+00:00",
             "test_ended_at": "2026-09-03T21:12:51.821707+00:00"
+        },
+        {
+            "id": "712ca574-86f2-4631-bffc-8bb20ce7d02e",
+            "trial_name": "train-fasttext.1-of-1.qwen38f56",
+            "task_id": "train-fasttext",
+            "instruction": "Can you train a fasttext model on the yelp data in the data/ folder?\n\nThe final model size needs to be less than 150MB but get at least 0.62 accuracy on a private test set.\n\nThe model should be saved as model.bin in the current directory.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_model_size": "passed",
+                "test_accuracy": "failed"
+            },
+            "recording_path": "qwen38f56/train-fasttext/train-fasttext.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T21:08:02.193661+00:00",
+            "trial_ended_at": "2026-09-03T21:34:11.450367+00:00",
+            "agent_started_at": "2026-09-03T21:08:08.042342+00:00",
+            "agent_ended_at": "2026-09-03T21:33:08.245016+00:00",
+            "test_started_at": "2026-09-03T21:33:12.585456+00:00",
+            "test_ended_at": "2026-09-03T21:33:54.423749+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 8,
-    "n_unresolved": 5,
+    "n_unresolved": 6,
     "resolved_ids": [
         "conda-env-conflict-resolution",
         "eval-mteb.hard",
@@ -440,7 +461,8 @@
         "build-linux-kernel-qemu",
         "swe-bench-astropy-2",
         "run-pdp11-code",
-        "swe-bench-astropy-1"
+        "swe-bench-astropy-1",
+        "train-fasttext"
     ],
-    "accuracy": 0.6153846153846154
+    "accuracy": 0.5714285714285714
 }

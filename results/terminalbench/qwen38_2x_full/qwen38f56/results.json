@@ -1073,10 +1073,73 @@
             "agent_ended_at": "2026-09-03T23:37:45.761532+00:00",
             "test_started_at": "2026-09-03T23:37:49.158433+00:00",
             "test_ended_at": "2026-09-03T23:37:57.478951+00:00"
+        },
+        {
+            "id": "3fe39854-29a6-4a17-aa17-496e6c74af7d",
+            "trial_name": "fix-pandas-version.1-of-1.qwen38f56",
+            "task_id": "fix-pandas-version",
+            "instruction": "You are working on a data analysis project that processes customer\ntransaction data. The project's test suite is failing with the following error:\n\nInput:\npython -m src.data_processor\n\nOutput:\nTypeError: read_csv() got an\\\n\\ unexpected keyword argument 'dtype_backend'\n\nPlease fix to environment to\\\n\\ support the features used in the code. \n\"",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_pandas_version": "passed",
+                "test_load_and_process_data": "passed",
+                "test_analyze_customer_segments": "passed"
+            },
+            "recording_path": "qwen38f56/fix-pandas-version/fix-pandas-version.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 153926,
+            "total_output_tokens": 6135,
+            "trial_started_at": "2026-09-03T23:32:16.629941+00:00",
+            "trial_ended_at": "2026-09-03T23:40:59.060834+00:00",
+            "agent_started_at": "2026-09-03T23:32:25.000077+00:00",
+            "agent_ended_at": "2026-09-03T23:40:38.613893+00:00",
+            "test_started_at": "2026-09-03T23:40:42.268610+00:00",
+            "test_ended_at": "2026-09-03T23:40:45.021887+00:00"
+        },
+        {
+            "id": "748439cb-0546-4947-b4bb-f7df090235e8",
+            "trial_name": "sqlite-db-truncate.1-of-1.qwen38f56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_data": "passed"
+            },
+            "recording_path": "qwen38f56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 28942,
+            "total_output_tokens": 3137,
+            "trial_started_at": "2026-09-03T23:38:10.233469+00:00",
+            "trial_ended_at": "2026-09-03T23:41:37.557934+00:00",
+            "agent_started_at": "2026-09-03T23:38:14.873023+00:00",
+            "agent_ended_at": "2026-09-03T23:41:04.450973+00:00",
+            "test_started_at": "2026-09-03T23:41:08.319203+00:00",
+            "test_ended_at": "2026-09-03T23:41:24.826239+00:00"
+        },
+        {
+            "id": "b49613f6-e978-4cba-98b2-3d3a34c0ac98",
+            "trial_name": "csv-to-parquet.1-of-1.qwen38f56",
+            "task_id": "csv-to-parquet",
+            "instruction": "Convert the file '/app/data.csv' into a Parquet file named '/app/data.parquet'. The CSV file contains sample data with headers.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_parquet_exists": "passed",
+                "test_data_matches": "passed"
+            },
+            "recording_path": "qwen38f56/csv-to-parquet/csv-to-parquet.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 64432,
+            "total_output_tokens": 2052,
+            "trial_started_at": "2026-09-03T23:41:37.564531+00:00",
+            "trial_ended_at": "2026-09-03T23:47:50.188293+00:00",
+            "agent_started_at": "2026-09-03T23:42:02.780049+00:00",
+            "agent_ended_at": "2026-09-03T23:47:23.989457+00:00",
+            "test_started_at": "2026-09-03T23:47:27.398439+00:00",
+            "test_ended_at": "2026-09-03T23:47:36.409749+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 22,
+    "n_resolved": 25,
     "n_unresolved": 20,
     "resolved_ids": [
         "conda-env-conflict-resolution",
@@ -1100,7 +1163,10 @@
         "modernize-fortran-build",
         "fix-git",
         "cartpole-rl-training",
-        "git-workflow-hack"
+        "git-workflow-hack",
+        "fix-pandas-version",
+        "sqlite-db-truncate",
+        "csv-to-parquet"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1124,5 +1190,5 @@
         "intrusion-detection",
         "fibonacci-server"
     ],
-    "accuracy": 0.5238095238095238
+    "accuracy": 0.5555555555555556
 }

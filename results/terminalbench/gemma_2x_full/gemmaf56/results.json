@@ -1189,10 +1189,33 @@
             "agent_ended_at": "2026-09-03T23:37:53.645591+00:00",
             "test_started_at": "2026-09-03T23:37:57.062275+00:00",
             "test_ended_at": "2026-09-03T23:38:04.601723+00:00"
+        },
+        {
+            "id": "10d81c78-1aae-4a9a-a30a-85923d70d464",
+            "trial_name": "prove-plus-comm.1-of-1.gemmaf56",
+            "task_id": "prove-plus-comm",
+            "instruction": "Fix the incomplete proof of addition commutativity in the file plus_comm.v. The file contains a partial proof that needs to be completed.\n\nThe theorem states that addition is commutative for natural numbers (forall n m : nat, n + m = m + n).\nThe proof attempt uses induction but is missing some crucial steps.\n\nYour task is to:\n1. Analyze the incomplete proof in plus_comm.v\n2. Add the missing steps to complete the proof\n3. Compile the completed proof using coqc\n\nThe proof should be completed using Coq's tactics and the final compiled proof should be in plus_comm.vo.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_proof_file_exists": "passed",
+                "test_compiled_proof_exists": "passed",
+                "test_proof_contents": "passed",
+                "test_compiled_proof_content": "passed"
+            },
+            "recording_path": "gemmaf56/prove-plus-comm/prove-plus-comm.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 10015,
+            "total_output_tokens": 1028,
+            "trial_started_at": "2026-09-03T23:38:16.906622+00:00",
+            "trial_ended_at": "2026-09-03T23:42:22.297130+00:00",
+            "agent_started_at": "2026-09-03T23:40:43.588863+00:00",
+            "agent_ended_at": "2026-09-03T23:41:45.061034+00:00",
+            "test_started_at": "2026-09-03T23:41:48.626836+00:00",
+            "test_ended_at": "2026-09-03T23:42:06.213504+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 27,
+    "n_resolved": 28,
     "n_unresolved": 20,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -1221,7 +1244,8 @@
         "heterogeneous-dates",
         "simple-web-scraper",
         "hello-world",
-        "openssl-selfsigned-cert"
+        "openssl-selfsigned-cert",
+        "prove-plus-comm"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -1245,5 +1269,5 @@
         "reshard-c4-data",
         "chess-best-move"
     ],
-    "accuracy": 0.574468085106383
+    "accuracy": 0.5833333333333334
 }

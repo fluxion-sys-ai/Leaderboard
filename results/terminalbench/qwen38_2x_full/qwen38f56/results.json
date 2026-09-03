@@ -441,11 +441,31 @@
             "agent_ended_at": "2026-09-03T21:33:08.245016+00:00",
             "test_started_at": "2026-09-03T21:33:12.585456+00:00",
             "test_ended_at": "2026-09-03T21:33:54.423749+00:00"
+        },
+        {
+            "id": "186215f1-5d3b-4fc5-8695-daaf1a0d828d",
+            "trial_name": "qemu-alpine-ssh.1-of-1.qwen38f56",
+            "task_id": "qemu-alpine-ssh",
+            "instruction": "Start the alpine.iso image in qemu, and then start an ssh server on the alpine linux vm. When you're done, I should be able to run `ssh -p 2222 root@localhost` with password `password123` and be dropped into a shell. On the alpine.iso image, the default username is root with no password.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_sshpass": "failed"
+            },
+            "recording_path": "qwen38f56/qemu-alpine-ssh/qemu-alpine-ssh.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T21:13:08.374300+00:00",
+            "trial_ended_at": "2026-09-03T21:42:49.499511+00:00",
+            "agent_started_at": "2026-09-03T21:17:10.459046+00:00",
+            "agent_ended_at": "2026-09-03T21:42:10.664378+00:00",
+            "test_started_at": "2026-09-03T21:42:14.551984+00:00",
+            "test_ended_at": "2026-09-03T21:42:32.885172+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 8,
-    "n_unresolved": 6,
+    "n_unresolved": 7,
     "resolved_ids": [
         "conda-env-conflict-resolution",
         "eval-mteb.hard",
@@ -462,7 +482,8 @@
         "swe-bench-astropy-2",
         "run-pdp11-code",
         "swe-bench-astropy-1",
-        "train-fasttext"
+        "train-fasttext",
+        "qemu-alpine-ssh"
     ],
-    "accuracy": 0.5714285714285714
+    "accuracy": 0.5333333333333333
 }

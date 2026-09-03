@@ -435,11 +435,52 @@
             "agent_ended_at": "2026-09-03T21:30:44.273480+00:00",
             "test_started_at": "2026-09-03T21:30:48.164359+00:00",
             "test_ended_at": "2026-09-03T21:31:04.756984+00:00"
+        },
+        {
+            "id": "a941db21-44f7-4465-aa84-44d8a7837b01",
+            "trial_name": "qemu-startup.1-of-1.gemmaf56",
+            "task_id": "qemu-startup",
+            "instruction": "Start the alpine.iso image in qemu in such a way that I can connect to it via `telnet 127.0.0.1 6665`. When I run telnet I will expect to see the login prompt; I'll log in. You should just get me to this point. Start the image in the background and leave it running. Block until it's ready.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_version": "passed"
+            },
+            "recording_path": "gemmaf56/qemu-startup/qemu-startup.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 31035,
+            "total_output_tokens": 3221,
+            "trial_started_at": "2026-09-03T21:31:25.452806+00:00",
+            "trial_ended_at": "2026-09-03T21:42:29.006473+00:00",
+            "agent_started_at": "2026-09-03T21:35:39.704946+00:00",
+            "agent_ended_at": "2026-09-03T21:41:53.509172+00:00",
+            "test_started_at": "2026-09-03T21:41:57.437920+00:00",
+            "test_ended_at": "2026-09-03T21:42:13.887157+00:00"
+        },
+        {
+            "id": "1497425c-adae-450a-a7df-6ab496d3072e",
+            "trial_name": "train-fasttext.1-of-1.gemmaf56",
+            "task_id": "train-fasttext",
+            "instruction": "Can you train a fasttext model on the yelp data in the data/ folder?\n\nThe final model size needs to be less than 150MB but get at least 0.62 accuracy on a private test set.\n\nThe model should be saved as model.bin in the current directory.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_accuracy": "failed",
+                "test_model_size": "failed"
+            },
+            "recording_path": "gemmaf56/train-fasttext/train-fasttext.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T21:20:43.457829+00:00",
+            "trial_ended_at": "2026-09-03T21:46:32.193870+00:00",
+            "agent_started_at": "2026-09-03T21:20:50.788381+00:00",
+            "agent_ended_at": "2026-09-03T21:45:50.988893+00:00",
+            "test_started_at": "2026-09-03T21:45:55.007458+00:00",
+            "test_ended_at": "2026-09-03T21:46:19.400533+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 7,
-    "n_unresolved": 6,
+    "n_resolved": 8,
+    "n_unresolved": 7,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -447,7 +488,8 @@
         "swe-bench-astropy-1",
         "blind-maze-explorer-algorithm",
         "incompatible-python-fasttext.base_with_hint",
-        "grid-pattern-transform"
+        "grid-pattern-transform",
+        "qemu-startup"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -455,7 +497,8 @@
         "swe-bench-astropy-2",
         "run-pdp11-code",
         "blind-maze-explorer-5x5",
-        "incompatible-python-fasttext"
+        "incompatible-python-fasttext",
+        "train-fasttext"
     ],
-    "accuracy": 0.5384615384615384
+    "accuracy": 0.5333333333333333
 }

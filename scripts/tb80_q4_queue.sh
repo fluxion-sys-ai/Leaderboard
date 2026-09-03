@@ -6,7 +6,8 @@
 set -uo pipefail
 REPO=/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark
 cd "$REPO" || exit 1
-REM="$REPO/configs/terminal_sample_remaining.txt"
+# play-zork excluded (broken container -> guaranteed 404/timeout, wastes GPU time). Full set = 24 + 55 = 79.
+REM="$REPO/configs/terminal_remaining_noplayzork.txt"
 LOG="$REPO/logs_tb80_q4.log"
 echo "=== tb80 Q4 (remaining-56 @2x, serial) start $(date -u) ===" > "$LOG"
 # wait until the GPU is free. Only GPU USERS block us: a live llama-server, or a LOCAL-Q4 tb run
@@ -23,11 +24,12 @@ for k in qwen38 qwen27 qwen35 gemma muse; do
   rid="${BASE[$k]}"
   base="$REPO/results/terminalbench_q4/${k}_2x24/${rid}/results.json"
   outdir="$REPO/results/terminalbench_q4/${k}_2x24"
-  echo "[$k] remaining-56 @2x start $(date -u)" >> "$LOG"
-  TB_OUT="$outdir" TB_RUNID="${k}rem56" TB_MULT=2.0 TB_SAMPLE_FILE="$REM" TERMN=56 \
+  echo "[$k] remaining-55 @2x start $(date -u)" >> "$LOG"
+  # run-id MUST differ from the full-precision run-id (${k}f56) to avoid Docker container-name collision.
+  TB_OUT="$outdir" TB_RUNID="${k}q56" TB_MULT=2.0 TB_SAMPLE_FILE="$REM" TERMN=55 \
     bash scripts/terminalbench_q4_run.sh "$k" >> "$REPO/logs_tb80_q4_${k}.log" 2>&1 \
-    || echo "[$k] q4 remaining-56 non-zero" >> "$LOG"
-  extra="$outdir/${k}rem56/results.json"
+    || echo "[$k] q4 remaining-55 non-zero" >> "$LOG"
+  extra="$outdir/${k}q56/results.json"
   mkdir -p "$REPO/results/terminalbench_q4/${k}_full80"
   python3 scripts/tb_merge80.py "$base" "$extra" "$REPO/results/terminalbench_q4/${k}_full80/results.json" >> "$LOG" 2>&1 \
     || echo "[$k] merge failed" >> "$LOG"

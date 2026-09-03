@@ -855,10 +855,53 @@
             "agent_ended_at": "2026-09-03T22:48:00.784594+00:00",
             "test_started_at": "2026-09-03T22:48:04.174472+00:00",
             "test_ended_at": "2026-09-03T22:48:36.300394+00:00"
+        },
+        {
+            "id": "bf475b4f-2124-4cfa-a4cf-13225a3c3ea2",
+            "trial_name": "crack-7z-hash.1-of-1.gemmaf56",
+            "task_id": "crack-7z-hash",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe password is unknown, but I know that the password is a 4-digit number.\nUse the john the ripper binaries in the \"/app/john/run\" directory.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "gemmaf56/crack-7z-hash/crack-7z-hash.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 217750,
+            "total_output_tokens": 5680,
+            "trial_started_at": "2026-09-03T22:35:49.825495+00:00",
+            "trial_ended_at": "2026-09-03T22:49:55.919503+00:00",
+            "agent_started_at": "2026-09-03T22:38:45.230954+00:00",
+            "agent_ended_at": "2026-09-03T22:49:30.555671+00:00",
+            "test_started_at": "2026-09-03T22:49:33.995371+00:00",
+            "test_ended_at": "2026-09-03T22:49:43.602402+00:00"
+        },
+        {
+            "id": "c6849557-ca0c-4781-ac4e-4d4a952c33dd",
+            "trial_name": "simple-sheets-put.1-of-1.gemmaf56",
+            "task_id": "simple-sheets-put",
+            "instruction": "1. Create a new spreadsheet named \"Financial Report\"\n2. Create a sheet in this spreadsheet named \"Q1 Data\"\n3. Add the following data to the sheet, starting at cell A1:\n  | Month    | Revenue | Expenses |\n  |----------|---------|----------|\n  | January  | 10000   | 8000     |\n  | February | 12000   | 9000     |\n  | March    | 15000   | 10000    |\n\n4. Add a third column that contains the profit.\n\nThe API is available at http://api:8000.\nThere is an endpoint to get the API documentation at http://api:8000/docs/json.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_spreadsheet_created": "passed",
+                "test_sheet_created": "passed",
+                "test_cells_created": "passed"
+            },
+            "recording_path": "gemmaf56/simple-sheets-put/simple-sheets-put.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 60114,
+            "total_output_tokens": 2861,
+            "trial_started_at": "2026-09-03T22:48:48.576418+00:00",
+            "trial_ended_at": "2026-09-03T22:52:24.193831+00:00",
+            "agent_started_at": "2026-09-03T22:49:30.427259+00:00",
+            "agent_ended_at": "2026-09-03T22:52:03.661069+00:00",
+            "test_started_at": "2026-09-03T22:52:03.711704+00:00",
+            "test_ended_at": "2026-09-03T22:52:09.579032+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 20,
+    "n_resolved": 22,
     "n_unresolved": 12,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -880,7 +923,9 @@
         "new-encrypt-command",
         "get-bitcoin-nodes",
         "crack-7z-hash.hard",
-        "swe-bench-langcodes"
+        "swe-bench-langcodes",
+        "crack-7z-hash",
+        "simple-sheets-put"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -896,5 +941,5 @@
         "raman-fitting",
         "intrusion-detection"
     ],
-    "accuracy": 0.625
+    "accuracy": 0.6470588235294118
 }

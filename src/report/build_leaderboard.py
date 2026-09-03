@@ -536,6 +536,19 @@ def _has_2x_q4(key) -> bool:
         return False
 
 
+def _terminal_full80(key, q4=False):
+    """If a merged full-80 TerminalBench run exists (24-sample + remaining-56, both at 2× timeout),
+    return its RAW 80-task accuracy — the full-set score. Only when it genuinely covers the set
+    (≥76 of 80 tasks ran); otherwise None so the caller falls back to the 24-sample score."""
+    root = "terminalbench_q4" if q4 else "terminalbench"
+    try:
+        d = json.load(open(REPO_ROOT / "results" / root / f"{key}_full80" / "results.json"))
+        n = d.get("n_resolved", 0) + d.get("n_unresolved", 0)
+        return d.get("accuracy") if n >= 76 else None
+    except Exception:
+        return None
+
+
 # ── Frontier tab: the exact params behind each cell (click a number to inspect) ──
 _FR_SAMP = {   # vendor-recommended sampling knobs, from the run scripts
     "muse":   "top_p 0.95 · top_k 64",
@@ -911,9 +924,12 @@ def _frontier_tab() -> str:
         return (None, False)
 
     def _terminal(key):
-        # TerminalBench full-precision. Show the 2× score if that run is COMPLETE, else the NATIVE score
-        # (never blank a model that has a native run). The CARD (_fr_spec) says which timeout config
-        # produced the shown number, per model — that's the only thing that differs 2× vs native.
+        # TerminalBench full-precision. Prefer the full-80 score if that merged run exists; else the 2×
+        # score if COMPLETE, else the NATIVE score (never blank a model that has a native run). The CARD
+        # (_fr_spec) says which config produced the shown number, per model.
+        f80 = _terminal_full80(key, q4=False)
+        if f80 is not None:
+            return f80
         if _has_2x_full(key):
             rid = _RID_FULL[key]
             try:
@@ -929,9 +945,11 @@ def _frontier_tab() -> str:
             return None
 
     def _terminal_q4(key):
-        # TerminalBench Q4-local. 2× score if complete, else native (full-80 override if present). Card
-        # states the config. Only qwen3.8 Q4 has a complete 2× run so far; the rest show native until
-        # their 2× runs finish, then auto-switch.
+        # TerminalBench Q4-local. Prefer the full-80 merged run if present; else 2× if complete, else
+        # native. Card states the config.
+        f80 = _terminal_full80(key, q4=True)
+        if f80 is not None:
+            return f80
         if _has_2x_q4(key):
             rid = _RID_Q4[key]
             try:

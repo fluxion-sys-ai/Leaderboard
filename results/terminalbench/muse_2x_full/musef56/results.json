@@ -435,11 +435,52 @@
             "agent_ended_at": "2026-09-03T20:29:19.057663+00:00",
             "test_started_at": "2026-09-03T20:29:22.666640+00:00",
             "test_ended_at": "2026-09-03T20:29:36.086912+00:00"
+        },
+        {
+            "id": "a2b1f93b-faf9-472d-bb15-6efbaabc3152",
+            "trial_name": "qemu-alpine-ssh.1-of-1.musef56",
+            "task_id": "qemu-alpine-ssh",
+            "instruction": "Start the alpine.iso image in qemu, and then start an ssh server on the alpine linux vm. When you're done, I should be able to run `ssh -p 2222 root@localhost` with password `password123` and be dropped into a shell. On the alpine.iso image, the default username is root with no password.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_sshpass": "failed"
+            },
+            "recording_path": "musef56/qemu-alpine-ssh/qemu-alpine-ssh.1-of-1.musef56/sessions/agent.cast",
+            "total_input_tokens": 486665,
+            "total_output_tokens": 11830,
+            "trial_started_at": "2026-09-03T20:29:48.656844+00:00",
+            "trial_ended_at": "2026-09-03T20:45:52.639476+00:00",
+            "agent_started_at": "2026-09-03T20:33:21.739076+00:00",
+            "agent_ended_at": "2026-09-03T20:45:19.412132+00:00",
+            "test_started_at": "2026-09-03T20:45:23.073861+00:00",
+            "test_ended_at": "2026-09-03T20:45:38.542401+00:00"
+        },
+        {
+            "id": "c76d6e00-db95-4f62-8132-b869410a8777",
+            "trial_name": "train-fasttext.1-of-1.musef56",
+            "task_id": "train-fasttext",
+            "instruction": "Can you train a fasttext model on the yelp data in the data/ folder?\n\nThe final model size needs to be less than 150MB but get at least 0.62 accuracy on a private test set.\n\nThe model should be saved as model.bin in the current directory.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_model_size": "passed",
+                "test_accuracy": "failed"
+            },
+            "recording_path": "musef56/train-fasttext/train-fasttext.1-of-1.musef56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T20:25:55.169777+00:00",
+            "trial_ended_at": "2026-09-03T20:51:50.272273+00:00",
+            "agent_started_at": "2026-09-03T20:26:00.378778+00:00",
+            "agent_ended_at": "2026-09-03T20:51:00.581345+00:00",
+            "test_started_at": "2026-09-03T20:51:05.085265+00:00",
+            "test_ended_at": "2026-09-03T20:51:34.994441+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 6,
-    "n_unresolved": 7,
+    "n_unresolved": 9,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -455,7 +496,9 @@
         "run-pdp11-code",
         "swe-bench-fsspec",
         "incompatible-python-fasttext",
-        "grid-pattern-transform"
+        "grid-pattern-transform",
+        "qemu-alpine-ssh",
+        "train-fasttext"
     ],
-    "accuracy": 0.46153846153846156
+    "accuracy": 0.4
 }

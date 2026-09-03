@@ -1105,11 +1105,54 @@
             "agent_ended_at": "2026-09-03T23:17:48.285887+00:00",
             "test_started_at": "2026-09-03T23:17:51.676528+00:00",
             "test_ended_at": "2026-09-03T23:17:58.241375+00:00"
+        },
+        {
+            "id": "23048b0b-bbd3-4a16-a1ca-ffb3531652e6",
+            "trial_name": "jupyter-notebook-server.1-of-1.gemmaf56",
+            "task_id": "jupyter-notebook-server",
+            "instruction": "Set up a secure Jupyter Notebook server with the following requirements:\n\n1. Install Jupyter Notebook with the necessary dependencies\n2. Configure the server to:\n   - Run on port 8888\n   - Accept connections from any IP address\n   - Use password authentication (set password to \"benchmarkpass\")\n   - Generate a self-signed SSL certificate for HTTPS\n3. Create a sample notebook named \"test_notebook.ipynb\" in the current directory with:\n   - A markdown cell explaining what Jupyter Notebook is\n   - A code cell that defines and plots a simple sine wave using matplotlib\n4. Start the Jupyter server in the background so it's running when tests execute. You should allow Jupyter to run as root.\n\nThe test will verify that:\n- The server is running on port 8888 with HTTPS\n- Password authentication is enabled with the specified password\n- The sample notebook exists and contains the required cells",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_jupyter_server_running": "passed",
+                "test_sample_notebook_exists": "passed",
+                "test_jupyter_config_exists": "failed",
+                "test_password_authentication": "failed"
+            },
+            "recording_path": "gemmaf56/jupyter-notebook-server/jupyter-notebook-server.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 73986,
+            "total_output_tokens": 2271,
+            "trial_started_at": "2026-09-03T23:14:46.471515+00:00",
+            "trial_ended_at": "2026-09-03T23:19:33.234379+00:00",
+            "agent_started_at": "2026-09-03T23:15:01.850435+00:00",
+            "agent_ended_at": "2026-09-03T23:19:14.173637+00:00",
+            "test_started_at": "2026-09-03T23:19:14.220588+00:00",
+            "test_ended_at": "2026-09-03T23:19:19.096697+00:00"
+        },
+        {
+            "id": "c111153f-2b89-43bf-938f-de2742684e1e",
+            "trial_name": "sqlite-db-truncate.1-of-1.gemmaf56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "gemmaf56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 114571,
+            "total_output_tokens": 3957,
+            "trial_started_at": "2026-09-03T23:18:10.107805+00:00",
+            "trial_ended_at": "2026-09-03T23:25:28.780114+00:00",
+            "agent_started_at": "2026-09-03T23:18:14.663912+00:00",
+            "agent_ended_at": "2026-09-03T23:25:02.166181+00:00",
+            "test_started_at": "2026-09-03T23:25:05.645668+00:00",
+            "test_ended_at": "2026-09-03T23:25:16.699246+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 27,
-    "n_unresolved": 16,
+    "n_unresolved": 18,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1155,7 +1198,9 @@
         "cartpole-rl-training",
         "solana-data",
         "hf-model-inference",
-        "fix-git"
+        "fix-git",
+        "jupyter-notebook-server",
+        "sqlite-db-truncate"
     ],
-    "accuracy": 0.627906976744186
+    "accuracy": 0.6
 }

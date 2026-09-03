@@ -1085,11 +1085,54 @@
             "agent_ended_at": "2026-09-03T23:18:07.424145+00:00",
             "test_started_at": "2026-09-03T23:18:10.812884+00:00",
             "test_ended_at": "2026-09-03T23:18:20.778041+00:00"
+        },
+        {
+            "id": "27c66412-68de-46e0-b261-f99f0f4b8262",
+            "trial_name": "simple-sheets-put.1-of-1.qwen27f56",
+            "task_id": "simple-sheets-put",
+            "instruction": "1. Create a new spreadsheet named \"Financial Report\"\n2. Create a sheet in this spreadsheet named \"Q1 Data\"\n3. Add the following data to the sheet, starting at cell A1:\n  | Month    | Revenue | Expenses |\n  |----------|---------|----------|\n  | January  | 10000   | 8000     |\n  | February | 12000   | 9000     |\n  | March    | 15000   | 10000    |\n\n4. Add a third column that contains the profit.\n\nThe API is available at http://api:8000.\nThere is an endpoint to get the API documentation at http://api:8000/docs/json.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_spreadsheet_created": "passed",
+                "test_sheet_created": "passed",
+                "test_cells_created": "passed"
+            },
+            "recording_path": "qwen27f56/simple-sheets-put/simple-sheets-put.1-of-1.qwen27f56/sessions/agent.cast",
+            "total_input_tokens": 62112,
+            "total_output_tokens": 3204,
+            "trial_started_at": "2026-09-03T23:18:32.609480+00:00",
+            "trial_ended_at": "2026-09-03T23:21:15.000155+00:00",
+            "agent_started_at": "2026-09-03T23:18:55.652474+00:00",
+            "agent_ended_at": "2026-09-03T23:20:48.560736+00:00",
+            "test_started_at": "2026-09-03T23:20:48.612453+00:00",
+            "test_ended_at": "2026-09-03T23:20:55.378333+00:00"
+        },
+        {
+            "id": "c005ac20-c6e8-4c0b-b9ad-036599862acc",
+            "trial_name": "fix-git.1-of-1.qwen27f56",
+            "task_id": "fix-git",
+            "instruction": "I just made some changes to my personal site and checked out master, but now I can't find those changes. Please help me find them and merge them into master.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_layout_file": "passed",
+                "test_about_file": "failed"
+            },
+            "recording_path": "qwen27f56/fix-git/fix-git.1-of-1.qwen27f56/sessions/agent.cast",
+            "total_input_tokens": 12921,
+            "total_output_tokens": 1270,
+            "trial_started_at": "2026-09-03T23:21:15.005582+00:00",
+            "trial_ended_at": "2026-09-03T23:22:23.351593+00:00",
+            "agent_started_at": "2026-09-03T23:21:22.183937+00:00",
+            "agent_ended_at": "2026-09-03T23:21:58.267598+00:00",
+            "test_started_at": "2026-09-03T23:22:01.692411+00:00",
+            "test_ended_at": "2026-09-03T23:22:09.472738+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 25,
-    "n_unresolved": 17,
+    "n_resolved": 26,
+    "n_unresolved": 18,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1115,7 +1158,8 @@
         "simple-web-scraper",
         "heterogeneous-dates",
         "modernize-fortran-build",
-        "git-workflow-hack"
+        "git-workflow-hack",
+        "simple-sheets-put"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -1134,7 +1178,8 @@
         "path-tracing",
         "password-recovery",
         "path-tracing-reverse",
-        "intrusion-detection"
+        "intrusion-detection",
+        "fix-git"
     ],
-    "accuracy": 0.5952380952380952
+    "accuracy": 0.5909090909090909
 }

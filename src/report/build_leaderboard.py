@@ -713,7 +713,7 @@ def _q4_real_repro(k) -> bool:
     return False
 
 
-def _q4_swe_cell(qc, tkey, cq) -> str:
+def _q4_swe_cell(qc, tkey, cq, disp="") -> str:
     """Q4 SWE-bench Lite cell for the Frontier table. If a genuine repro-40 run exists on disk, render
     the normal clickable cell. Otherwise, if a score is still on file — the accepted majority-vote (or a
     prior rerank whose repro artifacts weren't regenerated) — show that number flagged ⚑ 'majority-vote'
@@ -726,8 +726,14 @@ def _q4_swe_cell(qc, tkey, cq) -> str:
         return '<td class="sc na" data-v="-1" title="not run yet">—</td>'
     t = ("majority-vote score — repro-40 rerun declined: the reproduction-test rerank does not beat "
          "majority-vote on SWE-bench Lite, so the vote number stands (strat-51 sample)")
-    return (f'<td class="sc" data-v="{v:.4f}" style="{heat(v)}">{v * 100:.1f}'
-            f' <span class="flag" title="{html.escape(t)}">⚑</span></td>')
+    # Keep this cell CLICKABLE like every other score (it was previously a bare <td> with no onclick,
+    # so the ⚑ majority-vote cells couldn't be opened). data-spec = the params card (which already
+    # reflects the recorded majority_vote selection); the ⚑ flag + its tooltip are preserved.
+    spec = _fr_spec(tkey, "swe", "q4")
+    mk = f"{disp} · SWE-bench Lite · Q4" if disp else "SWE-bench Lite · Q4"
+    return (f'<td class="sc" data-v="{v:.4f}" style="{heat(v)};cursor:pointer"'
+            f' data-mk="{html.escape(mk)}" data-spec="{html.escape(spec)}" onclick="showSpec(this,event)">'
+            f'{v * 100:.1f} <span class="flag" title="{html.escape(t)}">⚑</span></td>')
 
 
 def _terminal_2x_bars() -> str:
@@ -1029,7 +1035,7 @@ def _frontier_tab() -> str:
                        # temp0+no_think (NOT rec), so they're pulled; this reads the rec-params redo.
                        + qc("pinchbench", score_of(cq, "pinchbench"))
                        + qc("terminal", _terminal_q4(tkey))
-                       + _q4_swe_cell(qc, tkey, cq)
+                       + _q4_swe_cell(qc, tkey, cq, disp)
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'

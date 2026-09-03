@@ -21,6 +21,7 @@ for k in qwen38 qwen27 qwen35 gemma muse; do
   DONEFLAG="$REPO/.${k}_retry_done"
   [ -f "$DONEFLAG" ] && continue                                   # already handled
   pgrep -f "${k}f56" >/dev/null 2>&1 && { echo "[$k] main run live -> defer"; continue; }
+  pgrep -f "${k}r1"  >/dev/null 2>&1 && { echo "[$k] retry already running -> skip (avoid r1 collision)"; continue; }
   [ -d "$MAINRUN" ] || { echo "[$k] no run dir yet -> defer"; continue; }
 
   mapfile -t TASKS < <(grep -rl "unknown_agent_error" "$MAINRUN" 2>/dev/null \

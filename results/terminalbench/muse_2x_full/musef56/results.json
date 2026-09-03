@@ -476,11 +476,32 @@
             "agent_ended_at": "2026-09-03T20:51:00.581345+00:00",
             "test_started_at": "2026-09-03T20:51:05.085265+00:00",
             "test_ended_at": "2026-09-03T20:51:34.994441+00:00"
+        },
+        {
+            "id": "5a34a3f2-6217-4939-8b90-079ab8d15ed9",
+            "trial_name": "cron-broken-network.1-of-1.musef56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_curl_file_exists": "passed",
+                "test_curl_file_content": "failed"
+            },
+            "recording_path": "musef56/cron-broken-network/cron-broken-network.1-of-1.musef56/sessions/agent.cast",
+            "total_input_tokens": 279626,
+            "total_output_tokens": 7411,
+            "trial_started_at": "2026-09-03T20:51:50.276070+00:00",
+            "trial_ended_at": "2026-09-03T21:03:38.818083+00:00",
+            "agent_started_at": "2026-09-03T20:52:50.635750+00:00",
+            "agent_ended_at": "2026-09-03T21:02:14.614225+00:00",
+            "test_started_at": "2026-09-03T21:02:18.024250+00:00",
+            "test_ended_at": "2026-09-03T21:03:24.363035+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 6,
-    "n_unresolved": 9,
+    "n_unresolved": 10,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -498,7 +519,8 @@
         "incompatible-python-fasttext",
         "grid-pattern-transform",
         "qemu-alpine-ssh",
-        "train-fasttext"
+        "train-fasttext",
+        "cron-broken-network"
     ],
-    "accuracy": 0.4
+    "accuracy": 0.375
 }

@@ -539,11 +539,76 @@
             "agent_ended_at": "2026-09-03T22:03:37.922247+00:00",
             "test_started_at": "2026-09-03T22:03:41.363146+00:00",
             "test_ended_at": "2026-09-03T22:07:41.530343+00:00"
+        },
+        {
+            "id": "50136c92-6456-44c7-893e-b2b4f11088d2",
+            "trial_name": "cron-broken-network.1-of-1.gemmaf56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_curl_file_exists": "passed",
+                "test_curl_file_content": "failed"
+            },
+            "recording_path": "gemmaf56/cron-broken-network/cron-broken-network.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 99727,
+            "total_output_tokens": 3829,
+            "trial_started_at": "2026-09-03T22:02:28.844224+00:00",
+            "trial_ended_at": "2026-09-03T22:10:42.719921+00:00",
+            "agent_started_at": "2026-09-03T22:03:24.527488+00:00",
+            "agent_ended_at": "2026-09-03T22:09:17.919938+00:00",
+            "test_started_at": "2026-09-03T22:09:21.568757+00:00",
+            "test_ended_at": "2026-09-03T22:10:30.195841+00:00"
+        },
+        {
+            "id": "c6cdfefa-ec99-446c-b74a-7e198e435de3",
+            "trial_name": "organization-json-generator.1-of-1.gemmaf56",
+            "task_id": "organization-json-generator",
+            "instruction": "Create a JSON processor that transforms CSV data into a structured JSON file following the schema defined in schema.json. Requirements: 1. Use the provided CSV files (departments.csv, employees.csv, projects.csv) as input data 2. Generate a file called 'organization.json' that follows the schema defined. 3. The output must include: Organization metadata, Department information with employees and projects, Statistical calculations",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_file_exists": "passed",
+                "test_organization_structure": "passed",
+                "test_relationships_integrity": "passed",
+                "test_statistics_calculations": "passed"
+            },
+            "recording_path": "gemmaf56/organization-json-generator/organization-json-generator.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 25533,
+            "total_output_tokens": 2014,
+            "trial_started_at": "2026-09-03T22:07:59.547974+00:00",
+            "trial_ended_at": "2026-09-03T22:11:12.821428+00:00",
+            "agent_started_at": "2026-09-03T22:08:06.952974+00:00",
+            "agent_ended_at": "2026-09-03T22:10:45.770149+00:00",
+            "test_started_at": "2026-09-03T22:10:49.282149+00:00",
+            "test_ended_at": "2026-09-03T22:10:58.128351+00:00"
+        },
+        {
+            "id": "7e819dd6-e9a1-4314-ac19-94f1e46608e6",
+            "trial_name": "csv-to-parquet.1-of-1.gemmaf56",
+            "task_id": "csv-to-parquet",
+            "instruction": "Convert the file '/app/data.csv' into a Parquet file named '/app/data.parquet'. The CSV file contains sample data with headers.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_parquet_exists": "passed",
+                "test_data_matches": "passed"
+            },
+            "recording_path": "gemmaf56/csv-to-parquet/csv-to-parquet.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 52259,
+            "total_output_tokens": 1739,
+            "trial_started_at": "2026-09-03T22:11:12.828430+00:00",
+            "trial_ended_at": "2026-09-03T22:16:01.430618+00:00",
+            "agent_started_at": "2026-09-03T22:11:41.164944+00:00",
+            "agent_ended_at": "2026-09-03T22:15:35.000635+00:00",
+            "test_started_at": "2026-09-03T22:15:38.465418+00:00",
+            "test_ended_at": "2026-09-03T22:15:49.035214+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 9,
-    "n_unresolved": 9,
+    "n_resolved": 11,
+    "n_unresolved": 10,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -553,7 +618,9 @@
         "incompatible-python-fasttext.base_with_hint",
         "grid-pattern-transform",
         "qemu-startup",
-        "pytorch-model-cli.easy"
+        "pytorch-model-cli.easy",
+        "organization-json-generator",
+        "csv-to-parquet"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -564,7 +631,8 @@
         "incompatible-python-fasttext",
         "train-fasttext",
         "qemu-alpine-ssh",
-        "pytorch-model-cli"
+        "pytorch-model-cli",
+        "cron-broken-network"
     ],
-    "accuracy": 0.5
+    "accuracy": 0.5238095238095238
 }

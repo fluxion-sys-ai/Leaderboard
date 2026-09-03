@@ -1078,11 +1078,72 @@
             "agent_ended_at": "2026-09-03T22:05:07.492567+00:00",
             "test_started_at": "2026-09-03T22:05:11.070261+00:00",
             "test_ended_at": "2026-09-03T22:05:19.520502+00:00"
+        },
+        {
+            "id": "b6c62b09-104f-44ae-839f-1fddddf4e833",
+            "trial_name": "crack-7z-hash.1-of-1.musef56",
+            "task_id": "crack-7z-hash",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe password is unknown, but I know that the password is a 4-digit number.\nUse the john the ripper binaries in the \"/app/john/run\" directory.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "musef56/crack-7z-hash/crack-7z-hash.1-of-1.musef56/sessions/agent.cast",
+            "total_input_tokens": 182767,
+            "total_output_tokens": 3485,
+            "trial_started_at": "2026-09-03T22:01:32.293622+00:00",
+            "trial_ended_at": "2026-09-03T22:11:33.632830+00:00",
+            "agent_started_at": "2026-09-03T22:08:07.014612+00:00",
+            "agent_ended_at": "2026-09-03T22:11:03.782543+00:00",
+            "test_started_at": "2026-09-03T22:11:07.445080+00:00",
+            "test_ended_at": "2026-09-03T22:11:18.944815+00:00"
+        },
+        {
+            "id": "24614a8c-c5fe-41b8-9088-a27e1fd26960",
+            "trial_name": "new-encrypt-command.1-of-1.musef56",
+            "task_id": "new-encrypt-command",
+            "instruction": "Please help me encrypt all the files I have in the data/ folder using rencrypt which i've just installed.\n\nI want to use the most secure encryption that it provides and the output should go into a encrypted_data/ directory where the basenames are the same.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_success": "passed"
+            },
+            "recording_path": "musef56/new-encrypt-command/new-encrypt-command.1-of-1.musef56/sessions/agent.cast",
+            "total_input_tokens": 20772,
+            "total_output_tokens": 1559,
+            "trial_started_at": "2026-09-03T22:11:33.639209+00:00",
+            "trial_ended_at": "2026-09-03T22:12:44.078146+00:00",
+            "agent_started_at": "2026-09-03T22:11:49.603376+00:00",
+            "agent_ended_at": "2026-09-03T22:12:18.615621+00:00",
+            "test_started_at": "2026-09-03T22:12:22.086978+00:00",
+            "test_ended_at": "2026-09-03T22:12:31.162139+00:00"
+        },
+        {
+            "id": "f2199f45-9fb1-4c63-94f1-98f24aad8284",
+            "trial_name": "sqlite-db-truncate.1-of-1.musef56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "musef56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.musef56/sessions/agent.cast",
+            "total_input_tokens": 730418,
+            "total_output_tokens": 21849,
+            "trial_started_at": "2026-09-03T22:05:31.988732+00:00",
+            "trial_ended_at": "2026-09-03T22:12:51.029428+00:00",
+            "agent_started_at": "2026-09-03T22:05:36.803677+00:00",
+            "agent_ended_at": "2026-09-03T22:12:24.005597+00:00",
+            "test_started_at": "2026-09-03T22:12:27.556457+00:00",
+            "test_ended_at": "2026-09-03T22:12:38.275374+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 24,
-    "n_unresolved": 18,
+    "n_resolved": 26,
+    "n_unresolved": 19,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1107,7 +1168,9 @@
         "solana-data",
         "path-tracing-reverse",
         "prove-plus-comm",
-        "swe-bench-langcodes"
+        "swe-bench-langcodes",
+        "crack-7z-hash",
+        "new-encrypt-command"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1127,7 +1190,8 @@
         "password-recovery",
         "chess-best-move",
         "raman-fitting",
-        "gpt2-codegolf"
+        "gpt2-codegolf",
+        "sqlite-db-truncate"
     ],
-    "accuracy": 0.5714285714285714
+    "accuracy": 0.5777777777777777
 }

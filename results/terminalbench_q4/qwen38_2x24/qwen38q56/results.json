@@ -479,16 +479,61 @@
             "agent_ended_at": "2026-09-03T20:30:49.688928+00:00",
             "test_started_at": "2026-09-03T20:30:54.630493+00:00",
             "test_ended_at": "2026-09-03T20:31:09.883550+00:00"
+        },
+        {
+            "id": "a261e332-155f-4e61-ab11-27d9321e9fe1",
+            "trial_name": "modernize-fortran-build.1-of-1.qwen38q56",
+            "task_id": "modernize-fortran-build",
+            "instruction": "You are to update a Fortran project's build process to use gfortran. The existing build system, designed for a different compiler, needs modification.\n\nContext:\nOriginal Makefile: /app/src/Makefile\nFortran Library: /app/src/my_lib.f90\nMain Program: /app/src/test_main.f90\nYour Working Directory: /app/. All actions (copying, modifying, compiling, running) should be based here.\n\nYour objectives are:\n1. Modify the '/app/Makefile'so that the build process works\n2. Compile the project with the modified Makefile and execute test_program.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_output_file_exists_and_content_is_correct": "passed",
+                "test_target_executable_was_created_and_is_executable": "passed",
+                "test_makefile_compilation_process": "passed"
+            },
+            "recording_path": "qwen38q56/modernize-fortran-build/modernize-fortran-build.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 16307,
+            "total_output_tokens": 1910,
+            "trial_started_at": "2026-09-03T20:26:51.975634+00:00",
+            "trial_ended_at": "2026-09-03T20:37:03.999867+00:00",
+            "agent_started_at": "2026-09-03T20:27:41.270704+00:00",
+            "agent_ended_at": "2026-09-03T20:36:33.885710+00:00",
+            "test_started_at": "2026-09-03T20:36:37.395628+00:00",
+            "test_ended_at": "2026-09-03T20:36:50.476190+00:00"
+        },
+        {
+            "id": "e692d59a-3074-4522-a216-032f36ad84fc",
+            "trial_name": "csv-to-parquet.1-of-1.qwen38q56",
+            "task_id": "csv-to-parquet",
+            "instruction": "Convert the file '/app/data.csv' into a Parquet file named '/app/data.parquet'. The CSV file contains sample data with headers.",
+            "is_resolved": true,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_parquet_exists": "passed",
+                "test_data_matches": "passed"
+            },
+            "recording_path": "qwen38q56/csv-to-parquet/csv-to-parquet.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T20:27:14.327664+00:00",
+            "trial_ended_at": "2026-09-03T20:40:46.635962+00:00",
+            "agent_started_at": "2026-09-03T20:27:37.218282+00:00",
+            "agent_ended_at": "2026-09-03T20:40:12.100759+00:00",
+            "test_started_at": "2026-09-03T20:40:15.767434+00:00",
+            "test_ended_at": "2026-09-03T20:40:30.954980+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 4,
+    "n_resolved": 6,
     "n_unresolved": 20,
     "resolved_ids": [
         "grid-pattern-transform",
         "qemu-startup",
         "pytorch-model-cli.easy",
-        "crack-7z-hash"
+        "crack-7z-hash",
+        "modernize-fortran-build",
+        "csv-to-parquet"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -512,5 +557,5 @@
         "fibonacci-server",
         "path-tracing"
     ],
-    "accuracy": 0.16666666666666666
+    "accuracy": 0.23076923076923078
 }

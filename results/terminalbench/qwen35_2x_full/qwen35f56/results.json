@@ -263,20 +263,77 @@
             "agent_ended_at": "2026-09-03T03:18:41.488908+00:00",
             "test_started_at": "2026-09-03T03:18:45.575888+00:00",
             "test_ended_at": "2026-09-03T03:19:58.958921+00:00"
+        },
+        {
+            "id": "3b78818c-5079-4be3-85be-4cca4b84bb44",
+            "trial_name": "run-pdp11-code.1-of-1.qwen35f56",
+            "task_id": "run-pdp11-code",
+            "instruction": "In /app/data.hex is the output of hexdump on a binary file. Figure out what kind of file it is, then figure out how to run it, and tell me what the output of that program is.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_out_file_exists": "failed",
+                "test_out_file_content": "failed"
+            },
+            "recording_path": "qwen35f56/run-pdp11-code/run-pdp11-code.1-of-1.qwen35f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T03:02:03.588436+00:00",
+            "trial_ended_at": "2026-09-03T03:40:54.818576+00:00",
+            "agent_started_at": "2026-09-03T03:02:10.339766+00:00",
+            "agent_ended_at": "2026-09-03T03:40:30.488318+00:00",
+            "test_started_at": "2026-09-03T03:40:33.956486+00:00",
+            "test_ended_at": "2026-09-03T03:40:39.609296+00:00"
+        },
+        {
+            "id": "f028c0ca-d7a3-4243-a8f1-375e8eccecf7",
+            "trial_name": "swe-bench-astropy-1.1-of-1.qwen35f56",
+            "task_id": "swe-bench-astropy-1",
+            "instruction": "Modeling's `separability_matrix` does not compute separability correctly for nested CompoundModels\nConsider the following model:\n\n```python\nfrom astropy.modeling import models as m\nfrom astropy.modeling.separable import separability_matrix\n\ncm = m.Linear1D(10) & m.Linear1D(5)\n```\n\nIt's separability matrix as you might expect is a diagonal:\n\n```python\n>>> separability_matrix(cm)\narray([[ True, False],\n[False, True]])\n```\n\nIf I make the model more complex:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, False],\n[False, False, False, True]])\n```\n\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\n\nIf however, I nest these compound models:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, True],\n[False, False, True, True]])\n```\nSuddenly the inputs and outputs are no longer separable?\n\nThis feels like a bug to me, but I might be missing something?",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_coord_matrix": "passed",
+                "test_cdot": "passed",
+                "test_cstack": "passed",
+                "test_arith_oper": "passed",
+                "test_separable[compound_model0-result0]": "passed",
+                "test_separable[compound_model1-result1]": "passed",
+                "test_separable[compound_model2-result2]": "passed",
+                "test_separable[compound_model3-result3]": "passed",
+                "test_separable[compound_model4-result4]": "passed",
+                "test_separable[compound_model5-result5]": "passed",
+                "test_separable[compound_model6-result6]": "passed",
+                "test_separable[compound_model7-result7]": "passed",
+                "test_separable[compound_model8-result8]": "passed",
+                "test_separable[compound_model9-result9]": "passed",
+                "test_custom_model_separable": "passed"
+            },
+            "recording_path": "qwen35f56/swe-bench-astropy-1/swe-bench-astropy-1.1-of-1.qwen35f56/sessions/agent.cast",
+            "total_input_tokens": 920733,
+            "total_output_tokens": 19478,
+            "trial_started_at": "2026-09-03T03:20:11.775537+00:00",
+            "trial_ended_at": "2026-09-03T03:41:19.075522+00:00",
+            "agent_started_at": "2026-09-03T03:20:16.367684+00:00",
+            "agent_ended_at": "2026-09-03T03:38:08.350091+00:00",
+            "test_started_at": "2026-09-03T03:38:11.813534+00:00",
+            "test_ended_at": "2026-09-03T03:41:06.980871+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 3,
-    "n_unresolved": 3,
+    "n_resolved": 4,
+    "n_unresolved": 4,
     "resolved_ids": [
         "conda-env-conflict-resolution",
         "eval-mteb.hard",
-        "swe-bench-fsspec"
+        "swe-bench-fsspec",
+        "swe-bench-astropy-1"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
         "build-linux-kernel-qemu",
-        "swe-bench-astropy-2"
+        "swe-bench-astropy-2",
+        "run-pdp11-code"
     ],
     "accuracy": 0.5
 }

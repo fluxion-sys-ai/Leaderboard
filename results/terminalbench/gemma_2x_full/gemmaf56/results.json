@@ -60,17 +60,69 @@
             "agent_ended_at": "2026-09-03T03:05:25.383347+00:00",
             "test_started_at": "2026-09-03T03:05:29.369523+00:00",
             "test_ended_at": "2026-09-03T03:05:43.195725+00:00"
+        },
+        {
+            "id": "be4f53fc-732f-445a-b9bc-a81ab063667f",
+            "trial_name": "swe-bench-astropy-2.1-of-1.gemmaf56",
+            "task_id": "swe-bench-astropy-2",
+            "instruction": "ascii.qdp Table format assumes QDP commands are upper case\n### Description\n\nascii.qdp assumes that commands in a QDP file are upper case, for example, for errors they must be \"READ SERR 1 2\" whereas QDP itself is not case sensitive and case use \"read serr 1 2\".\n\nAs many QDP files are created by hand, the expectation that all commands be all-caps should be removed.\n\n### Expected behavior\n\nThe following qdp file should read into a `Table` with errors, rather than crashing.\n```\nread serr 1 2\n1 0.5 1 0.5\n```\n\n### How to Reproduce\n\nCreate a QDP file:\n```\n> cat > test.qdp\nread serr 1 2\n1 0.5 1 0.5\n<EOF>\n\n> python\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)] on darwin\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> from astropy.table import Table\n>>> Table.read('test.qdp',format='ascii.qdp')\nWARNING: table_id not specified. Reading the first available table [astropy.io.ascii.qdp]\nTraceback (most recent call last):\n...\n    raise ValueError(f'Unrecognized QDP line: {line}')\nValueError: Unrecognized QDP line: read serr 1 2\n```\n\nRunning \"qdp test.qdp\" works just fine.\n\n\n### Versions\n\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)]\nastropy 5.1\nNumpy 1.24.1\npyerfa 2.0.0.1\nScipy 1.10.0\nMatplotlib 3.6.3",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_get_tables_from_qdp_file": "passed",
+                "test_roundtrip[False]": "passed",
+                "test_read_example": "passed",
+                "test_roundtrip_example": "passed",
+                "test_roundtrip_example_comma": "passed",
+                "test_read_write_simple": "passed",
+                "test_read_write_simple_specify_name": "passed",
+                "test_get_lines_from_qdp": "passed",
+                "test_roundtrip[True]": "failed"
+            },
+            "recording_path": "gemmaf56/swe-bench-astropy-2/swe-bench-astropy-2.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 145242,
+            "total_output_tokens": 4814,
+            "trial_started_at": "2026-09-03T03:06:10.273971+00:00",
+            "trial_ended_at": "2026-09-03T03:17:45.530723+00:00",
+            "agent_started_at": "2026-09-03T03:06:16.924123+00:00",
+            "agent_ended_at": "2026-09-03T03:15:09.701953+00:00",
+            "test_started_at": "2026-09-03T03:15:13.113530+00:00",
+            "test_ended_at": "2026-09-03T03:17:33.379660+00:00"
+        },
+        {
+            "id": "c600db19-6da1-4e8f-ab1f-f02bc0d90d64",
+            "trial_name": "conda-env-conflict-resolution.1-of-1.gemmaf56",
+            "task_id": "conda-env-conflict-resolution",
+            "instruction": "You need to debug and fix a conda environment conflict for a data science project. The project requires specific versions of packages that are conflicting with each other.\n\nYou have a base conda environment with the necessary tools, but you need to:\n\n1. Create a new conda environment named \"datasci\" using the provided environment.yml file in /app/project\n2. Identify and resolve the package version conflicts in the environment.yml file\n3. Successfully create the environment without conflicts\n4. Install and test the working environment by running a test script that requires all the specified packages\n\nThe environment.yml file has specific dependency issues:\n- TensorFlow 2.8 and PyTorch 1.12 conflict with different CUDA versions\n- NumPy 1.22 is incompatible with the specified SciPy version\n\nModify the environment.yml file, create the fixed environment, and verify it works by running the test_imports.py script which will attempt to import all required packages.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_environment_exists": "passed",
+                "test_environment_yml_modified": "passed",
+                "test_imports_script_runs": "passed"
+            },
+            "recording_path": "gemmaf56/conda-env-conflict-resolution/conda-env-conflict-resolution.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 92934,
+            "total_output_tokens": 3698,
+            "trial_started_at": "2026-09-03T03:02:20.198726+00:00",
+            "trial_ended_at": "2026-09-03T03:19:04.741919+00:00",
+            "agent_started_at": "2026-09-03T03:02:26.472156+00:00",
+            "agent_ended_at": "2026-09-03T03:18:20.105227+00:00",
+            "test_started_at": "2026-09-03T03:18:23.843676+00:00",
+            "test_ended_at": "2026-09-03T03:18:45.498796+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 1,
-    "n_unresolved": 2,
+    "n_resolved": 2,
+    "n_unresolved": 3,
     "resolved_ids": [
-        "eval-mteb.hard"
+        "eval-mteb.hard",
+        "conda-env-conflict-resolution"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
-        "build-linux-kernel-qemu"
+        "build-linux-kernel-qemu",
+        "swe-bench-astropy-2"
     ],
-    "accuracy": 0.3333333333333333
+    "accuracy": 0.4
 }

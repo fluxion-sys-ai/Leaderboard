@@ -457,11 +457,51 @@
             "agent_ended_at": "2026-09-03T21:23:23.467927+00:00",
             "test_started_at": "2026-09-03T21:23:27.216245+00:00",
             "test_ended_at": "2026-09-03T21:23:43.872824+00:00"
+        },
+        {
+            "id": "4d7cb64f-1728-49c5-a035-6ee8414f2664",
+            "trial_name": "qemu-alpine-ssh.1-of-1.qwen27f56",
+            "task_id": "qemu-alpine-ssh",
+            "instruction": "Start the alpine.iso image in qemu, and then start an ssh server on the alpine linux vm. When you're done, I should be able to run `ssh -p 2222 root@localhost` with password `password123` and be dropped into a shell. On the alpine.iso image, the default username is root with no password.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_sshpass": "failed"
+            },
+            "recording_path": "qwen27f56/qemu-alpine-ssh/qemu-alpine-ssh.1-of-1.qwen27f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T21:24:00.837966+00:00",
+            "trial_ended_at": "2026-09-03T21:52:18.505793+00:00",
+            "agent_started_at": "2026-09-03T21:26:52.736408+00:00",
+            "agent_ended_at": "2026-09-03T21:51:52.842201+00:00",
+            "test_started_at": "2026-09-03T21:51:56.323609+00:00",
+            "test_ended_at": "2026-09-03T21:52:06.577129+00:00"
+        },
+        {
+            "id": "949b0171-7a72-4402-912e-ef9c518dcc38",
+            "trial_name": "qemu-startup.1-of-1.qwen27f56",
+            "task_id": "qemu-startup",
+            "instruction": "Start the alpine.iso image in qemu in such a way that I can connect to it via `telnet 127.0.0.1 6665`. When I run telnet I will expect to see the login prompt; I'll log in. You should just get me to this point. Start the image in the background and leave it running. Block until it's ready.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_version": "failed"
+            },
+            "recording_path": "qwen27f56/qemu-startup/qemu-startup.1-of-1.qwen27f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T21:22:36.665877+00:00",
+            "trial_ended_at": "2026-09-03T21:52:19.342555+00:00",
+            "agent_started_at": "2026-09-03T21:26:52.908227+00:00",
+            "agent_ended_at": "2026-09-03T21:51:53.089590+00:00",
+            "test_started_at": "2026-09-03T21:51:56.528463+00:00",
+            "test_ended_at": "2026-09-03T21:52:07.272399+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 8,
-    "n_unresolved": 6,
+    "n_unresolved": 8,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -478,7 +518,9 @@
         "swe-bench-astropy-2",
         "run-pdp11-code",
         "train-fasttext",
-        "blind-maze-explorer-algorithm"
+        "blind-maze-explorer-algorithm",
+        "qemu-alpine-ssh",
+        "qemu-startup"
     ],
-    "accuracy": 0.5714285714285714
+    "accuracy": 0.5
 }

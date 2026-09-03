@@ -486,11 +486,52 @@
             "agent_ended_at": "2026-09-03T21:48:24.404634+00:00",
             "test_started_at": "2026-09-03T21:48:27.831751+00:00",
             "test_ended_at": "2026-09-03T21:49:36.946285+00:00"
+        },
+        {
+            "id": "399b6c81-b8b8-4ac1-88e1-e69d31390b4a",
+            "trial_name": "qemu-startup.1-of-1.qwen38f56",
+            "task_id": "qemu-startup",
+            "instruction": "Start the alpine.iso image in qemu in such a way that I can connect to it via `telnet 127.0.0.1 6665`. When I run telnet I will expect to see the login prompt; I'll log in. You should just get me to this point. Start the image in the background and leave it running. Block until it's ready.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_version": "failed"
+            },
+            "recording_path": "qwen38f56/qemu-startup/qemu-startup.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T21:34:11.455747+00:00",
+            "trial_ended_at": "2026-09-03T22:01:08.188507+00:00",
+            "agent_started_at": "2026-09-03T21:35:40.451099+00:00",
+            "agent_ended_at": "2026-09-03T22:00:40.589020+00:00",
+            "test_started_at": "2026-09-03T22:00:44.081549+00:00",
+            "test_ended_at": "2026-09-03T22:00:55.793636+00:00"
+        },
+        {
+            "id": "bee04180-a086-4f05-b4b3-c3eca1d1ead0",
+            "trial_name": "cron-broken-network.1-of-1.qwen38f56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_curl_file_exists": "passed",
+                "test_curl_file_content": "failed"
+            },
+            "recording_path": "qwen38f56/cron-broken-network/cron-broken-network.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T21:49:52.852391+00:00",
+            "trial_ended_at": "2026-09-03T22:09:03.078415+00:00",
+            "agent_started_at": "2026-09-03T21:50:38.315182+00:00",
+            "agent_ended_at": "2026-09-03T22:07:38.517999+00:00",
+            "test_started_at": "2026-09-03T22:07:42.078261+00:00",
+            "test_ended_at": "2026-09-03T22:08:51.106573+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 9,
-    "n_unresolved": 7,
+    "n_unresolved": 9,
     "resolved_ids": [
         "conda-env-conflict-resolution",
         "eval-mteb.hard",
@@ -509,7 +550,9 @@
         "run-pdp11-code",
         "swe-bench-astropy-1",
         "train-fasttext",
-        "qemu-alpine-ssh"
+        "qemu-alpine-ssh",
+        "qemu-startup",
+        "cron-broken-network"
     ],
-    "accuracy": 0.5625
+    "accuracy": 0.5
 }

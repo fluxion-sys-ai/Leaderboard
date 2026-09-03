@@ -1139,11 +1139,32 @@
             "agent_ended_at": "2026-09-03T22:12:24.005597+00:00",
             "test_started_at": "2026-09-03T22:12:27.556457+00:00",
             "test_ended_at": "2026-09-03T22:12:38.275374+00:00"
+        },
+        {
+            "id": "8329c183-b9e1-435c-a122-cc575197d9ef",
+            "trial_name": "reshard-c4-data.1-of-1.musef56",
+            "task_id": "reshard-c4-data",
+            "instruction": "Help me prepare a version of the data in the c4_sample/ folder for upload to a remote server. Call this folder \"c4_reshard/\".\n\nDue to the constraints of the server, I need the maximum number of files in each folder to be 30 and the maximum filesize to be 15MB.\n\nI also need a script that can revert the contents of c4_reshard/ back to the original state such that it matches what was originally in c4_sample.\n\nHowever, don't actually run the revert script yet.\n\nPlease call the script \"revert.py\" and place it in the parent directory of c4_sample/.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_reformat_success": "failed",
+                "test_revert": "failed"
+            },
+            "recording_path": "musef56/reshard-c4-data/reshard-c4-data.1-of-1.musef56/sessions/agent.cast",
+            "total_input_tokens": 122399,
+            "total_output_tokens": 3584,
+            "trial_started_at": "2026-09-03T22:12:51.035665+00:00",
+            "trial_ended_at": "2026-09-03T22:20:02.543267+00:00",
+            "agent_started_at": "2026-09-03T22:17:50.123026+00:00",
+            "agent_ended_at": "2026-09-03T22:19:03.539250+00:00",
+            "test_started_at": "2026-09-03T22:19:07.216205+00:00",
+            "test_ended_at": "2026-09-03T22:19:41.727137+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 26,
-    "n_unresolved": 19,
+    "n_unresolved": 20,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1191,7 +1212,8 @@
         "chess-best-move",
         "raman-fitting",
         "gpt2-codegolf",
-        "sqlite-db-truncate"
+        "sqlite-db-truncate",
+        "reshard-c4-data"
     ],
-    "accuracy": 0.5777777777777777
+    "accuracy": 0.5652173913043478
 }

@@ -20,14 +20,35 @@
             "agent_ended_at": "2026-09-03T19:58:33.287540+00:00",
             "test_started_at": "2026-09-03T19:58:37.110416+00:00",
             "test_ended_at": "2026-09-03T19:58:54.388525+00:00"
+        },
+        {
+            "id": "448fa892-9dd1-4ad7-9a78-cc46590e5ab2",
+            "trial_name": "super-benchmark-upet.1-of-1.gemmaf56",
+            "task_id": "super-benchmark-upet",
+            "instruction": "Train a roberta-base model on the RTE dataset using the UPET method with the `run.py` script. Report eval accuracy as a json structured as follows: {\"eval_accuracy\": 0.0} (replace 0.0 with the actual value).\n\nAdditional instructions:\n1. Run for only 1 epoch. 2. Set 5 examples per label, seed=42, and other hyperparameters taken from the example in the repository readme file.\n\nGit repository: https://github.com/wjn1996/UPET\nCommit hash: 4701c3c62441077cc44a6553bf6ae909d99b8351",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_right_output": "failed"
+            },
+            "recording_path": "gemmaf56/super-benchmark-upet/super-benchmark-upet.1-of-1.gemmaf56/sessions/agent.cast",
+            "total_input_tokens": 1414486,
+            "total_output_tokens": 12721,
+            "trial_started_at": "2026-09-03T18:53:28.614281+00:00",
+            "trial_ended_at": "2026-09-03T20:06:51.136620+00:00",
+            "agent_started_at": "2026-09-03T19:06:27.418513+00:00",
+            "agent_ended_at": "2026-09-03T20:06:18.085844+00:00",
+            "test_started_at": "2026-09-03T20:06:21.557352+00:00",
+            "test_ended_at": "2026-09-03T20:06:29.914484+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 0,
-    "n_unresolved": 1,
+    "n_unresolved": 2,
     "resolved_ids": [],
     "unresolved_ids": [
-        "build-linux-kernel-qemu"
+        "build-linux-kernel-qemu",
+        "super-benchmark-upet"
     ],
     "accuracy": 0.0
 }

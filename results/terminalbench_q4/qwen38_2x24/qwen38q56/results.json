@@ -348,15 +348,55 @@
             "agent_ended_at": "2026-09-03T20:01:51.088778+00:00",
             "test_started_at": "2026-09-03T20:01:54.534923+00:00",
             "test_ended_at": "2026-09-03T20:03:25.422982+00:00"
+        },
+        {
+            "id": "a5571dcc-c6f7-4327-99ad-58f83859038b",
+            "trial_name": "cron-broken-network.1-of-1.qwen38q56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": null,
+            "failure_mode": "parse_error",
+            "parser_results": null,
+            "recording_path": "qwen38q56/cron-broken-network/cron-broken-network.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T19:47:37.791974+00:00",
+            "trial_ended_at": "2026-09-03T20:06:20.695194+00:00",
+            "agent_started_at": "2026-09-03T19:48:58.503918+00:00",
+            "agent_ended_at": "2026-09-03T20:05:58.641053+00:00",
+            "test_started_at": "2026-09-03T20:06:02.077996+00:00",
+            "test_ended_at": "2026-09-03T20:06:07.327526+00:00"
+        },
+        {
+            "id": "f91de1db-ff5b-430c-9a17-e3079fa152d8",
+            "trial_name": "crack-7z-hash.1-of-1.qwen38q56",
+            "task_id": "crack-7z-hash",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe password is unknown, but I know that the password is a 4-digit number.\nUse the john the ripper binaries in the \"/app/john/run\" directory.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "qwen38q56/crack-7z-hash/crack-7z-hash.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 45755,
+            "total_output_tokens": 2254,
+            "trial_started_at": "2026-09-03T19:56:19.960183+00:00",
+            "trial_ended_at": "2026-09-03T20:07:32.479674+00:00",
+            "agent_started_at": "2026-09-03T20:03:02.880153+00:00",
+            "agent_ended_at": "2026-09-03T20:07:07.384223+00:00",
+            "test_started_at": "2026-09-03T20:07:10.831287+00:00",
+            "test_ended_at": "2026-09-03T20:07:20.379057+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 3,
-    "n_unresolved": 15,
+    "n_resolved": 4,
+    "n_unresolved": 16,
     "resolved_ids": [
         "grid-pattern-transform",
         "qemu-startup",
-        "pytorch-model-cli.easy"
+        "pytorch-model-cli.easy",
+        "crack-7z-hash"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -373,7 +413,8 @@
         "eval-mteb.hard",
         "build-linux-kernel-qemu",
         "qemu-alpine-ssh",
-        "pytorch-model-cli"
+        "pytorch-model-cli",
+        "cron-broken-network"
     ],
-    "accuracy": 0.16666666666666666
+    "accuracy": 0.2
 }

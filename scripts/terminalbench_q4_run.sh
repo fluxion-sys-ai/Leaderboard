@@ -32,9 +32,10 @@ echo "[tb-q4] $KEY ($M) gguf=$GGUF bin=$(basename $BIN) sampling=$SAMP thinking=
 SLOG=/tmp/tb_q4_${KEY}_server.log
 PIDF=/tmp/tb_q4_${KEY}_server.pid
 start_server(){
-  # -c 98304 --parallel 2 => 49152 tokens/slot (fits the ~33k-token terminal prompts, no overflow)
-  # at the SAME total KV/VRAM as parallel-1, but 2 concurrent requests => ~2x throughput.
-  "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 2 -ngl 999 \
+  # -c 147456 --parallel 3 => 49152 tokens/slot (SAME per-slot ctx as before -> still fits the ~33k-token
+  # terminal prompts, no overflow), but 3 concurrent requests => ~1.5x throughput. GPU is bursty (idle
+  # gaps during in-container command execution), so extra slots fill the gaps. VRAM: 3 slots ~28GB < 41GB.
+  "$BIN/llama-server" -m "$GGUF" -c 147456 --parallel 3 -ngl 999 \
     --chat-template-kwargs "$TKW" $SAMP \
     --host 127.0.0.1 --port $PORT --no-webui >>"$SLOG" 2>&1 &
   echo $! > "$PIDF"
@@ -72,17 +73,21 @@ export OPENAI_API_BASE="http://127.0.0.1:$PORT/v1"
 export OPENAI_API_KEY="sk-local"
 export TB_MODEL_PARAMS='{"top_p":0.95}'
 
-OUT="$REPO/results/terminalbench_q4/$KEY"
+OUT="${TB_OUT:-$REPO/results/terminalbench_q4/$KEY}"   # TB_OUT overrides the output dir (e.g. a side dir for the remaining-56 run)
 # stale-run guard: a prior run dir that is INCOMPLETE and not owned by a live tb process is stale
 # (e.g. a killed partial + leftover tb.lock, OR a lock baked with different args -> the
 # "Current run configuration does not match existing lock file" ABORT). tb crashes on a mismatched
 # lock BEFORE any task runs, so we must back it up / clear it even when a tb.lock IS present (the old
 # guard only cleared when NO lock existed -> crash-loop). Complete dirs are never touched.
-RUNDIR="$OUT/$KEY"
+# run-id namespaces tb's docker container names (<task>-1-of-1-<run-id>). A concurrent full/OpenRouter
+# run sharing run-id "$KEY" would build identically-named containers and collide (404/unknown_agent_error).
+# TB_RUNID gives this run a distinct namespace; defaults to $KEY for solo runs.
+RUNID="${TB_RUNID:-$KEY}"
+RUNDIR="$OUT/$RUNID"
 if [ -d "$RUNDIR" ]; then
   DONE_N=$([ -f "$RUNDIR/results.json" ] && python3 -c "import json;d=json.load(open('$RUNDIR/results.json'));print(d.get('n_resolved',0)+d.get('n_unresolved',0))" 2>/dev/null || echo 0)
-  if [ "${DONE_N:-0}" -lt "${TERMN:-24}" ] && ! pgrep -f "tb run .*terminalbench_q4/$KEY" >/dev/null 2>&1; then
-    BK="$OUT/_stale_${KEY}_$(date +%s)"; mv "$RUNDIR" "$BK" 2>/dev/null && echo "[tb-q4] cleared stale/incomplete run dir ($DONE_N tasks, lock-agnostic) -> $BK"
+  if [ "${DONE_N:-0}" -lt "${TERMN:-24}" ] && ! pgrep -f "tb run .*terminalbench_q4/$RUNID" >/dev/null 2>&1; then
+    BK="$OUT/_stale_${RUNID}_$(date +%s)"; mv "$RUNDIR" "$BK" 2>/dev/null && echo "[tb-q4] cleared stale/incomplete run dir ($DONE_N tasks, lock-agnostic) -> $BK"
   fi
 fi
 mkdir -p "$OUT"
@@ -91,7 +96,15 @@ mkdir -p "$OUT"
 # are saved in configs/terminal_sample_remaining.txt to finish later. Falls back to full-80 (or
 # --n-tasks N) only if the sample file is absent.
 TARGS=()
-if [ -s "$REPO/configs/terminal_sample.txt" ]; then
+if [ "${TB_FULL80:-}" = "1" ]; then
+  # FULL-80 mode: no task-id filter => tb runs the ENTIRE terminal-bench-core 0.1.1 set (80 tasks).
+  echo "[tb-q4] FULL-80 mode: running the entire terminal-bench-core 0.1.1 set (no task filter)"
+elif [ -n "${TB_SAMPLE_FILE:-}" ] && [ -s "$TB_SAMPLE_FILE" ]; then
+  # Custom task-id list (e.g. terminal_sample_remaining.txt = the 56 NOT in the 24-sample). Run into a
+  # side dir via TB_OUT, then merge with the 24-sample to score the full 80 — reuses the 24 already done.
+  while IFS= read -r t; do [ -n "$t" ] && TARGS+=(--task-id "$t"); done < "$TB_SAMPLE_FILE"
+  echo "[tb-q4] custom sample file $TB_SAMPLE_FILE: $(( ${#TARGS[@]} / 2 )) tasks"
+elif [ -s "$REPO/configs/terminal_sample.txt" ]; then
   while IFS= read -r t; do [ -n "$t" ] && TARGS+=(--task-id "$t"); done < "$REPO/configs/terminal_sample.txt"
   echo "[tb-q4] using stratified sample: ${#TARGS[@]} tasks (÷2 = task count)"
 elif [ -n "$NTASKS" ]; then TARGS=(--n-tasks "$NTASKS"); fi
@@ -105,7 +118,13 @@ tb run \
   --model "openai/edge-${KEY}-q4" \
   "${TARGS[@]}" \
   --output-path "$OUT" \
-  --run-id "$KEY" \
-  --n-concurrent 2 \
-  --global-agent-timeout-sec 600 \
+  --run-id "$RUNID" \
+  --n-concurrent 3 \
+  --global-timeout-multiplier ${TB_MULT:-1.0} \
   --cleanup
+  # FIX (2026-08-23): removed `--global-agent-timeout-sec 600`, which OVERRODE every task's native
+  # max_agent_timeout_sec (harness.py:639-640) and forced ALL tasks to 600s. 15/24 sample tasks have
+  # native timeouts of 900-1800s, so the 600 cap guillotined slow/verbose models mid-task -> spurious
+  # agent_timeout (qwen3.8: 67% timeouts vs 21-32% for peers). Now honors each task's native timeout
+  # via multiplier 1.0 (terminal-bench default = the recommended condition). The full-precision runner
+  # never had this cap, so only Q4 terminal was affected.

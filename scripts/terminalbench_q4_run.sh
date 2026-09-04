@@ -37,7 +37,7 @@ start_server(){
   # qwen models' and at 147456 it spilled ~83GB to HOST RAM -> OOM-killed the whole systemd unit in a
   # ~49min restart loop (kernel: "Out of memory: Killed process llama-server anon-rss:83GB"). 98304 keeps
   # host KV ~55GB (< 83GB box RAM, with Docker headroom) while preserving per-slot ctx. n-concurrent -> 2.
-  "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 2 -ngl 999 \
+  "$BIN/llama-server" -m "$GGUF" -c 49152 --parallel 1 -ngl 999 \
     --chat-template-kwargs "$TKW" $SAMP \
     --host 127.0.0.1 --port $PORT --no-webui >>"$SLOG" 2>&1 &
   echo $! > "$PIDF"
@@ -121,7 +121,7 @@ tb run \
   "${TARGS[@]}" \
   --output-path "$OUT" \
   --run-id "$RUNID" \
-  --n-concurrent 2 \
+  --n-concurrent 1 \
   --global-timeout-multiplier ${TB_MULT:-1.0} \
   --cleanup
   # FIX (2026-08-23): removed `--global-agent-timeout-sec 600`, which OVERRODE every task's native

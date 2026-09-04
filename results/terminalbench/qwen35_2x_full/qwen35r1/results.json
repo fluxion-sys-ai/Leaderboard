@@ -159,11 +159,31 @@
             "agent_ended_at": "2026-09-04T00:15:31.798056+00:00",
             "test_started_at": "2026-09-04T00:15:35.188122+00:00",
             "test_ended_at": "2026-09-04T00:15:46.989188+00:00"
+        },
+        {
+            "id": "84500d77-5993-4f4a-939a-8d1f338feb87",
+            "trial_name": "chess-best-move.1-of-1.qwen35r1",
+            "task_id": "chess-best-move",
+            "instruction": "The file chess_bard.png has an image of a chess board. It is currently white to move. Write the best move for white to play to /app/move.txt in the form [src][dst], for example, e2e4 or h1h8. If there are multiple winning moves, print them all, one per line.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_move_correct": "failed"
+            },
+            "recording_path": "qwen35r1/chess-best-move/chess-best-move.1-of-1.qwen35r1/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T00:01:43.571259+00:00",
+            "trial_ended_at": "2026-09-04T00:20:59.942638+00:00",
+            "agent_started_at": "2026-09-04T00:03:36.138591+00:00",
+            "agent_ended_at": "2026-09-04T00:20:36.244893+00:00",
+            "test_started_at": "2026-09-04T00:20:39.642251+00:00",
+            "test_ended_at": "2026-09-04T00:20:48.266842+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 0,
-    "n_unresolved": 8,
+    "n_unresolved": 9,
     "resolved_ids": [],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -173,7 +193,8 @@
         "blind-maze-explorer-5x5",
         "raman-fitting",
         "path-tracing",
-        "sqlite-db-truncate"
+        "sqlite-db-truncate",
+        "chess-best-move"
     ],
     "accuracy": 0.0
 }

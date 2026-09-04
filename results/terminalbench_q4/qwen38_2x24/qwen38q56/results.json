@@ -1145,10 +1145,32 @@
             "agent_ended_at": "2026-09-04T05:43:58.080200+00:00",
             "test_started_at": "2026-09-04T05:44:01.486407+00:00",
             "test_ended_at": "2026-09-04T05:44:10.888664+00:00"
+        },
+        {
+            "id": "9a07cfd6-c84e-46e9-a8d0-810165949317",
+            "trial_name": "modernize-fortran-build.1-of-1.qwen38q56",
+            "task_id": "modernize-fortran-build",
+            "instruction": "You are to update a Fortran project's build process to use gfortran. The existing build system, designed for a different compiler, needs modification.\n\nContext:\nOriginal Makefile: /app/src/Makefile\nFortran Library: /app/src/my_lib.f90\nMain Program: /app/src/test_main.f90\nYour Working Directory: /app/. All actions (copying, modifying, compiling, running) should be based here.\n\nYour objectives are:\n1. Modify the '/app/Makefile'so that the build process works\n2. Compile the project with the modified Makefile and execute test_program.",
+            "is_resolved": true,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_output_file_exists_and_content_is_correct": "passed",
+                "test_target_executable_was_created_and_is_executable": "passed",
+                "test_makefile_compilation_process": "passed"
+            },
+            "recording_path": "qwen38q56/modernize-fortran-build/modernize-fortran-build.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T05:36:58.159614+00:00",
+            "trial_ended_at": "2026-09-04T05:55:07.437899+00:00",
+            "agent_started_at": "2026-09-04T05:37:37.718988+00:00",
+            "agent_ended_at": "2026-09-04T05:54:37.914148+00:00",
+            "test_started_at": "2026-09-04T05:54:41.313527+00:00",
+            "test_ended_at": "2026-09-04T05:54:55.591374+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 21,
+    "n_resolved": 22,
     "n_unresolved": 24,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -1171,7 +1193,8 @@
         "simple-sheets-put",
         "processing-pipeline",
         "simple-web-scraper",
-        "hello-world"
+        "hello-world",
+        "modernize-fortran-build"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -1199,5 +1222,5 @@
         "organization-json-generator",
         "password-recovery"
     ],
-    "accuracy": 0.4666666666666667
+    "accuracy": 0.4782608695652174
 }

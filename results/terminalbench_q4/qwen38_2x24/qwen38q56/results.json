@@ -993,11 +993,99 @@
             "agent_ended_at": "2026-09-04T05:22:01.835877+00:00",
             "test_started_at": "2026-09-04T05:22:05.227196+00:00",
             "test_ended_at": "2026-09-04T05:22:12.029796+00:00"
+        },
+        {
+            "id": "f407cc65-fc5e-43e2-b0f2-7bd64d7cbc89",
+            "trial_name": "jupyter-notebook-server.1-of-1.qwen38q56",
+            "task_id": "jupyter-notebook-server",
+            "instruction": "Set up a secure Jupyter Notebook server with the following requirements:\n\n1. Install Jupyter Notebook with the necessary dependencies\n2. Configure the server to:\n   - Run on port 8888\n   - Accept connections from any IP address\n   - Use password authentication (set password to \"benchmarkpass\")\n   - Generate a self-signed SSL certificate for HTTPS\n3. Create a sample notebook named \"test_notebook.ipynb\" in the current directory with:\n   - A markdown cell explaining what Jupyter Notebook is\n   - A code cell that defines and plots a simple sine wave using matplotlib\n4. Start the Jupyter server in the background so it's running when tests execute. You should allow Jupyter to run as root.\n\nThe test will verify that:\n- The server is running on port 8888 with HTTPS\n- Password authentication is enabled with the specified password\n- The sample notebook exists and contains the required cells",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_jupyter_server_running": "passed",
+                "test_sample_notebook_exists": "passed",
+                "test_jupyter_config_exists": "failed",
+                "test_password_authentication": "failed"
+            },
+            "recording_path": "qwen38q56/jupyter-notebook-server/jupyter-notebook-server.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 64736,
+            "total_output_tokens": 4186,
+            "trial_started_at": "2026-09-04T05:18:16.135281+00:00",
+            "trial_ended_at": "2026-09-04T05:26:31.560022+00:00",
+            "agent_started_at": "2026-09-04T05:18:32.886811+00:00",
+            "agent_ended_at": "2026-09-04T05:26:15.386416+00:00",
+            "test_started_at": "2026-09-04T05:26:15.432266+00:00",
+            "test_ended_at": "2026-09-04T05:26:19.641396+00:00"
+        },
+        {
+            "id": "762de1c4-b7d2-4c5f-aec8-ead9988ce62e",
+            "trial_name": "new-encrypt-command.1-of-1.qwen38q56",
+            "task_id": "new-encrypt-command",
+            "instruction": "Please help me encrypt all the files I have in the data/ folder using rencrypt which i've just installed.\n\nI want to use the most secure encryption that it provides and the output should go into a encrypted_data/ directory where the basenames are the same.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_success": "failed"
+            },
+            "recording_path": "qwen38q56/new-encrypt-command/new-encrypt-command.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 11665,
+            "total_output_tokens": 1454,
+            "trial_started_at": "2026-09-04T05:22:23.825893+00:00",
+            "trial_ended_at": "2026-09-04T05:29:33.417499+00:00",
+            "agent_started_at": "2026-09-04T05:22:35.411173+00:00",
+            "agent_ended_at": "2026-09-04T05:29:12.370229+00:00",
+            "test_started_at": "2026-09-04T05:29:15.754686+00:00",
+            "test_ended_at": "2026-09-04T05:29:21.775066+00:00"
+        },
+        {
+            "id": "97c96978-32f4-405e-91fb-24dcdc72008e",
+            "trial_name": "simple-web-scraper.1-of-1.qwen38q56",
+            "task_id": "simple-web-scraper",
+            "instruction": "Create a simple web scraper that collects book information from a bookstore website. requests, beautifulsoup4, and pandas are installed.\n\nTasks to complete:\n1. Create a Python script that scrapes data from http://server:8000\n2. The script should extract the following information for each book:\n   - Title\n   - Author\n   - Year published\n   - Rating\n   - Price\n3. Save the collected data to a CSV file named 'books.csv' with columns [\"title\", \"author\", \"year\", \"rating\", \"price\"]\n4. Create a simple summary report showing:\n   - Total number of books scraped\n   - Average book price\n   - Highest rated book\n\nThe bookstore website has a simple HTML structure with the following elements:\n- Each book is contained in a <div class=\"book\"> element\n- Title is in <div class=\"book-title\">\n- Author is in <div class=\"book-author\">\n- Year, rating, and price are in <span> elements with classes \"book-year\", \"book-rating\", and \"book-price\"\n- A template looks like '''\n  <div class=\"book\">\n      <div class=\"book-title\">{title}</div>\n      <div class=\"book-author\">by {author}</div>\n      <div class=\"book-details\">\n          <span class=\"book-year\">Published: {year}</span>\n          <span class=\"book-rating\">Rating: {rating}/5</span>\n          <span class=\"book-price\">${price}</span>\n      </div>\n  </div>\n  '''\n\nThe report should be saved to a file named 'report.txt'.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_csv_file_exists": "passed",
+                "test_csv_structure": "passed",
+                "test_data_completeness": "passed",
+                "test_data_accuracy": "passed",
+                "test_report_exists": "passed"
+            },
+            "recording_path": "qwen38q56/simple-web-scraper/simple-web-scraper.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 17009,
+            "total_output_tokens": 1831,
+            "trial_started_at": "2026-09-04T05:29:33.425085+00:00",
+            "trial_ended_at": "2026-09-04T05:33:15.787109+00:00",
+            "agent_started_at": "2026-09-04T05:30:19.405048+00:00",
+            "agent_ended_at": "2026-09-04T05:32:46.633296+00:00",
+            "test_started_at": "2026-09-04T05:32:50.033999+00:00",
+            "test_ended_at": "2026-09-04T05:32:53.760970+00:00"
+        },
+        {
+            "id": "f35a6eea-c3f3-4daf-bff8-a35f49f54a0c",
+            "trial_name": "hello-world.1-of-1.qwen38q56",
+            "task_id": "hello-world",
+            "instruction": "Create a file called hello.txt in the current directory. Write \"Hello, world!\" to it. Make sure it ends in a newline. Don't make any other files or folders.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_hello_file_exists": "passed",
+                "test_hello_file_content": "passed"
+            },
+            "recording_path": "qwen38q56/hello-world/hello-world.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 4031,
+            "total_output_tokens": 454,
+            "trial_started_at": "2026-09-04T05:33:15.792209+00:00",
+            "trial_ended_at": "2026-09-04T05:34:23.270109+00:00",
+            "agent_started_at": "2026-09-04T05:33:20.341156+00:00",
+            "agent_ended_at": "2026-09-04T05:34:00.773903+00:00",
+            "test_started_at": "2026-09-04T05:34:04.164290+00:00",
+            "test_ended_at": "2026-09-04T05:34:11.630383+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 19,
-    "n_unresolved": 19,
+    "n_resolved": 21,
+    "n_unresolved": 21,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1017,7 +1105,9 @@
         "cartpole-rl-training",
         "prove-plus-comm",
         "simple-sheets-put",
-        "processing-pipeline"
+        "processing-pipeline",
+        "simple-web-scraper",
+        "hello-world"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -1038,7 +1128,9 @@
         "intrusion-detection",
         "csv-to-parquet",
         "chess-best-move",
-        "raman-fitting"
+        "raman-fitting",
+        "jupyter-notebook-server",
+        "new-encrypt-command"
     ],
     "accuracy": 0.5
 }

@@ -1263,11 +1263,77 @@
             "agent_ended_at": "2026-09-04T00:20:21.601718+00:00",
             "test_started_at": "2026-09-04T00:20:24.993516+00:00",
             "test_ended_at": "2026-09-04T00:20:34.702685+00:00"
+        },
+        {
+            "id": "e4e3b97e-fb92-414f-ba46-ddec208da6e2",
+            "trial_name": "chess-best-move.1-of-1.qwen38f56",
+            "task_id": "chess-best-move",
+            "instruction": "The file chess_bard.png has an image of a chess board. It is currently white to move. Write the best move for white to play to /app/move.txt in the form [src][dst], for example, e2e4 or h1h8. If there are multiple winning moves, print them all, one per line.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_move_correct": "failed"
+            },
+            "recording_path": "qwen38f56/chess-best-move/chess-best-move.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T00:10:45.201891+00:00",
+            "trial_ended_at": "2026-09-04T00:29:39.154688+00:00",
+            "agent_started_at": "2026-09-04T00:12:15.479104+00:00",
+            "agent_ended_at": "2026-09-04T00:29:15.604874+00:00",
+            "test_started_at": "2026-09-04T00:29:19.004295+00:00",
+            "test_ended_at": "2026-09-04T00:29:27.338397+00:00"
+        },
+        {
+            "id": "2b045001-552e-4289-9bf4-6fba82d1d694",
+            "trial_name": "extract-safely.1-of-1.qwen38f56",
+            "task_id": "extract-safely",
+            "instruction": "# Extract Solution Safely\n\nYou need to extract the contents of the solution from `archive.tar` and write it to `/app/solution.txt`.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_system_logs_exists": "passed",
+                "test_no_sensitive_exposure": "passed",
+                "test_solution_found": "passed"
+            },
+            "recording_path": "qwen38f56/extract-safely/extract-safely.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 7653,
+            "total_output_tokens": 979,
+            "trial_started_at": "2026-09-04T00:29:39.158384+00:00",
+            "trial_ended_at": "2026-09-04T00:31:45.860952+00:00",
+            "agent_started_at": "2026-09-04T00:30:51.071145+00:00",
+            "agent_ended_at": "2026-09-04T00:31:23.643440+00:00",
+            "test_started_at": "2026-09-04T00:31:27.035190+00:00",
+            "test_ended_at": "2026-09-04T00:31:33.508138+00:00"
+        },
+        {
+            "id": "88348402-5982-485c-a0e8-98640d8395bd",
+            "trial_name": "vim-terminal-task.1-of-1.qwen38f56",
+            "task_id": "vim-terminal-task",
+            "instruction": "Using vim, create a Python script named 'text_processor.py' that:\n\n1. Takes a filename as a command line argument\n2. Reads the file\n3. Counts the frequency of each word (separated by spaces) not including punctuation or capitalization.\n4. Prints the top 3 most common words with their frequencies in descending order. Each line should be in the format: \"word: frequency\". There should be 3 lines of output.\n\nThen, create a test file named 'sample.txt' with the following text:\n\"The quick brown fox jumps over the lazy dog. The dog barks at the fox.\"\n\nFinally, run the script with the test file and verify that it correctly identifies 'the' as the most common word.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_python_script_exists": "passed",
+                "test_sample_text_exists": "passed",
+                "test_sample_text_content": "passed",
+                "test_script_output": "passed",
+                "test_python_script_executable": "failed"
+            },
+            "recording_path": "qwen38f56/vim-terminal-task/vim-terminal-task.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 4866,
+            "total_output_tokens": 1131,
+            "trial_started_at": "2026-09-04T00:31:45.865616+00:00",
+            "trial_ended_at": "2026-09-04T00:34:08.974590+00:00",
+            "agent_started_at": "2026-09-04T00:31:50.903994+00:00",
+            "agent_ended_at": "2026-09-04T00:33:46.275501+00:00",
+            "test_started_at": "2026-09-04T00:33:49.659701+00:00",
+            "test_ended_at": "2026-09-04T00:33:57.333891+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 29,
-    "n_unresolved": 22,
+    "n_resolved": 30,
+    "n_unresolved": 24,
     "resolved_ids": [
         "conda-env-conflict-resolution",
         "eval-mteb.hard",
@@ -1297,7 +1363,8 @@
         "crack-7z-hash",
         "crack-7z-hash.easy",
         "simple-sheets-put",
-        "password-recovery"
+        "password-recovery",
+        "extract-safely"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1321,7 +1388,9 @@
         "intrusion-detection",
         "fibonacci-server",
         "solana-data",
-        "build-initramfs-qemu"
+        "build-initramfs-qemu",
+        "chess-best-move",
+        "vim-terminal-task"
     ],
-    "accuracy": 0.5686274509803921
+    "accuracy": 0.5555555555555556
 }

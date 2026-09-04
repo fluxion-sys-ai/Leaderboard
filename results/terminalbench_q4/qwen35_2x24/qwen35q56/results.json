@@ -1,5 +1,5 @@
 {
-    "id": "6a5d708e-37f4-4079-85ed-70757fa0bafe",
+    "id": "26ec33a5-07a3-4fb7-aa86-8959d9b81ea1",
     "results": [
         {
             "id": "a363a3d0-bbfd-4d88-940d-1ed10e727423",
@@ -441,6 +441,27 @@
             "agent_ended_at": "2026-09-04T12:01:31.879996+00:00",
             "test_started_at": "2026-09-04T12:01:35.266117+00:00",
             "test_ended_at": "2026-09-04T12:02:17.626801+00:00"
+        },
+        {
+            "id": "a68967b9-c3b7-4711-82ca-bc8e1501d08f",
+            "trial_name": "cron-broken-network.1-of-1.qwen35q56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_curl_file_exists": "passed",
+                "test_curl_file_content": "failed"
+            },
+            "recording_path": "qwen35q56/cron-broken-network/cron-broken-network.1-of-1.qwen35q56/sessions/agent.cast",
+            "total_input_tokens": 143888,
+            "total_output_tokens": 3899,
+            "trial_started_at": "2026-09-04T15:29:44.977678+00:00",
+            "trial_ended_at": "2026-09-04T15:35:11.136301+00:00",
+            "agent_started_at": "2026-09-04T15:29:53.977151+00:00",
+            "agent_ended_at": "2026-09-04T15:33:50.087108+00:00",
+            "test_started_at": "2026-09-04T15:33:53.478546+00:00",
+            "test_ended_at": "2026-09-04T15:34:59.266969+00:00"
         },
         {
             "id": "1a308361-6a32-44f0-b14a-8f5cf0b65bb2",
@@ -1307,25 +1328,7 @@
             "test_ended_at": "2026-09-04T12:43:26.041864+00:00"
         },
         {
-            "id": "a9eec8b0-abae-4163-9122-c68453a6fc3b",
-            "trial_name": "qemu-startup.1-of-1.qwen35q56",
-            "task_id": "qemu-startup",
-            "instruction": "Start the alpine.iso image in qemu in such a way that I can connect to it via `telnet 127.0.0.1 6665`. When I run telnet I will expect to see the login prompt; I'll log in. You should just get me to this point. Start the image in the background and leave it running. Block until it's ready.",
-            "is_resolved": null,
-            "failure_mode": "unknown_agent_error",
-            "parser_results": null,
-            "recording_path": null,
-            "total_input_tokens": null,
-            "total_output_tokens": null,
-            "trial_started_at": null,
-            "trial_ended_at": null,
-            "agent_started_at": null,
-            "agent_ended_at": null,
-            "test_started_at": null,
-            "test_ended_at": null
-        },
-        {
-            "id": "6949c10c-9a2b-4628-acc7-974ca5733880",
+            "id": "ca4f6c5e-0ccc-4a48-8f9d-833aed90fa2b",
             "trial_name": "qemu-alpine-ssh.1-of-1.qwen35q56",
             "task_id": "qemu-alpine-ssh",
             "instruction": "Start the alpine.iso image in qemu, and then start an ssh server on the alpine linux vm. When you're done, I should be able to run `ssh -p 2222 root@localhost` with password `password123` and be dropped into a shell. On the alpine.iso image, the default username is root with no password.",
@@ -1343,25 +1346,22 @@
             "test_ended_at": null
         },
         {
-            "id": "a68967b9-c3b7-4711-82ca-bc8e1501d08f",
-            "trial_name": "cron-broken-network.1-of-1.qwen35q56",
-            "task_id": "cron-broken-network",
-            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
-            "is_resolved": false,
-            "failure_mode": "unset",
-            "parser_results": {
-                "test_curl_file_exists": "passed",
-                "test_curl_file_content": "failed"
-            },
-            "recording_path": "qwen35q56/cron-broken-network/cron-broken-network.1-of-1.qwen35q56/sessions/agent.cast",
-            "total_input_tokens": 143888,
-            "total_output_tokens": 3899,
-            "trial_started_at": "2026-09-04T15:29:44.977678+00:00",
-            "trial_ended_at": "2026-09-04T15:35:11.136301+00:00",
-            "agent_started_at": "2026-09-04T15:29:53.977151+00:00",
-            "agent_ended_at": "2026-09-04T15:33:50.087108+00:00",
-            "test_started_at": "2026-09-04T15:33:53.478546+00:00",
-            "test_ended_at": "2026-09-04T15:34:59.266969+00:00"
+            "id": "62080b14-e1ef-42a0-86fe-713a4f4ead8a",
+            "trial_name": "qemu-startup.1-of-1.qwen35q56",
+            "task_id": "qemu-startup",
+            "instruction": "Start the alpine.iso image in qemu in such a way that I can connect to it via `telnet 127.0.0.1 6665`. When I run telnet I will expect to see the login prompt; I'll log in. You should just get me to this point. Start the image in the background and leave it running. Block until it's ready.",
+            "is_resolved": null,
+            "failure_mode": "unknown_agent_error",
+            "parser_results": null,
+            "recording_path": null,
+            "total_input_tokens": null,
+            "total_output_tokens": null,
+            "trial_started_at": null,
+            "trial_ended_at": null,
+            "agent_started_at": null,
+            "agent_ended_at": null,
+            "test_started_at": null,
+            "test_ended_at": null
         }
     ],
     "pass_at_k": {},
@@ -1404,6 +1404,7 @@
         "sqlite-db-truncate",
         "vim-terminal-task",
         "openssl-selfsigned-cert",
+        "cron-broken-network",
         "cartpole-rl-training",
         "super-benchmark-upet",
         "fix-git",
@@ -1422,9 +1423,8 @@
         "intrusion-detection",
         "pytorch-model-cli",
         "crack-7z-hash.hard",
-        "qemu-startup",
         "qemu-alpine-ssh",
-        "cron-broken-network"
+        "qemu-startup"
     ],
     "accuracy": 0.4909090909090909
 }

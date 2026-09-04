@@ -1,5 +1,5 @@
 {
-    "id": "af003485-8ba8-4ab8-8aa9-f158a5a5caeb",
+    "id": "fd956c04-5bd7-4a0e-9c24-4691046c52c2",
     "results": [
         {
             "id": "167fd1d3-e1f1-4d0a-a91f-4dd5502cf30d",
@@ -440,6 +440,27 @@
             "agent_ended_at": "2026-09-04T08:01:35.788424+00:00",
             "test_started_at": "2026-09-04T08:01:39.183623+00:00",
             "test_ended_at": "2026-09-04T08:02:20.401415+00:00"
+        },
+        {
+            "id": "5f53faa4-9109-4dee-a71c-93a49607ea9c",
+            "trial_name": "cron-broken-network.1-of-1.qwen27q56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_curl_file_exists": "passed",
+                "test_curl_file_content": "failed"
+            },
+            "recording_path": "qwen27q56/cron-broken-network/cron-broken-network.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 102744,
+            "total_output_tokens": 4622,
+            "trial_started_at": "2026-09-04T15:21:59.522202+00:00",
+            "trial_ended_at": "2026-09-04T15:28:36.892399+00:00",
+            "agent_started_at": "2026-09-04T15:22:40.542205+00:00",
+            "agent_ended_at": "2026-09-04T15:27:15.702977+00:00",
+            "test_started_at": "2026-09-04T15:27:19.095921+00:00",
+            "test_ended_at": "2026-09-04T15:28:25.011690+00:00"
         },
         {
             "id": "c4d4025c-3d7b-41e1-a3f7-78a3cff48c6b",
@@ -1327,27 +1348,6 @@
             "agent_ended_at": "2026-09-04T10:09:17.355413+00:00",
             "test_started_at": "2026-09-04T10:09:17.404447+00:00",
             "test_ended_at": "2026-09-04T10:09:22.941736+00:00"
-        },
-        {
-            "id": "5f53faa4-9109-4dee-a71c-93a49607ea9c",
-            "trial_name": "cron-broken-network.1-of-1.qwen27q56",
-            "task_id": "cron-broken-network",
-            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
-            "is_resolved": false,
-            "failure_mode": "unset",
-            "parser_results": {
-                "test_curl_file_exists": "passed",
-                "test_curl_file_content": "failed"
-            },
-            "recording_path": "qwen27q56/cron-broken-network/cron-broken-network.1-of-1.qwen27q56/sessions/agent.cast",
-            "total_input_tokens": 102744,
-            "total_output_tokens": 4622,
-            "trial_started_at": "2026-09-04T15:21:59.522202+00:00",
-            "trial_ended_at": "2026-09-04T15:28:36.892399+00:00",
-            "agent_started_at": "2026-09-04T15:22:40.542205+00:00",
-            "agent_ended_at": "2026-09-04T15:27:15.702977+00:00",
-            "test_started_at": "2026-09-04T15:27:19.095921+00:00",
-            "test_ended_at": "2026-09-04T15:28:25.011690+00:00"
         }
     ],
     "pass_at_k": {},
@@ -1391,6 +1391,7 @@
         "sqlite-db-truncate",
         "vim-terminal-task",
         "swe-bench-fsspec",
+        "cron-broken-network",
         "blind-maze-explorer-algorithm",
         "super-benchmark-upet",
         "raman-fitting",
@@ -1409,8 +1410,7 @@
         "intrusion-detection",
         "get-bitcoin-nodes",
         "extract-safely",
-        "qemu-alpine-ssh",
-        "cron-broken-network"
+        "qemu-alpine-ssh"
     ],
     "accuracy": 0.509090909090909
 }

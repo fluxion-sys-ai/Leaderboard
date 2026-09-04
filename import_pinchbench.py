@@ -31,10 +31,14 @@ def main():
             d = json.load(open(f))
         except (json.JSONDecodeError, OSError):
             continue
-        m = re.search(r"edge-(.+)", str(d.get("model", "")))   # only our edge runs
-        if not m:
+        raw = str(d.get("model", ""))
+        m = re.search(r"edge-(.+)", raw)   # our edge runs
+        if m:
+            model = m.group(1).replace("/", "-")
+        elif "claude-sonnet-5" in raw:     # frontier reference (Claude Sonnet 5, API)
+            model = "claude-sonnet-5-ref"
+        else:
             continue
-        model = m.group(1).replace("/", "-")
         matched += 1
         for cat, cs in (d.get("category_scores") or {}).items():
             agg[model]["score"] += cs.get("score", 0.0)

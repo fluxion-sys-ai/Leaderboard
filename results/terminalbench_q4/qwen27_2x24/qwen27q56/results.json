@@ -436,11 +436,32 @@
             "agent_ended_at": "2026-09-04T08:41:32.594751+00:00",
             "test_started_at": "2026-09-04T08:41:36.000084+00:00",
             "test_ended_at": "2026-09-04T08:41:47.272633+00:00"
+        },
+        {
+            "id": "5cb99bf5-3ee9-4a17-84b1-b9862c0462a4",
+            "trial_name": "train-fasttext.1-of-1.qwen27q56",
+            "task_id": "train-fasttext",
+            "instruction": "Can you train a fasttext model on the yelp data in the data/ folder?\n\nThe final model size needs to be less than 150MB but get at least 0.62 accuracy on a private test set.\n\nThe model should be saved as model.bin in the current directory.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_model_size": "passed",
+                "test_accuracy": "failed"
+            },
+            "recording_path": "qwen27q56/train-fasttext/train-fasttext.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T08:25:03.109661+00:00",
+            "trial_ended_at": "2026-09-04T08:51:30.699586+00:00",
+            "agent_started_at": "2026-09-04T08:25:59.747510+00:00",
+            "agent_ended_at": "2026-09-04T08:50:59.866055+00:00",
+            "test_started_at": "2026-09-04T08:51:03.371936+00:00",
+            "test_ended_at": "2026-09-04T08:51:15.466812+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 6,
-    "n_unresolved": 7,
+    "n_unresolved": 8,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -456,7 +477,8 @@
         "swe-bench-fsspec",
         "run-pdp11-code",
         "blind-maze-explorer-algorithm",
-        "blind-maze-explorer-5x5"
+        "blind-maze-explorer-5x5",
+        "train-fasttext"
     ],
-    "accuracy": 0.46153846153846156
+    "accuracy": 0.42857142857142855
 }

@@ -723,10 +723,73 @@
             "agent_ended_at": "2026-09-04T04:34:17.955719+00:00",
             "test_started_at": "2026-09-04T04:34:21.344025+00:00",
             "test_ended_at": "2026-09-04T04:34:24.259670+00:00"
+        },
+        {
+            "id": "1d1eec4e-9ab8-45b7-812f-d63296492d7e",
+            "trial_name": "fix-git.1-of-1.qwen38q56",
+            "task_id": "fix-git",
+            "instruction": "I just made some changes to my personal site and checked out master, but now I can't find those changes. Please help me find them and merge them into master.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_about_file": "passed",
+                "test_layout_file": "passed"
+            },
+            "recording_path": "qwen38q56/fix-git/fix-git.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 20289,
+            "total_output_tokens": 1847,
+            "trial_started_at": "2026-09-04T04:31:47.847137+00:00",
+            "trial_ended_at": "2026-09-04T04:36:31.415678+00:00",
+            "agent_started_at": "2026-09-04T04:32:12.759730+00:00",
+            "agent_ended_at": "2026-09-04T04:36:09.290805+00:00",
+            "test_started_at": "2026-09-04T04:36:12.684215+00:00",
+            "test_ended_at": "2026-09-04T04:36:19.669986+00:00"
+        },
+        {
+            "id": "7640442f-04cf-49d5-b258-c03ea71dab8a",
+            "trial_name": "crack-7z-hash.1-of-1.qwen38q56",
+            "task_id": "crack-7z-hash",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe password is unknown, but I know that the password is a 4-digit number.\nUse the john the ripper binaries in the \"/app/john/run\" directory.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "qwen38q56/crack-7z-hash/crack-7z-hash.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 66259,
+            "total_output_tokens": 2427,
+            "trial_started_at": "2026-09-04T04:32:54.633415+00:00",
+            "trial_ended_at": "2026-09-04T04:38:09.307886+00:00",
+            "agent_started_at": "2026-09-04T04:33:06.659506+00:00",
+            "agent_ended_at": "2026-09-04T04:37:47.676149+00:00",
+            "test_started_at": "2026-09-04T04:37:51.065077+00:00",
+            "test_ended_at": "2026-09-04T04:37:57.708079+00:00"
+        },
+        {
+            "id": "c05bbb5b-cc6e-4669-9a88-016d11a1e12d",
+            "trial_name": "crack-7z-hash.easy.1-of-1.qwen38q56",
+            "task_id": "crack-7z-hash.easy",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe password is unknown, but I know that the password is a 4-digit number.\nUse the john the ripper binaries in the \"/app/john/run\" directory.\nYou also need to install perl (libcompress-raw-lzma-perl) and 7z on the system.\nUse the \"/app/john/run/7z2john.pl\" script to convert the 7z file to a john the ripper format.\nAfterwards use the \"/app/john/run/john\" command with the created hash file to crack the password.\nThen unzip the \"secrets.7z\" file with the found password.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "qwen38q56/crack-7z-hash.easy/crack-7z-hash.easy.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 70337,
+            "total_output_tokens": 2457,
+            "trial_started_at": "2026-09-04T04:36:31.420450+00:00",
+            "trial_ended_at": "2026-09-04T04:42:21.264460+00:00",
+            "agent_started_at": "2026-09-04T04:36:35.973101+00:00",
+            "agent_ended_at": "2026-09-04T04:41:58.931011+00:00",
+            "test_started_at": "2026-09-04T04:42:02.333207+00:00",
+            "test_ended_at": "2026-09-04T04:42:09.352686+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 12,
+    "n_resolved": 15,
     "n_unresolved": 14,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -740,7 +803,10 @@
         "pytorch-model-cli.easy",
         "crack-7z-hash.hard",
         "openssl-selfsigned-cert",
-        "swe-bench-langcodes"
+        "swe-bench-langcodes",
+        "fix-git",
+        "crack-7z-hash",
+        "crack-7z-hash.easy"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -758,5 +824,5 @@
         "get-bitcoin-nodes",
         "hf-model-inference"
     ],
-    "accuracy": 0.46153846153846156
+    "accuracy": 0.5172413793103449
 }

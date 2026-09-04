@@ -139,11 +139,31 @@
             "agent_ended_at": "2026-09-04T00:01:18.728991+00:00",
             "test_started_at": "2026-09-04T00:01:22.291564+00:00",
             "test_ended_at": "2026-09-04T00:01:30.248358+00:00"
+        },
+        {
+            "id": "cb2afdca-bb6d-453f-b37a-aef56cd96a5a",
+            "trial_name": "sqlite-db-truncate.1-of-1.qwen35r1",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "qwen35r1/sqlite-db-truncate/sqlite-db-truncate.1-of-1.qwen35r1/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T23:58:27.097061+00:00",
+            "trial_ended_at": "2026-09-04T00:15:58.702376+00:00",
+            "agent_started_at": "2026-09-03T23:58:31.647577+00:00",
+            "agent_ended_at": "2026-09-04T00:15:31.798056+00:00",
+            "test_started_at": "2026-09-04T00:15:35.188122+00:00",
+            "test_ended_at": "2026-09-04T00:15:46.989188+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 0,
-    "n_unresolved": 7,
+    "n_unresolved": 8,
     "resolved_ids": [],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -152,7 +172,8 @@
         "gpt2-codegolf",
         "blind-maze-explorer-5x5",
         "raman-fitting",
-        "path-tracing"
+        "path-tracing",
+        "sqlite-db-truncate"
     ],
     "accuracy": 0.0
 }

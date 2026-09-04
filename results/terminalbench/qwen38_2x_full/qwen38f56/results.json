@@ -1329,11 +1329,33 @@
             "agent_ended_at": "2026-09-04T00:33:46.275501+00:00",
             "test_started_at": "2026-09-04T00:33:49.659701+00:00",
             "test_ended_at": "2026-09-04T00:33:57.333891+00:00"
+        },
+        {
+            "id": "9016ee21-c2b5-403e-905b-09d8c1c862ec",
+            "trial_name": "path-tracing-reverse.1-of-1.qwen38f56",
+            "task_id": "path-tracing-reverse",
+            "instruction": "I've compiled a program at ./mystery. Write a C program called mystery.c that performs an identical operation.\nYou can do this by observing input output behavior, decompiling the program, or anything else.\nThe effect of running ./mystery should be identical to running gcc -o reversed mystery.c -lm && ./reversed\nshould be completely identical.\nYour c program must be <10k when compressed.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_image_c_exists": "failed",
+                "test_image_compiles": "failed",
+                "test_image_similarity": "failed"
+            },
+            "recording_path": "qwen38f56/path-tracing-reverse/path-tracing-reverse.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T00:20:46.494825+00:00",
+            "trial_ended_at": "2026-09-04T00:38:54.307872+00:00",
+            "agent_started_at": "2026-09-04T00:21:33.843346+00:00",
+            "agent_ended_at": "2026-09-04T00:38:34.045857+00:00",
+            "test_started_at": "2026-09-04T00:38:37.441306+00:00",
+            "test_ended_at": "2026-09-04T00:38:42.626660+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 30,
-    "n_unresolved": 24,
+    "n_unresolved": 25,
     "resolved_ids": [
         "conda-env-conflict-resolution",
         "eval-mteb.hard",
@@ -1390,7 +1412,8 @@
         "solana-data",
         "build-initramfs-qemu",
         "chess-best-move",
-        "vim-terminal-task"
+        "vim-terminal-task",
+        "path-tracing-reverse"
     ],
-    "accuracy": 0.5555555555555556
+    "accuracy": 0.5454545454545454
 }

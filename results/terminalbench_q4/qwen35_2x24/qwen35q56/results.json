@@ -60,17 +60,81 @@
             "agent_ended_at": "2026-09-04T11:41:16.850607+00:00",
             "test_started_at": "2026-09-04T11:41:20.378596+00:00",
             "test_ended_at": "2026-09-04T11:41:27.773676+00:00"
+        },
+        {
+            "id": "bd1dbc66-d1ba-479b-bdad-a8b024500bdc",
+            "trial_name": "swe-bench-astropy-2.1-of-1.qwen35q56",
+            "task_id": "swe-bench-astropy-2",
+            "instruction": "ascii.qdp Table format assumes QDP commands are upper case\n### Description\n\nascii.qdp assumes that commands in a QDP file are upper case, for example, for errors they must be \"READ SERR 1 2\" whereas QDP itself is not case sensitive and case use \"read serr 1 2\".\n\nAs many QDP files are created by hand, the expectation that all commands be all-caps should be removed.\n\n### Expected behavior\n\nThe following qdp file should read into a `Table` with errors, rather than crashing.\n```\nread serr 1 2\n1 0.5 1 0.5\n```\n\n### How to Reproduce\n\nCreate a QDP file:\n```\n> cat > test.qdp\nread serr 1 2\n1 0.5 1 0.5\n<EOF>\n\n> python\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)] on darwin\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> from astropy.table import Table\n>>> Table.read('test.qdp',format='ascii.qdp')\nWARNING: table_id not specified. Reading the first available table [astropy.io.ascii.qdp]\nTraceback (most recent call last):\n...\n    raise ValueError(f'Unrecognized QDP line: {line}')\nValueError: Unrecognized QDP line: read serr 1 2\n```\n\nRunning \"qdp test.qdp\" works just fine.\n\n\n### Versions\n\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)]\nastropy 5.1\nNumpy 1.24.1\npyerfa 2.0.0.1\nScipy 1.10.0\nMatplotlib 3.6.3",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_get_tables_from_qdp_file": "passed",
+                "test_roundtrip[False]": "passed",
+                "test_read_example": "passed",
+                "test_roundtrip_example": "passed",
+                "test_roundtrip_example_comma": "passed",
+                "test_read_write_simple": "passed",
+                "test_read_write_simple_specify_name": "passed",
+                "test_get_lines_from_qdp": "passed",
+                "test_roundtrip[True]": "failed"
+            },
+            "recording_path": "qwen35q56/swe-bench-astropy-2/swe-bench-astropy-2.1-of-1.qwen35q56/sessions/agent.cast",
+            "total_input_tokens": 274705,
+            "total_output_tokens": 6096,
+            "trial_started_at": "2026-09-04T11:38:48.090268+00:00",
+            "trial_ended_at": "2026-09-04T11:51:58.729924+00:00",
+            "agent_started_at": "2026-09-04T11:39:26.818884+00:00",
+            "agent_ended_at": "2026-09-04T11:49:37.048548+00:00",
+            "test_started_at": "2026-09-04T11:49:40.445719+00:00",
+            "test_ended_at": "2026-09-04T11:51:46.608799+00:00"
+        },
+        {
+            "id": "19e4e44a-e8c9-49ae-b8cd-99db7925c46a",
+            "trial_name": "swe-bench-astropy-1.1-of-1.qwen35q56",
+            "task_id": "swe-bench-astropy-1",
+            "instruction": "Modeling's `separability_matrix` does not compute separability correctly for nested CompoundModels\nConsider the following model:\n\n```python\nfrom astropy.modeling import models as m\nfrom astropy.modeling.separable import separability_matrix\n\ncm = m.Linear1D(10) & m.Linear1D(5)\n```\n\nIt's separability matrix as you might expect is a diagonal:\n\n```python\n>>> separability_matrix(cm)\narray([[ True, False],\n[False, True]])\n```\n\nIf I make the model more complex:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, False],\n[False, False, False, True]])\n```\n\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\n\nIf however, I nest these compound models:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, True],\n[False, False, True, True]])\n```\nSuddenly the inputs and outputs are no longer separable?\n\nThis feels like a bug to me, but I might be missing something?",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_coord_matrix": "passed",
+                "test_cdot": "passed",
+                "test_cstack": "passed",
+                "test_arith_oper": "passed",
+                "test_separable[compound_model0-result0]": "passed",
+                "test_separable[compound_model1-result1]": "passed",
+                "test_separable[compound_model2-result2]": "passed",
+                "test_separable[compound_model3-result3]": "passed",
+                "test_separable[compound_model4-result4]": "passed",
+                "test_separable[compound_model5-result5]": "passed",
+                "test_separable[compound_model6-result6]": "passed",
+                "test_separable[compound_model7-result7]": "passed",
+                "test_separable[compound_model8-result8]": "passed",
+                "test_separable[compound_model9-result9]": "passed",
+                "test_custom_model_separable": "passed"
+            },
+            "recording_path": "qwen35q56/swe-bench-astropy-1/swe-bench-astropy-1.1-of-1.qwen35q56/sessions/agent.cast",
+            "total_input_tokens": 156757,
+            "total_output_tokens": 4364,
+            "trial_started_at": "2026-09-04T11:41:48.084088+00:00",
+            "trial_ended_at": "2026-09-04T11:54:46.059851+00:00",
+            "agent_started_at": "2026-09-04T11:42:28.624407+00:00",
+            "agent_ended_at": "2026-09-04T11:51:47.334182+00:00",
+            "test_started_at": "2026-09-04T11:51:50.717010+00:00",
+            "test_ended_at": "2026-09-04T11:54:33.575919+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 1,
-    "n_unresolved": 2,
+    "n_resolved": 2,
+    "n_unresolved": 3,
     "resolved_ids": [
-        "eval-mteb.hard"
+        "eval-mteb.hard",
+        "swe-bench-astropy-1"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
-        "super-benchmark-upet"
+        "super-benchmark-upet",
+        "swe-bench-astropy-2"
     ],
-    "accuracy": 0.3333333333333333
+    "accuracy": 0.4
 }

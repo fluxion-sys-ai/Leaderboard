@@ -17,6 +17,7 @@ case "$KEY" in
   qwen35) MODEL="openrouter/qwen/qwen3.6-35b-a3b" ;;
   gemma)  MODEL="openrouter/google/gemma-4-31b-it" ;;
   qwen38) MODEL="openrouter/qwen/qwen3.8-27b" ;;
+  claude) MODEL="openrouter/anthropic/claude-sonnet-5" ;;
   *) echo "unknown key: $KEY"; exit 2 ;;
 esac
 # qwen3.8-FIRST phase: while this flag exists, ONLY qwen38 pinch runs; the other 4 are deferred so

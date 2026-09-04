@@ -106,3 +106,16 @@ models:
     provider:
       quantizations: ["fp8"]
       allow_fallbacks: true
+
+  # ---- Claude Sonnet 5 (FRONTIER REFERENCE, Sep 2026) — API anchor -----------
+  # NOT an edge model: a frontier API baseline so every edge number reads in
+  # context ("how close is edge to frontier"). Full-precision only (no Q4 — you
+  # can't self-host it), so it renders as a full-precision reference row.
+  - name: claude-sonnet-5-ref
+    model_slug: anthropic/claude-sonnet-5
+    precision: frontier
+    precision_label: "frontier reference (Claude Sonnet 5, API)"
+    temperature: 1.0
+    top_p: 0.95
+    provider:
+      allow_fallbacks: true

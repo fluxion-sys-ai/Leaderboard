@@ -19,7 +19,7 @@ from collections import defaultdict
 
 from src.utils.helpers import write_json, scored_path
 
-PB_RESULTS = "/home/ubuntu/pinchbench-skill/results"
+PB_RESULTS = "/home/aliixh/pinchbench-skill/results"
 
 
 def main():

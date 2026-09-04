@@ -48,10 +48,16 @@ log "PinchBench Q4 phase complete."
 
 # ---- Phase 2: SWE-bench Lite Q4 (all 5) ----
 for m in "${MODELS[@]}"; do
-  [ -f "results/scored/${FN[$m]}/swebench_lite.json" ] && { log "SWE Q4 $m done — skip"; continue; }
+  # skip only if SWE already scored over the FULL 51-instance stratified sample (n>=51). A cell scored
+  # over the old 20-subset (n=20) is re-run at strat51 — the 20 are cached (--skip_existing) so only
+  # the 31 new instances actually run. Fail-safe: if the n-check errors, treat as done (never loop).
+  swep="results/scored/${FN[$m]}/swebench_lite.json"
+  if [ -f "$swep" ] && [ "$(python3 -c "import json;print(json.load(open('$swep')).get('n',0))" 2>/dev/null || echo 51)" -ge 51 ]; then
+    log "SWE Q4 $m done (n>=51) — skip"; continue
+  fi
   free_gpu; sleep 3
-  log "SWE Q4 $m (strat50)"
-  bash scripts/swe_agentless_q4_run.sh "$m" --subset strat50 >>"$REPO/logs_swe_q4_${m}.log" 2>&1 || log "  SWE Q4 $m errored (see logs_swe_q4_${m}.log)"
+  log "SWE Q4 $m (strat51)"
+  bash scripts/swe_agentless_q4_run.sh "$m" --subset strat51 >>"$REPO/logs_swe_q4_${m}.log" 2>&1 || log "  SWE Q4 $m errored (see logs_swe_q4_${m}.log)"
 done
 log "SWE-bench Q4 phase complete."
 

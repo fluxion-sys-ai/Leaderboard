@@ -118,6 +118,9 @@ class OpenRouterRunner(ModelRunner):
         resp = None
         for attempt in range(4):
             try:
+                # 360s (was 900): a full 32k-token generation takes ~5-6 min, so this covers legit
+                # long reasoning while a HUNG provider fails fast and retries (to a fallback provider
+                # via the order pin) instead of blocking 15 min/attempt (= 60 min of dead stall).
                 with urllib.request.urlopen(req, timeout=900) as r:
                     resp = json.loads(r.read())
                 break

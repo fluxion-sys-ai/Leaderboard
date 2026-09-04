@@ -18,9 +18,12 @@ NTASKS="${2:-}"
 # q4f GGUF name + RECOMMENDED sampling (no_think) + llama bin
 case "$KEY" in
   gemma)  M=gemma-4-31b-q4f;      SAMP="--temp 1.0 --top-p 0.95 --top-k 64"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
-  qwen27) M=qwen3.6-27b-q4f;      SAMP="--temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --presence-penalty 0.0"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
+  # pinch runs thinking-OFF -> use the HF NON-THINKING recipe (complete set matched to the mode):
+  # dense Qwen (27B/3.8) = temp 0.7 / top_p 0.80 / top_k 20 / min_p 0 / presence 1.5 (was wrongly on
+  # the thinking-mode set temp1.0/0.95/pp0.0). MoE 35B non-thinking keeps temp1.0/0.95/pp1.5.
+  qwen27) M=qwen3.6-27b-q4f;      SAMP="--temp 0.7 --top-p 0.80 --top-k 20 --min-p 0 --presence-penalty 1.5 --repeat-penalty 1.0"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
   qwen35) M=qwen3.5-35b-a3b-q4f;  SAMP="--temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --presence-penalty 1.5"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
-  qwen38) M=qwen3.8-27b-q4f;      SAMP="--temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 --presence-penalty 0.0"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
+  qwen38) M=qwen3.8-27b-q4f;      SAMP="--temp 0.7 --top-p 0.80 --top-k 20 --min-p 0 --presence-penalty 1.5 --repeat-penalty 1.0"; BIN=/home/aliixh/llama.cpp/llama-b9892 ;;
   muse)   M=muse-glimmer-30b-q4f; SAMP="--temp 1.0 --top-p 0.95 --top-k 64"; BIN=/home/aliixh/llama.cpp/llama.cpp-b10433/build/bin ;;
   *) echo "unknown model key: $KEY"; exit 2 ;;
 esac

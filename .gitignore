@@ -41,3 +41,4 @@ results/swe_agentless/*/_stale_*
 results/swe_agentless/_*_bak_*
 scripts/*.bak_*
 scripts/*.bak
+.SWE_ALL_DONE

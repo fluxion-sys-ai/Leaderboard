@@ -92,7 +92,12 @@ def main():
         with ThreadPoolExecutor(max_workers=12) as ex:      # parallelize the API calls
             ratings = list(ex.map(lambda r: _rate_one(tasks[r["task_id"]].prompt, r["output"]), rows))
         ratings = [x for x in ratings if x is not None]
-        score = round(sum(ratings) / len(ratings), 4) if ratings else 0.0
+        if not ratings:
+            # TOTAL judge outage (every rating call failed) — do NOT write a false 0 that would
+            # lock into the board average. Leave any prior good score untouched; skip this model.
+            print(f"SKIP {model}: writing judge produced 0 ratings (total outage) — not scoring as 0", flush=True)
+            continue
+        score = round(sum(ratings) / len(ratings), 4)
         # judge score is a MEAN of 1-10 ratings -> normal-approx CI (not Wilson, which is for pass rates)
         if len(ratings) > 1:
             se = statistics.pstdev(ratings) / math.sqrt(len(ratings))

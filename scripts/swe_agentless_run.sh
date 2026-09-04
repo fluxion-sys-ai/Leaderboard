@@ -52,6 +52,14 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# HARD STOP: the full-precision (-orf) SWE-Lite runs are COMPLETE and scored on the board. A stray
+# watchdog/cron relaunch must NOT re-run them (wastes OpenRouter + competes with the running pinches).
+# Exit immediately when the done-flag is set. Only affects --tag orf (full); Q4 SWE (untagged) still
+# runs. Remove .SWE_ALL_DONE to re-enable full SWE-Lite runs.
+if [ "${TAG:-}" = "orf" ] && [ -f "/home/aliixh/.openclaw/workspace/edge-intelligence-benchmark/.SWE_ALL_DONE" ]; then
+  echo "[swe] .SWE_ALL_DONE set — full SWE-Lite is complete; skipping $KEY (-orf) relaunch"; exit 0
+fi
+
 # --- model key -> OpenRouter slug + full-precision/reasoning params (extra_body) ---
 # temperature is controlled by the Agentless pipeline (localize 0, repair 0.8); the
 # per-model reasoning/thinking + top_p/top_k/precision live in extra_body (FRONTIER_SPEC §6).
@@ -80,8 +88,13 @@ if [ -n "$IDS_CSV" ]; then
   IFS=',' read -r -a IDS <<< "$IDS_CSV"
 elif [ "$SUBSET" = "strat50" ]; then
   mapfile -t IDS < "$REPO/configs/swe_lite_strat50.txt"
+elif [ "$SUBSET" = "strat51" ]; then
+  # 51-instance stratified-by-repo random sample (superset of strat50's 20 -> the 20 stay cached,
+  # only the 31 new instances run). Full SWE-bench Lite (300) is ~12-18h/model on Q4-local, so this
+  # is the stratified-sample fallback per the size threshold.
+  mapfile -t IDS < "$REPO/configs/swe_lite_strat50_full51.txt"
 else
-  echo "must pass --subset strat50 or --ids <csv>"; exit 2
+  echo "must pass --subset strat50|strat51 or --ids <csv>"; exit 2
 fi
 # strip blanks
 CLEAN=(); for i in "${IDS[@]}"; do [ -n "$i" ] && CLEAN+=("$i"); done; IDS=("${CLEAN[@]}")

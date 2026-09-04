@@ -116,11 +116,34 @@
             "agent_ended_at": "2026-09-03T23:58:04.993100+00:00",
             "test_started_at": "2026-09-03T23:58:08.392158+00:00",
             "test_ended_at": "2026-09-03T23:58:15.191177+00:00"
+        },
+        {
+            "id": "d69c7d21-4290-4fe4-aea0-311107ab8814",
+            "trial_name": "path-tracing.1-of-1.qwen35r1",
+            "task_id": "path-tracing",
+            "instruction": "I've put an image at image.ppm that I rendered programmatically. Write a c program image.c that I can run and compile and will generate an image that's as close as possible to the image I put here.\nSpecifically, I will compute the normalized L2 similarity in [0,1] and yours must match with 0.8 similarity.\nYour image.c file should not read image.ppm, or otherwise read that image file. Your output should be to a new file reconstructed.ppm.\nI will test it by calling gcc -o image image.c -lm && ./image and expect that the reconstructed file will be basically identical.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_image_c_exists": "failed",
+                "test_image_compiles": "failed",
+                "test_runs_and_produces_output": "failed",
+                "test_image_similarity": "failed"
+            },
+            "recording_path": "qwen35r1/path-tracing/path-tracing.1-of-1.qwen35r1/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-03T23:40:16.961175+00:00",
+            "trial_ended_at": "2026-09-04T00:01:43.567306+00:00",
+            "agent_started_at": "2026-09-03T23:44:18.617248+00:00",
+            "agent_ended_at": "2026-09-04T00:01:18.728991+00:00",
+            "test_started_at": "2026-09-04T00:01:22.291564+00:00",
+            "test_ended_at": "2026-09-04T00:01:30.248358+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 0,
-    "n_unresolved": 6,
+    "n_unresolved": 7,
     "resolved_ids": [],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -128,7 +151,8 @@
         "qemu-alpine-ssh",
         "gpt2-codegolf",
         "blind-maze-explorer-5x5",
-        "raman-fitting"
+        "raman-fitting",
+        "path-tracing"
     ],
     "accuracy": 0.0
 }

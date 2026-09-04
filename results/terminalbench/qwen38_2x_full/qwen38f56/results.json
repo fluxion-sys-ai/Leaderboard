@@ -1160,10 +1160,31 @@
             "agent_ended_at": "2026-09-03T23:52:27.102075+00:00",
             "test_started_at": "2026-09-03T23:52:30.708817+00:00",
             "test_ended_at": "2026-09-03T23:52:40.505632+00:00"
+        },
+        {
+            "id": "55538e3c-c90d-4778-9b98-636bb564f5ef",
+            "trial_name": "crack-7z-hash.1-of-1.qwen38f56",
+            "task_id": "crack-7z-hash",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe password is unknown, but I know that the password is a 4-digit number.\nUse the john the ripper binaries in the \"/app/john/run\" directory.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "qwen38f56/crack-7z-hash/crack-7z-hash.1-of-1.qwen38f56/sessions/agent.cast",
+            "total_input_tokens": 81119,
+            "total_output_tokens": 2134,
+            "trial_started_at": "2026-09-03T23:52:58.132638+00:00",
+            "trial_ended_at": "2026-09-04T00:02:15.330671+00:00",
+            "agent_started_at": "2026-09-03T23:59:05.054077+00:00",
+            "agent_ended_at": "2026-09-04T00:01:48.481476+00:00",
+            "test_started_at": "2026-09-04T00:01:52.107272+00:00",
+            "test_ended_at": "2026-09-04T00:02:01.628806+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 25,
+    "n_resolved": 26,
     "n_unresolved": 21,
     "resolved_ids": [
         "conda-env-conflict-resolution",
@@ -1190,7 +1211,8 @@
         "git-workflow-hack",
         "fix-pandas-version",
         "sqlite-db-truncate",
-        "csv-to-parquet"
+        "csv-to-parquet",
+        "crack-7z-hash"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1215,5 +1237,5 @@
         "fibonacci-server",
         "solana-data"
     ],
-    "accuracy": 0.5434782608695652
+    "accuracy": 0.5531914893617021
 }

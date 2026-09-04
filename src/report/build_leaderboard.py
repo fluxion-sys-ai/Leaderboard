@@ -1150,7 +1150,7 @@ th.ml,td.ml{text-align:left;width:1%;white-space:nowrap;padding-right:14px}
 td{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;font-size:12px}
 td.ml{font-family:'Sora',sans-serif;font-weight:600;font-size:12.5px}
 td.sz{color:var(--mut);font-weight:500}
-td.sc{width:38px;border-radius:5px}
+td.sc{width:54px;border-radius:5px}
 td.av{font-weight:700;background:var(--s2);border-radius:5px}
 td.av.big{font-size:13.5px}
 .na{color:var(--mut)!important;background:transparent!important;font-weight:400!important}
@@ -1167,7 +1167,8 @@ tbody tr:hover td{outline:1px solid var(--acc);outline-offset:-1px}
 .uv{display:flex;flex-direction:column;background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:5px 9px;min-width:118px}
 .uvk{color:var(--mut);font-size:9px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
 .uvv{color:var(--tx);font-size:11.5px;margin-top:2px}
-.sc{cursor:pointer}
+.sc{cursor:pointer;width:54px;min-width:54px;max-width:54px}
+th.sc{white-space:nowrap}
 #specpop{position:absolute;z-index:60;max-width:305px;background:var(--s2);border:1px solid var(--acc);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--tx);box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;line-height:1.5}
 #specpop .sp-h{color:var(--acc);font-weight:700;font-size:10px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
 #specpop .sp-src{color:var(--mut);font-size:10px;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid rgba(128,128,128,.28)}

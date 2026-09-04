@@ -1067,6 +1067,7 @@ def build() -> str:
     n_cells = sum(len([b for b in r if not b.startswith("_")]) for _, r in cells.items())
     return f"""<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="robots" content="noindex,nofollow">
 <title>Edge Intelligence Leaderboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -32,10 +32,12 @@ echo "[tb-q4] $KEY ($M) gguf=$GGUF bin=$(basename $BIN) sampling=$SAMP thinking=
 SLOG=/tmp/tb_q4_${KEY}_server.log
 PIDF=/tmp/tb_q4_${KEY}_server.pid
 start_server(){
-  # -c 147456 --parallel 3 => 49152 tokens/slot (SAME per-slot ctx as before -> still fits the ~33k-token
-  # terminal prompts, no overflow), but 3 concurrent requests => ~1.5x throughput. GPU is bursty (idle
-  # gaps during in-container command execution), so extra slots fill the gaps. VRAM: 3 slots ~28GB < 41GB.
-  "$BIN/llama-server" -m "$GGUF" -c 147456 --parallel 3 -ngl 999 \
+  # -c 98304 --parallel 2 => 49152 tokens/slot (SAME per-slot ctx -> still fits the ~33k-token terminal
+  # prompts, no overflow). REDUCED from -c 147456 --parallel 3: gemma-4-31b's KV cache is fatter than the
+  # qwen models' and at 147456 it spilled ~83GB to HOST RAM -> OOM-killed the whole systemd unit in a
+  # ~49min restart loop (kernel: "Out of memory: Killed process llama-server anon-rss:83GB"). 98304 keeps
+  # host KV ~55GB (< 83GB box RAM, with Docker headroom) while preserving per-slot ctx. n-concurrent -> 2.
+  "$BIN/llama-server" -m "$GGUF" -c 98304 --parallel 2 -ngl 999 \
     --chat-template-kwargs "$TKW" $SAMP \
     --host 127.0.0.1 --port $PORT --no-webui >>"$SLOG" 2>&1 &
   echo $! > "$PIDF"
@@ -119,7 +121,7 @@ tb run \
   "${TARGS[@]}" \
   --output-path "$OUT" \
   --run-id "$RUNID" \
-  --n-concurrent 3 \
+  --n-concurrent 2 \
   --global-timeout-multiplier ${TB_MULT:-1.0} \
   --cleanup
   # FIX (2026-08-23): removed `--global-agent-timeout-sec 600`, which OVERRODE every task's native

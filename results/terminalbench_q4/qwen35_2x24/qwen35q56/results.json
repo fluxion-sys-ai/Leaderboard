@@ -760,11 +760,31 @@
             "agent_ended_at": "2026-09-04T13:05:19.418218+00:00",
             "test_started_at": "2026-09-04T13:05:23.037007+00:00",
             "test_ended_at": "2026-09-04T13:05:32.647053+00:00"
+        },
+        {
+            "id": "1dcce937-f4cd-498e-866b-a9fd048b0d3f",
+            "trial_name": "sqlite-db-truncate.1-of-1.qwen35q56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "qwen35q56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.qwen35q56/sessions/agent.cast",
+            "total_input_tokens": 500292,
+            "total_output_tokens": 10500,
+            "trial_started_at": "2026-09-04T13:05:45.537664+00:00",
+            "trial_ended_at": "2026-09-04T13:17:06.609704+00:00",
+            "agent_started_at": "2026-09-04T13:05:50.840546+00:00",
+            "agent_ended_at": "2026-09-04T13:16:42.043641+00:00",
+            "test_started_at": "2026-09-04T13:16:45.433781+00:00",
+            "test_ended_at": "2026-09-04T13:16:54.812337+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 15,
-    "n_unresolved": 13,
+    "n_unresolved": 14,
     "resolved_ids": [
         "eval-mteb.hard",
         "swe-bench-astropy-1",
@@ -795,7 +815,8 @@
         "train-fasttext",
         "cron-broken-network",
         "gpt2-codegolf",
-        "intrusion-detection"
+        "intrusion-detection",
+        "sqlite-db-truncate"
     ],
-    "accuracy": 0.5357142857142857
+    "accuracy": 0.5172413793103449
 }

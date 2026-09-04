@@ -1343,11 +1343,31 @@
             "agent_ended_at": "2026-09-04T06:34:15.823850+00:00",
             "test_started_at": "2026-09-04T06:34:19.210734+00:00",
             "test_ended_at": "2026-09-04T06:34:26.678482+00:00"
+        },
+        {
+            "id": "829a1bc7-e9dc-481f-9299-19c21b5b209f",
+            "trial_name": "gpt2-codegolf.1-of-1.qwen38q56",
+            "task_id": "gpt2-codegolf",
+            "instruction": "I have downloaded the gpt-2 weights stored as a TF .ckpt. Write me a dependency-free C file that samples from the model with arg-max sampling. Call your program gpt2.c, I will compile with gcc -O3 -lm. It should read the .ckpt and the .bpe file. Your c program must be <5000 bytes. I will run it ./a.out gpt2-124M.ckpt vocab.bpe \"[input string here]\" and you should continue the output under whatever GPT-2 would print for the next 20 tokens.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_gpt2_implementation": "failed"
+            },
+            "recording_path": "qwen38q56/gpt2-codegolf/gpt2-codegolf.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T06:22:31.581381+00:00",
+            "trial_ended_at": "2026-09-04T06:41:38.174024+00:00",
+            "agent_started_at": "2026-09-04T06:24:17.139575+00:00",
+            "agent_ended_at": "2026-09-04T06:41:17.342402+00:00",
+            "test_started_at": "2026-09-04T06:41:20.737873+00:00",
+            "test_ended_at": "2026-09-04T06:41:26.358745+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 24,
-    "n_unresolved": 30,
+    "n_unresolved": 31,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1404,7 +1424,8 @@
         "path-tracing",
         "build-initramfs-qemu",
         "path-tracing-reverse",
-        "vim-terminal-task"
+        "vim-terminal-task",
+        "gpt2-codegolf"
     ],
-    "accuracy": 0.4444444444444444
+    "accuracy": 0.43636363636363634
 }

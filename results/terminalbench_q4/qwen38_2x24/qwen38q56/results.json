@@ -287,21 +287,79 @@
             "agent_ended_at": "2026-09-04T02:54:10.338114+00:00",
             "test_started_at": "2026-09-04T02:54:13.735929+00:00",
             "test_ended_at": "2026-09-04T02:54:20.685723+00:00"
+        },
+        {
+            "id": "08142fb3-ade3-4216-800e-733b837f8a90",
+            "trial_name": "swe-bench-astropy-1.1-of-1.qwen38q56",
+            "task_id": "swe-bench-astropy-1",
+            "instruction": "Modeling's `separability_matrix` does not compute separability correctly for nested CompoundModels\nConsider the following model:\n\n```python\nfrom astropy.modeling import models as m\nfrom astropy.modeling.separable import separability_matrix\n\ncm = m.Linear1D(10) & m.Linear1D(5)\n```\n\nIt's separability matrix as you might expect is a diagonal:\n\n```python\n>>> separability_matrix(cm)\narray([[ True, False],\n[False, True]])\n```\n\nIf I make the model more complex:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, False],\n[False, False, False, True]])\n```\n\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\n\nIf however, I nest these compound models:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\narray([[ True, True, False, False],\n[ True, True, False, False],\n[False, False, True, True],\n[False, False, True, True]])\n```\nSuddenly the inputs and outputs are no longer separable?\n\nThis feels like a bug to me, but I might be missing something?",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_coord_matrix": "passed",
+                "test_cdot": "passed",
+                "test_cstack": "passed",
+                "test_arith_oper": "passed",
+                "test_separable[compound_model0-result0]": "passed",
+                "test_separable[compound_model1-result1]": "passed",
+                "test_separable[compound_model2-result2]": "passed",
+                "test_separable[compound_model3-result3]": "passed",
+                "test_separable[compound_model4-result4]": "passed",
+                "test_separable[compound_model5-result5]": "passed",
+                "test_separable[compound_model6-result6]": "passed",
+                "test_separable[compound_model7-result7]": "passed",
+                "test_separable[compound_model8-result8]": "passed",
+                "test_separable[compound_model9-result9]": "passed",
+                "test_custom_model_separable": "passed",
+                "test_nested_compound_separable": "passed"
+            },
+            "recording_path": "qwen38q56/swe-bench-astropy-1/swe-bench-astropy-1.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 737611,
+            "total_output_tokens": 10495,
+            "trial_started_at": "2026-09-04T02:19:51.639508+00:00",
+            "trial_ended_at": "2026-09-04T02:55:44.003773+00:00",
+            "agent_started_at": "2026-09-04T02:20:14.862721+00:00",
+            "agent_ended_at": "2026-09-04T02:52:47.243506+00:00",
+            "test_started_at": "2026-09-04T02:52:50.630201+00:00",
+            "test_ended_at": "2026-09-04T02:55:31.293813+00:00"
+        },
+        {
+            "id": "12bed130-10b9-416f-a480-34773dd82881",
+            "trial_name": "run-pdp11-code.1-of-1.qwen38q56",
+            "task_id": "run-pdp11-code",
+            "instruction": "In /app/data.hex is the output of hexdump on a binary file. Figure out what kind of file it is, then figure out how to run it, and tell me what the output of that program is.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_out_file_exists": "failed",
+                "test_out_file_content": "failed"
+            },
+            "recording_path": "qwen38q56/run-pdp11-code/run-pdp11-code.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T02:20:53.024277+00:00",
+            "trial_ended_at": "2026-09-04T02:59:39.711399+00:00",
+            "agent_started_at": "2026-09-04T02:20:57.936786+00:00",
+            "agent_ended_at": "2026-09-04T02:59:18.137863+00:00",
+            "test_started_at": "2026-09-04T02:59:21.533659+00:00",
+            "test_ended_at": "2026-09-04T02:59:27.255711+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 4,
-    "n_unresolved": 3,
+    "n_resolved": 5,
+    "n_unresolved": 4,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
         "swe-bench-fsspec",
-        "blind-maze-explorer-5x5"
+        "blind-maze-explorer-5x5",
+        "swe-bench-astropy-1"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
         "super-benchmark-upet",
-        "swe-bench-astropy-2"
+        "swe-bench-astropy-2",
+        "run-pdp11-code"
     ],
-    "accuracy": 0.5714285714285714
+    "accuracy": 0.5555555555555556
 }

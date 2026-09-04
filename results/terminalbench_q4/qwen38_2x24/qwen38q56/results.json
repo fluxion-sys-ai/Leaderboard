@@ -343,17 +343,40 @@
             "agent_ended_at": "2026-09-04T02:59:18.137863+00:00",
             "test_started_at": "2026-09-04T02:59:21.533659+00:00",
             "test_ended_at": "2026-09-04T02:59:27.255711+00:00"
+        },
+        {
+            "id": "9915319c-fc70-4987-9fdb-2e4d6292e122",
+            "trial_name": "incompatible-python-fasttext.1-of-1.qwen38q56",
+            "task_id": "incompatible-python-fasttext",
+            "instruction": "For some reason the fasttext python package is not currently working for me.\n\nCan you please help me figure out why and fix it?\n\nI need to be able to use it with the default python interpreter.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_predict_raises_no_error": "passed",
+                "test_correct_output": "passed",
+                "test_site_packages_not_overly_changed": "passed"
+            },
+            "recording_path": "qwen38q56/incompatible-python-fasttext/incompatible-python-fasttext.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 36479,
+            "total_output_tokens": 4678,
+            "trial_started_at": "2026-09-04T02:59:39.715967+00:00",
+            "trial_ended_at": "2026-09-04T03:13:37.430537+00:00",
+            "agent_started_at": "2026-09-04T02:59:52.226953+00:00",
+            "agent_ended_at": "2026-09-04T03:13:17.964270+00:00",
+            "test_started_at": "2026-09-04T03:13:21.350482+00:00",
+            "test_ended_at": "2026-09-04T03:13:25.603804+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 5,
+    "n_resolved": 6,
     "n_unresolved": 4,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
         "swe-bench-fsspec",
         "blind-maze-explorer-5x5",
-        "swe-bench-astropy-1"
+        "swe-bench-astropy-1",
+        "incompatible-python-fasttext"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -361,5 +384,5 @@
         "swe-bench-astropy-2",
         "run-pdp11-code"
     ],
-    "accuracy": 0.5555555555555556
+    "accuracy": 0.6
 }

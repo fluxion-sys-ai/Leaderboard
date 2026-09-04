@@ -298,21 +298,66 @@
             "agent_ended_at": "2026-09-04T08:00:14.249161+00:00",
             "test_started_at": "2026-09-04T08:00:17.648705+00:00",
             "test_ended_at": "2026-09-04T08:02:52.702291+00:00"
+        },
+        {
+            "id": "f0d28611-de38-4924-8f1f-e616ebcf031b",
+            "trial_name": "run-pdp11-code.1-of-1.qwen27q56",
+            "task_id": "run-pdp11-code",
+            "instruction": "In /app/data.hex is the output of hexdump on a binary file. Figure out what kind of file it is, then figure out how to run it, and tell me what the output of that program is.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_out_file_exists": "failed",
+                "test_out_file_content": "failed"
+            },
+            "recording_path": "qwen27q56/run-pdp11-code/run-pdp11-code.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T07:42:51.986501+00:00",
+            "trial_ended_at": "2026-09-04T08:21:21.782105+00:00",
+            "agent_started_at": "2026-09-04T07:42:56.595008+00:00",
+            "agent_ended_at": "2026-09-04T08:20:59.138696+00:00",
+            "test_started_at": "2026-09-04T08:21:02.529681+00:00",
+            "test_ended_at": "2026-09-04T08:21:08.487752+00:00"
+        },
+        {
+            "id": "14a1e893-8f3f-498c-8903-5ff53bc059cb",
+            "trial_name": "incompatible-python-fasttext.1-of-1.qwen27q56",
+            "task_id": "incompatible-python-fasttext",
+            "instruction": "For some reason the fasttext python package is not currently working for me.\n\nCan you please help me figure out why and fix it?\n\nI need to be able to use it with the default python interpreter.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_predict_raises_no_error": "passed",
+                "test_correct_output": "passed",
+                "test_site_packages_not_overly_changed": "passed"
+            },
+            "recording_path": "qwen27q56/incompatible-python-fasttext/incompatible-python-fasttext.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 24323,
+            "total_output_tokens": 2318,
+            "trial_started_at": "2026-09-04T08:21:21.786016+00:00",
+            "trial_ended_at": "2026-09-04T08:25:03.105020+00:00",
+            "agent_started_at": "2026-09-04T08:21:34.057267+00:00",
+            "agent_ended_at": "2026-09-04T08:24:43.719462+00:00",
+            "test_started_at": "2026-09-04T08:24:47.102447+00:00",
+            "test_ended_at": "2026-09-04T08:24:51.271068+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 3,
-    "n_unresolved": 4,
+    "n_resolved": 4,
+    "n_unresolved": 5,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
-        "swe-bench-astropy-1"
+        "swe-bench-astropy-1",
+        "incompatible-python-fasttext"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
         "super-benchmark-upet",
         "swe-bench-astropy-2",
-        "swe-bench-fsspec"
+        "swe-bench-fsspec",
+        "run-pdp11-code"
     ],
-    "accuracy": 0.42857142857142855
+    "accuracy": 0.4444444444444444
 }

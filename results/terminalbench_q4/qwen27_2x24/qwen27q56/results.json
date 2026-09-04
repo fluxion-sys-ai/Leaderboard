@@ -585,11 +585,31 @@
             "agent_ended_at": "2026-09-04T09:14:32.394600+00:00",
             "test_started_at": "2026-09-04T09:14:35.789098+00:00",
             "test_ended_at": "2026-09-04T09:14:45.397018+00:00"
+        },
+        {
+            "id": "bf802aa0-113c-40b2-a5da-4f61d60e1154",
+            "trial_name": "sqlite-db-truncate.1-of-1.qwen27q56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "qwen27q56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T09:01:21.397901+00:00",
+            "trial_ended_at": "2026-09-04T09:19:18.079429+00:00",
+            "agent_started_at": "2026-09-04T09:01:26.007695+00:00",
+            "agent_ended_at": "2026-09-04T09:18:26.177511+00:00",
+            "test_started_at": "2026-09-04T09:18:29.571907+00:00",
+            "test_ended_at": "2026-09-04T09:19:05.711236+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 10,
-    "n_unresolved": 10,
+    "n_unresolved": 11,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -612,7 +632,8 @@
         "blind-maze-explorer-5x5",
         "train-fasttext",
         "qemu-alpine-ssh",
-        "cron-broken-network"
+        "cron-broken-network",
+        "sqlite-db-truncate"
     ],
-    "accuracy": 0.5
+    "accuracy": 0.47619047619047616
 }

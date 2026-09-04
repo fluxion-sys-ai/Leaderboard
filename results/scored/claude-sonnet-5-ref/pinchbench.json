@@ -1,0 +1,20 @@
+{
+  "metric": "pinchbench_pct",
+  "score": 0.7811,
+  "n": null,
+  "by_category": {
+    "CODING": {
+      "score": 0.982,
+      "n": null
+    },
+    "ANALYSIS": {
+      "score": 0.6747,
+      "n": null
+    },
+    "CSV_ANALYSIS": {
+      "score": 0.7732,
+      "n": null
+    }
+  },
+  "scorer": "pinchbench-harness (official)"
+}

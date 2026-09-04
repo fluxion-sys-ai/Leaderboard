@@ -930,11 +930,74 @@
             "agent_ended_at": "2026-09-04T05:04:33.225247+00:00",
             "test_started_at": "2026-09-04T05:04:36.621078+00:00",
             "test_ended_at": "2026-09-04T05:04:45.227429+00:00"
+        },
+        {
+            "id": "008a3476-59a7-4bbf-ba5f-fdbe7a1cbf96",
+            "trial_name": "csv-to-parquet.1-of-1.qwen38q56",
+            "task_id": "csv-to-parquet",
+            "instruction": "Convert the file '/app/data.csv' into a Parquet file named '/app/data.parquet'. The CSV file contains sample data with headers.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_parquet_exists": "failed",
+                "test_data_matches": "failed"
+            },
+            "recording_path": "qwen38q56/csv-to-parquet/csv-to-parquet.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T04:59:57.995848+00:00",
+            "trial_ended_at": "2026-09-04T05:18:16.130901+00:00",
+            "agent_started_at": "2026-09-04T05:00:50.315120+00:00",
+            "agent_ended_at": "2026-09-04T05:17:50.517704+00:00",
+            "test_started_at": "2026-09-04T05:17:53.912627+00:00",
+            "test_ended_at": "2026-09-04T05:18:03.480756+00:00"
+        },
+        {
+            "id": "734405bf-f8fd-4fab-843d-86d56fc555f7",
+            "trial_name": "chess-best-move.1-of-1.qwen38q56",
+            "task_id": "chess-best-move",
+            "instruction": "The file chess_bard.png has an image of a chess board. It is currently white to move. Write the best move for white to play to /app/move.txt in the form [src][dst], for example, e2e4 or h1h8. If there are multiple winning moves, print them all, one per line.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_move_correct": "failed"
+            },
+            "recording_path": "qwen38q56/chess-best-move/chess-best-move.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T04:59:29.839088+00:00",
+            "trial_ended_at": "2026-09-04T05:19:07.066165+00:00",
+            "agent_started_at": "2026-09-04T05:01:43.328005+00:00",
+            "agent_ended_at": "2026-09-04T05:18:43.460458+00:00",
+            "test_started_at": "2026-09-04T05:18:46.859066+00:00",
+            "test_ended_at": "2026-09-04T05:18:55.004697+00:00"
+        },
+        {
+            "id": "0cbf0bb2-b8eb-43e8-a5fd-6b63608aecda",
+            "trial_name": "raman-fitting.1-of-1.qwen38q56",
+            "task_id": "raman-fitting",
+            "instruction": "You are given the output file of a Raman Setup. We used it to measure some graphene sample.\nFit the G and 2D Peak of the spectrum and return the x0, gamma, amplitude and offset of the peaks and write them to a file called \"results.json\".\n\nThe file should have the following format:\n{\n  \"G\": {\n    \"x0\": <x0_value>,\n    \"gamma\": <gamma_value>,\n    \"amplitude\": <amplitude_value>,\n    \"offset\": <offset_value>\n  },\n  \"2D\": {\n    \"x0\": <x0_value>,\n    \"gamma\": <gamma_value>,\n    \"amplitude\": <amplitude_value>,\n    \"offset\": <offset_value>\"\n  }\n}",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_result_file_exists": "failed",
+                "test_G_Peak": "failed",
+                "test_2D_Peak": "failed"
+            },
+            "recording_path": "qwen38q56/raman-fitting/raman-fitting.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T05:04:57.041103+00:00",
+            "trial_ended_at": "2026-09-04T05:22:23.822236+00:00",
+            "agent_started_at": "2026-09-04T05:05:01.727334+00:00",
+            "agent_ended_at": "2026-09-04T05:22:01.835877+00:00",
+            "test_started_at": "2026-09-04T05:22:05.227196+00:00",
+            "test_ended_at": "2026-09-04T05:22:12.029796+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 19,
-    "n_unresolved": 16,
+    "n_unresolved": 19,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -972,7 +1035,10 @@
         "get-bitcoin-nodes",
         "hf-model-inference",
         "reshard-c4-data",
-        "intrusion-detection"
+        "intrusion-detection",
+        "csv-to-parquet",
+        "chess-best-move",
+        "raman-fitting"
     ],
-    "accuracy": 0.5428571428571428
+    "accuracy": 0.5
 }

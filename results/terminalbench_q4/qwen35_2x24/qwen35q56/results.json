@@ -1,5 +1,5 @@
 {
-    "id": "4bcac34f-5f99-4db6-b867-98c61fd72bca",
+    "id": "547edece-86db-48f8-a164-57e7ff11e9f8",
     "results": [
         {
             "id": "a363a3d0-bbfd-4d88-940d-1ed10e727423",
@@ -1328,7 +1328,7 @@
             "test_ended_at": "2026-09-04T12:43:26.041864+00:00"
         },
         {
-            "id": "536070f3-b0f8-43ea-8fcf-d4082559c22d",
+            "id": "90f5b040-f630-401b-9c8d-f9296381d0e1",
             "trial_name": "qemu-startup.1-of-1.qwen35q56",
             "task_id": "qemu-startup",
             "instruction": "Start the alpine.iso image in qemu in such a way that I can connect to it via `telnet 127.0.0.1 6665`. When I run telnet I will expect to see the login prompt; I'll log in. You should just get me to this point. Start the image in the background and leave it running. Block until it's ready.",
@@ -1346,7 +1346,7 @@
             "test_ended_at": null
         },
         {
-            "id": "8ae64d13-4956-437e-8f6e-e369c35feed6",
+            "id": "0cd4aa1a-0b0b-4e02-a9df-7b700a80ff8a",
             "trial_name": "qemu-alpine-ssh.1-of-1.qwen35q56",
             "task_id": "qemu-alpine-ssh",
             "instruction": "Start the alpine.iso image in qemu, and then start an ssh server on the alpine linux vm. When you're done, I should be able to run `ssh -p 2222 root@localhost` with password `password123` and be dropped into a shell. On the alpine.iso image, the default username is root with no password.",

@@ -1073,11 +1073,76 @@
             "agent_ended_at": "2026-09-04T10:45:43.973834+00:00",
             "test_started_at": "2026-09-04T10:45:47.371594+00:00",
             "test_ended_at": "2026-09-04T10:45:53.048924+00:00"
+        },
+        {
+            "id": "05345eae-a85d-4df0-a9d7-6c143fd82380",
+            "trial_name": "raman-fitting.1-of-1.qwen27q56",
+            "task_id": "raman-fitting",
+            "instruction": "You are given the output file of a Raman Setup. We used it to measure some graphene sample.\nFit the G and 2D Peak of the spectrum and return the x0, gamma, amplitude and offset of the peaks and write them to a file called \"results.json\".\n\nThe file should have the following format:\n{\n  \"G\": {\n    \"x0\": <x0_value>,\n    \"gamma\": <gamma_value>,\n    \"amplitude\": <amplitude_value>,\n    \"offset\": <offset_value>\n  },\n  \"2D\": {\n    \"x0\": <x0_value>,\n    \"gamma\": <gamma_value>,\n    \"amplitude\": <amplitude_value>,\n    \"offset\": <offset_value>\"\n  }\n}",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_result_file_exists": "passed",
+                "test_G_Peak": "failed",
+                "test_2D_Peak": "failed"
+            },
+            "recording_path": "qwen27q56/raman-fitting/raman-fitting.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T10:29:56.789985+00:00",
+            "trial_ended_at": "2026-09-04T10:47:23.821590+00:00",
+            "agent_started_at": "2026-09-04T10:30:01.472237+00:00",
+            "agent_ended_at": "2026-09-04T10:47:01.577485+00:00",
+            "test_started_at": "2026-09-04T10:47:05.028385+00:00",
+            "test_ended_at": "2026-09-04T10:47:12.006678+00:00"
+        },
+        {
+            "id": "878f0a22-a35f-4e74-8c80-5200dbe488e0",
+            "trial_name": "new-encrypt-command.1-of-1.qwen27q56",
+            "task_id": "new-encrypt-command",
+            "instruction": "Please help me encrypt all the files I have in the data/ folder using rencrypt which i've just installed.\n\nI want to use the most secure encryption that it provides and the output should go into a encrypted_data/ directory where the basenames are the same.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_success": "passed"
+            },
+            "recording_path": "qwen27q56/new-encrypt-command/new-encrypt-command.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 24629,
+            "total_output_tokens": 2061,
+            "trial_started_at": "2026-09-04T10:47:23.825109+00:00",
+            "trial_ended_at": "2026-09-04T10:50:42.181920+00:00",
+            "agent_started_at": "2026-09-04T10:47:35.339915+00:00",
+            "agent_ended_at": "2026-09-04T10:50:21.095155+00:00",
+            "test_started_at": "2026-09-04T10:50:24.478775+00:00",
+            "test_ended_at": "2026-09-04T10:50:30.518951+00:00"
+        },
+        {
+            "id": "cd75d6fe-0d12-4eab-ac63-4125e78349e9",
+            "trial_name": "jupyter-notebook-server.1-of-1.qwen27q56",
+            "task_id": "jupyter-notebook-server",
+            "instruction": "Set up a secure Jupyter Notebook server with the following requirements:\n\n1. Install Jupyter Notebook with the necessary dependencies\n2. Configure the server to:\n   - Run on port 8888\n   - Accept connections from any IP address\n   - Use password authentication (set password to \"benchmarkpass\")\n   - Generate a self-signed SSL certificate for HTTPS\n3. Create a sample notebook named \"test_notebook.ipynb\" in the current directory with:\n   - A markdown cell explaining what Jupyter Notebook is\n   - A code cell that defines and plots a simple sine wave using matplotlib\n4. Start the Jupyter server in the background so it's running when tests execute. You should allow Jupyter to run as root.\n\nThe test will verify that:\n- The server is running on port 8888 with HTTPS\n- Password authentication is enabled with the specified password\n- The sample notebook exists and contains the required cells",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_jupyter_server_running": "passed",
+                "test_sample_notebook_exists": "passed",
+                "test_jupyter_config_exists": "failed",
+                "test_password_authentication": "failed"
+            },
+            "recording_path": "qwen27q56/jupyter-notebook-server/jupyter-notebook-server.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 43974,
+            "total_output_tokens": 2787,
+            "trial_started_at": "2026-09-04T10:50:42.188920+00:00",
+            "trial_ended_at": "2026-09-04T10:56:13.031776+00:00",
+            "agent_started_at": "2026-09-04T10:50:58.627731+00:00",
+            "agent_ended_at": "2026-09-04T10:55:56.321193+00:00",
+            "test_started_at": "2026-09-04T10:55:56.367591+00:00",
+            "test_ended_at": "2026-09-04T10:56:00.648471+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 22,
-    "n_unresolved": 21,
+    "n_resolved": 23,
+    "n_unresolved": 23,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1100,7 +1165,8 @@
         "fix-pandas-version",
         "simple-sheets-put",
         "openssl-selfsigned-cert",
-        "cartpole-rl-training"
+        "cartpole-rl-training",
+        "new-encrypt-command"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -1123,7 +1189,9 @@
         "fibonacci-server",
         "hf-model-inference",
         "gpt2-codegolf",
-        "path-tracing-reverse"
+        "path-tracing-reverse",
+        "raman-fitting",
+        "jupyter-notebook-server"
     ],
-    "accuracy": 0.5116279069767442
+    "accuracy": 0.5
 }

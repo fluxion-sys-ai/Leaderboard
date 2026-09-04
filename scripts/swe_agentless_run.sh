@@ -73,6 +73,9 @@ case "$KEY" in
   qwen35) MODEL="qwen/qwen3.6-35b-a3b"
           EXTRA='{"top_p":0.95,"top_k":20,"min_p":0,"presence_penalty":0.0,"provider":{"quantizations":["fp8"]}}'  # presence 0.0 for SWE (1.5 is Terminal-only). pp 1.5 SUPPRESSED the repeated SEARCH/REPLACE marker tokens -> model emitted plain code fences -> Agentless --diff_format extracted EMPTY patches -> 0% score. Reverted to 0.0 to restore the diff format.
           FULLNAME="qwen3.6-35b-a3b" ;;
+  claude) MODEL="anthropic/claude-sonnet-5"   # frontier reference (API)
+          EXTRA='{"top_p":0.95}'
+          FULLNAME="claude-sonnet-5-ref" ;;
   gemma)  MODEL="google/gemma-4-31b-it"
           EXTRA='{"top_p":0.95,"top_k":64,"reasoning":{"effort":"high"},"provider":{"quantizations":["bf16"]}}'
           FULLNAME="gemma-4-31b" ;;

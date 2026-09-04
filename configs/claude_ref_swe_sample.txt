@@ -1,0 +1,8 @@
+django__django-11797
+django__django-11283
+django__django-12284
+sympy__sympy-13971
+sympy__sympy-23262
+matplotlib__matplotlib-23476
+scikit-learn__scikit-learn-11040
+pytest-dev__pytest-8906

@@ -457,18 +457,77 @@
             "agent_ended_at": "2026-09-04T08:50:59.866055+00:00",
             "test_started_at": "2026-09-04T08:51:03.371936+00:00",
             "test_ended_at": "2026-09-04T08:51:15.466812+00:00"
+        },
+        {
+            "id": "efde6eae-ea78-4bbc-82d9-45c89e604527",
+            "trial_name": "qemu-alpine-ssh.1-of-1.qwen27q56",
+            "task_id": "qemu-alpine-ssh",
+            "instruction": "Start the alpine.iso image in qemu, and then start an ssh server on the alpine linux vm. When you're done, I should be able to run `ssh -p 2222 root@localhost` with password `password123` and be dropped into a shell. On the alpine.iso image, the default username is root with no password.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_sshpass": "failed"
+            },
+            "recording_path": "qwen27q56/qemu-alpine-ssh/qemu-alpine-ssh.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 302813,
+            "total_output_tokens": 10419,
+            "trial_started_at": "2026-09-04T08:42:01.786471+00:00",
+            "trial_ended_at": "2026-09-04T08:59:45.763296+00:00",
+            "agent_started_at": "2026-09-04T08:42:59.869963+00:00",
+            "agent_ended_at": "2026-09-04T08:59:20.781474+00:00",
+            "test_started_at": "2026-09-04T08:59:24.175017+00:00",
+            "test_ended_at": "2026-09-04T08:59:33.342464+00:00"
+        },
+        {
+            "id": "2170c26c-a460-4016-b286-7dcf4237abef",
+            "trial_name": "qemu-startup.1-of-1.qwen27q56",
+            "task_id": "qemu-startup",
+            "instruction": "Start the alpine.iso image in qemu in such a way that I can connect to it via `telnet 127.0.0.1 6665`. When I run telnet I will expect to see the login prompt; I'll log in. You should just get me to this point. Start the image in the background and leave it running. Block until it's ready.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_version": "passed"
+            },
+            "recording_path": "qwen27q56/qemu-startup/qemu-startup.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 177775,
+            "total_output_tokens": 6617,
+            "trial_started_at": "2026-09-04T08:40:43.562401+00:00",
+            "trial_ended_at": "2026-09-04T08:59:48.048128+00:00",
+            "agent_started_at": "2026-09-04T08:42:59.878136+00:00",
+            "agent_ended_at": "2026-09-04T08:59:22.260171+00:00",
+            "test_started_at": "2026-09-04T08:59:25.653015+00:00",
+            "test_ended_at": "2026-09-04T08:59:35.674499+00:00"
+        },
+        {
+            "id": "899a32fc-1e4e-4312-8ea3-a05a70200139",
+            "trial_name": "cron-broken-network.1-of-1.qwen27q56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": null,
+            "failure_mode": "unknown_agent_error",
+            "parser_results": null,
+            "recording_path": null,
+            "total_input_tokens": null,
+            "total_output_tokens": null,
+            "trial_started_at": null,
+            "trial_ended_at": null,
+            "agent_started_at": null,
+            "agent_ended_at": null,
+            "test_started_at": null,
+            "test_ended_at": null
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 6,
-    "n_unresolved": 8,
+    "n_resolved": 7,
+    "n_unresolved": 10,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
         "swe-bench-astropy-1",
         "incompatible-python-fasttext",
         "incompatible-python-fasttext.base_with_hint",
-        "grid-pattern-transform"
+        "grid-pattern-transform",
+        "qemu-startup"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -478,7 +537,9 @@
         "run-pdp11-code",
         "blind-maze-explorer-algorithm",
         "blind-maze-explorer-5x5",
-        "train-fasttext"
+        "train-fasttext",
+        "qemu-alpine-ssh",
+        "cron-broken-network"
     ],
-    "accuracy": 0.42857142857142855
+    "accuracy": 0.4117647058823529
 }

@@ -1009,11 +1009,29 @@
             "agent_ended_at": "2026-09-04T10:12:59.110217+00:00",
             "test_started_at": "2026-09-04T10:13:02.499343+00:00",
             "test_ended_at": "2026-09-04T10:13:05.571375+00:00"
+        },
+        {
+            "id": "167fd1d3-e1f1-4d0a-a91f-4dd5502cf30d",
+            "trial_name": "gpt2-codegolf.1-of-1.qwen27q56",
+            "task_id": "gpt2-codegolf",
+            "instruction": "I have downloaded the gpt-2 weights stored as a TF .ckpt. Write me a dependency-free C file that samples from the model with arg-max sampling. Call your program gpt2.c, I will compile with gcc -O3 -lm. It should read the .ckpt and the .bpe file. Your c program must be <5000 bytes. I will run it ./a.out gpt2-124M.ckpt vocab.bpe \"[input string here]\" and you should continue the output under whatever GPT-2 would print for the next 20 tokens.",
+            "is_resolved": null,
+            "failure_mode": "parse_error",
+            "parser_results": null,
+            "recording_path": "qwen27q56/gpt2-codegolf/gpt2-codegolf.1-of-1.qwen27q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T09:59:39.256935+00:00",
+            "trial_ended_at": "2026-09-04T10:20:03.640989+00:00",
+            "agent_started_at": "2026-09-04T10:00:48.338821+00:00",
+            "agent_ended_at": "2026-09-04T10:17:48.431939+00:00",
+            "test_started_at": "2026-09-04T10:17:51.826217+00:00",
+            "test_ended_at": "2026-09-04T10:19:51.975183+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 21,
-    "n_unresolved": 19,
+    "n_unresolved": 20,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1056,7 +1074,8 @@
         "password-recovery",
         "processing-pipeline",
         "fibonacci-server",
-        "hf-model-inference"
+        "hf-model-inference",
+        "gpt2-codegolf"
     ],
-    "accuracy": 0.525
+    "accuracy": 0.5121951219512195
 }

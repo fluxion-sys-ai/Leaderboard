@@ -1167,11 +1167,78 @@
             "agent_ended_at": "2026-09-04T05:54:37.914148+00:00",
             "test_started_at": "2026-09-04T05:54:41.313527+00:00",
             "test_ended_at": "2026-09-04T05:54:55.591374+00:00"
+        },
+        {
+            "id": "e94a2180-1aa5-43f3-a203-26f4ae3c086b",
+            "trial_name": "sqlite-db-truncate.1-of-1.qwen38q56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "qwen38q56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T05:42:12.673623+00:00",
+            "trial_ended_at": "2026-09-04T05:59:49.999919+00:00",
+            "agent_started_at": "2026-09-04T05:42:17.308338+00:00",
+            "agent_ended_at": "2026-09-04T05:59:17.455099+00:00",
+            "test_started_at": "2026-09-04T05:59:21.049505+00:00",
+            "test_ended_at": "2026-09-04T05:59:36.918845+00:00"
+        },
+        {
+            "id": "3f7e6ee9-3a0b-4e8e-a010-81df25ba85c6",
+            "trial_name": "heterogeneous-dates.1-of-1.qwen38q56",
+            "task_id": "heterogeneous-dates",
+            "instruction": "I'm headed to San Francisco and need to know how much the temperature changes each day. \n\nUse the files `daily_temp_sf_high.csv` and `daily_temp_sf_low.csv` to calculate the average\ndifference between the daily high and daily low temperatures. Save this number in a \nfile called `avg_temp.txt`. This file should only contain the number you calculate.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_avg_temp_file_exists": "passed",
+                "test_avg_temp_file_format": "passed",
+                "test_avg_temp_value": "failed"
+            },
+            "recording_path": "qwen38q56/heterogeneous-dates/heterogeneous-dates.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-04T05:44:22.715684+00:00",
+            "trial_ended_at": "2026-09-04T06:02:15.071425+00:00",
+            "agent_started_at": "2026-09-04T05:44:51.472203+00:00",
+            "agent_ended_at": "2026-09-04T06:01:51.635818+00:00",
+            "test_started_at": "2026-09-04T06:01:55.032898+00:00",
+            "test_ended_at": "2026-09-04T06:02:02.082718+00:00"
+        },
+        {
+            "id": "148c98d5-b58d-4d95-886e-06851d56057c",
+            "trial_name": "fibonacci-server.1-of-1.qwen38q56",
+            "task_id": "fibonacci-server",
+            "instruction": "Create and run a server on port 3000 that has a single GET endpoint: /fib.\n\nIt should expect a query param /fib?n={some number} and return the nth Fibonacci number as a JSON object with a key 'result'.\n\nIf the query param is not provided, it should return a 400 Bad Request error.\nIf the query param is not an integer, it should return a 400 Bad Request error.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_server_running": "passed",
+                "test_fibonacci_endpoint_small_numbers": "passed",
+                "test_fibonacci_large_number": "passed",
+                "test_negative_number": "passed",
+                "test_missing_parameter": "passed",
+                "test_non_integer_parameter": "passed"
+            },
+            "recording_path": "qwen38q56/fibonacci-server/fibonacci-server.1-of-1.qwen38q56/sessions/agent.cast",
+            "total_input_tokens": 15412,
+            "total_output_tokens": 2073,
+            "trial_started_at": "2026-09-04T05:59:50.008046+00:00",
+            "trial_ended_at": "2026-09-04T06:05:37.772337+00:00",
+            "agent_started_at": "2026-09-04T05:59:55.727983+00:00",
+            "agent_ended_at": "2026-09-04T06:05:10.568813+00:00",
+            "test_started_at": "2026-09-04T06:05:13.958982+00:00",
+            "test_ended_at": "2026-09-04T06:05:26.038507+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 22,
-    "n_unresolved": 24,
+    "n_resolved": 23,
+    "n_unresolved": 26,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1194,7 +1261,8 @@
         "processing-pipeline",
         "simple-web-scraper",
         "hello-world",
-        "modernize-fortran-build"
+        "modernize-fortran-build",
+        "fibonacci-server"
     ],
     "unresolved_ids": [
         "build-linux-kernel-qemu",
@@ -1220,7 +1288,9 @@
         "new-encrypt-command",
         "git-workflow-hack",
         "organization-json-generator",
-        "password-recovery"
+        "password-recovery",
+        "sqlite-db-truncate",
+        "heterogeneous-dates"
     ],
-    "accuracy": 0.4782608695652174
+    "accuracy": 0.46938775510204084
 }

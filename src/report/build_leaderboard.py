@@ -301,7 +301,11 @@ def av(v, cls="av", bar=False):   # 0..100 average
     style, cls = (heat_bar(v / 100), cls + " bar") if bar else (heat(v / 100), cls)
     return f'<td class="{cls}" data-v="{v:.2f}" style="{style}">{v:.1f}</td>'
 
+DISPLAY_NAME = {"claude-sonnet-5-ref": "Claude Sonnet 5 ✦ (frontier ref)"}
+
+
 def mlcell(name):
+    disp = DISPLAY_NAME.get(name, name)
     flag = (f' <span class="flag" title="{html.escape(NOTES[name])}">⚑</span>'
             if name in NOTES else "")
     ft = ""
@@ -309,7 +313,7 @@ def mlcell(name):
         info = f"{name} — finetune of {FINETUNE[name]}"
         ft = (f' <span class="ftbadge" title="{html.escape(info)}" data-ft="{html.escape(info)}"'
               f' onclick="showFT(this,event)">⑂</span>')
-    return f'<td class="ml" data-v="{html.escape(name)}">{html.escape(name)}{flag}{ft}</td>'
+    return f'<td class="ml" data-v="{html.escape(name)}">{html.escape(disp)}{flag}{ft}</td>'
 
 def szcell(s):
     return f'<td class="sz" data-v="{s:.1f}">{s:g}B</td>'

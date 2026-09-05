@@ -837,11 +837,31 @@
             "agent_ended_at": "2026-09-05T07:26:59.583783+00:00",
             "test_started_at": "2026-09-05T07:27:02.975461+00:00",
             "test_ended_at": "2026-09-05T07:27:12.518076+00:00"
+        },
+        {
+            "id": "09a8df5d-6479-4ca6-a772-0dd5dc6eeb6c",
+            "trial_name": "chess-best-move.1-of-1.gemmaq56",
+            "task_id": "chess-best-move",
+            "instruction": "The file chess_bard.png has an image of a chess board. It is currently white to move. Write the best move for white to play to /app/move.txt in the form [src][dst], for example, e2e4 or h1h8. If there are multiple winning moves, print them all, one per line.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_move_correct": "failed"
+            },
+            "recording_path": "gemmaq56/chess-best-move/chess-best-move.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 10411,
+            "total_output_tokens": 1408,
+            "trial_started_at": "2026-09-05T07:27:24.226075+00:00",
+            "trial_ended_at": "2026-09-05T07:34:57.489727+00:00",
+            "agent_started_at": "2026-09-05T07:28:26.925762+00:00",
+            "agent_ended_at": "2026-09-05T07:34:35.452651+00:00",
+            "test_started_at": "2026-09-05T07:34:38.859151+00:00",
+            "test_ended_at": "2026-09-05T07:34:45.554999+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 19,
-    "n_unresolved": 19,
+    "n_unresolved": 20,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -882,7 +902,8 @@
         "raman-fitting",
         "reshard-c4-data",
         "fix-git",
-        "build-initramfs-qemu"
+        "build-initramfs-qemu",
+        "chess-best-move"
     ],
-    "accuracy": 0.5
+    "accuracy": 0.48717948717948717
 }

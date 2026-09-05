@@ -656,11 +656,29 @@
             "agent_ended_at": "2026-09-05T13:51:16.517238+00:00",
             "test_started_at": "2026-09-05T13:51:19.902338+00:00",
             "test_ended_at": "2026-09-05T13:51:36.389894+00:00"
+        },
+        {
+            "id": "fc25ab4a-23fd-4a07-bfb5-54222c572560",
+            "trial_name": "build-initramfs-qemu.1-of-1.museq56",
+            "task_id": "build-initramfs-qemu",
+            "instruction": "I've built the linux kernel from source. Please make for me an initramfs so that I can run the command\nrun qemu-system-x86_64 -kernel ./linux-6.9/arch/x86/boot/bzImage -initrd ramfs/initramfs.cpio.gz -append \"console=ttyS0\" -nographic.\nand it will boot me into the kernel as I expect.\nI want to login with username 'root' and no password.",
+            "is_resolved": null,
+            "failure_mode": "test_timeout",
+            "parser_results": null,
+            "recording_path": "museq56/build-initramfs-qemu/build-initramfs-qemu.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 142165,
+            "total_output_tokens": 5266,
+            "trial_started_at": "2026-09-05T13:51:48.431679+00:00",
+            "trial_ended_at": "2026-09-05T14:07:24.973951+00:00",
+            "agent_started_at": "2026-09-05T14:00:33.876102+00:00",
+            "agent_ended_at": "2026-09-05T14:05:21.384838+00:00",
+            "test_started_at": "2026-09-05T14:05:24.774479+00:00",
+            "test_ended_at": "2026-09-05T14:07:24.918709+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 12,
-    "n_unresolved": 11,
+    "n_unresolved": 12,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -686,7 +704,8 @@
         "grid-pattern-transform",
         "qemu-startup",
         "qemu-alpine-ssh",
-        "cron-broken-network"
+        "cron-broken-network",
+        "build-initramfs-qemu"
     ],
-    "accuracy": 0.5217391304347826
+    "accuracy": 0.5
 }

@@ -611,10 +611,31 @@
             "agent_ended_at": "2026-09-05T13:36:35.598841+00:00",
             "test_started_at": "2026-09-05T13:36:38.981504+00:00",
             "test_ended_at": "2026-09-05T13:37:08.021004+00:00"
+        },
+        {
+            "id": "70fd52fc-1169-4069-a9c1-ad11ebb13aa1",
+            "trial_name": "csv-to-parquet.1-of-1.museq56",
+            "task_id": "csv-to-parquet",
+            "instruction": "Convert the file '/app/data.csv' into a Parquet file named '/app/data.parquet'. The CSV file contains sample data with headers.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_parquet_exists": "passed",
+                "test_data_matches": "passed"
+            },
+            "recording_path": "museq56/csv-to-parquet/csv-to-parquet.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 102563,
+            "total_output_tokens": 2250,
+            "trial_started_at": "2026-09-05T13:37:20.266145+00:00",
+            "trial_ended_at": "2026-09-05T13:46:03.589033+00:00",
+            "agent_started_at": "2026-09-05T13:37:38.056770+00:00",
+            "agent_ended_at": "2026-09-05T13:45:38.521569+00:00",
+            "test_started_at": "2026-09-05T13:45:41.919702+00:00",
+            "test_ended_at": "2026-09-05T13:45:50.589710+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 10,
+    "n_resolved": 11,
     "n_unresolved": 11,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -626,7 +647,8 @@
         "pytorch-model-cli.easy",
         "pytorch-model-cli",
         "processing-pipeline",
-        "swe-bench-langcodes"
+        "swe-bench-langcodes",
+        "csv-to-parquet"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -641,5 +663,5 @@
         "qemu-alpine-ssh",
         "cron-broken-network"
     ],
-    "accuracy": 0.47619047619047616
+    "accuracy": 0.5
 }

@@ -1,25 +1,25 @@
 {
-    "id": "bdd67bf1-634d-4b69-9f6b-721be836c9f6",
+    "id": "9d7502dc-7dec-4de7-876e-b1a8ba621414",
     "results": [
         {
-            "id": "35ecf441-7e40-4d84-a44e-5d6361327b56",
+            "id": "cdf47c9b-a33c-41bb-b2ea-603a9445e812",
             "trial_name": "super-benchmark-upet.1-of-1.gemmaq56",
             "task_id": "super-benchmark-upet",
             "instruction": "Train a roberta-base model on the RTE dataset using the UPET method with the `run.py` script. Report eval accuracy as a json structured as follows: {\"eval_accuracy\": 0.0} (replace 0.0 with the actual value).\n\nAdditional instructions:\n1. Run for only 1 epoch. 2. Set 5 examples per label, seed=42, and other hyperparameters taken from the example in the repository readme file.\n\nGit repository: https://github.com/wjn1996/UPET\nCommit hash: 4701c3c62441077cc44a6553bf6ae909d99b8351",
             "is_resolved": false,
-            "failure_mode": "unknown_agent_error",
+            "failure_mode": "unset",
             "parser_results": {
                 "test_right_output": "failed"
             },
             "recording_path": "gemmaq56/super-benchmark-upet/super-benchmark-upet.1-of-1.gemmaq56/sessions/agent.cast",
-            "total_input_tokens": null,
-            "total_output_tokens": null,
-            "trial_started_at": "2026-09-04T22:47:40.986734+00:00",
-            "trial_ended_at": "2026-09-04T23:15:16.687386+00:00",
-            "agent_started_at": "2026-09-04T22:47:45.621523+00:00",
-            "agent_ended_at": "2026-09-04T23:14:51.236469+00:00",
-            "test_started_at": "2026-09-04T23:14:54.647205+00:00",
-            "test_ended_at": "2026-09-04T23:15:01.606411+00:00"
+            "total_input_tokens": 380645,
+            "total_output_tokens": 8254,
+            "trial_started_at": "2026-09-05T00:01:27.625832+00:00",
+            "trial_ended_at": "2026-09-05T00:25:01.260766+00:00",
+            "agent_started_at": "2026-09-05T00:01:33.262782+00:00",
+            "agent_ended_at": "2026-09-05T00:24:32.052947+00:00",
+            "test_started_at": "2026-09-05T00:24:35.593860+00:00",
+            "test_ended_at": "2026-09-05T00:24:42.596849+00:00"
         }
     ],
     "pass_at_k": {},

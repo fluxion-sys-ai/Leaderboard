@@ -772,10 +772,32 @@
             "agent_ended_at": "2026-09-05T07:03:11.695100+00:00",
             "test_started_at": "2026-09-05T07:03:15.077432+00:00",
             "test_ended_at": "2026-09-05T07:04:08.784842+00:00"
+        },
+        {
+            "id": "f05bb957-d387-40e7-aece-525071ebd374",
+            "trial_name": "simple-sheets-put.1-of-1.gemmaq56",
+            "task_id": "simple-sheets-put",
+            "instruction": "1. Create a new spreadsheet named \"Financial Report\"\n2. Create a sheet in this spreadsheet named \"Q1 Data\"\n3. Add the following data to the sheet, starting at cell A1:\n  | Month    | Revenue | Expenses |\n  |----------|---------|----------|\n  | January  | 10000   | 8000     |\n  | February | 12000   | 9000     |\n  | March    | 15000   | 10000    |\n\n4. Add a third column that contains the profit.\n\nThe API is available at http://api:8000.\nThere is an endpoint to get the API documentation at http://api:8000/docs/json.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_spreadsheet_created": "passed",
+                "test_sheet_created": "passed",
+                "test_cells_created": "passed"
+            },
+            "recording_path": "gemmaq56/simple-sheets-put/simple-sheets-put.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 41957,
+            "total_output_tokens": 6341,
+            "trial_started_at": "2026-09-05T07:04:20.352736+00:00",
+            "trial_ended_at": "2026-09-05T07:10:28.904816+00:00",
+            "agent_started_at": "2026-09-05T07:04:58.013190+00:00",
+            "agent_ended_at": "2026-09-05T07:10:11.438330+00:00",
+            "test_started_at": "2026-09-05T07:10:11.485100+00:00",
+            "test_ended_at": "2026-09-05T07:10:16.390809+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 17,
+    "n_resolved": 18,
     "n_unresolved": 18,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -794,7 +816,8 @@
         "crack-7z-hash",
         "password-recovery",
         "simple-web-scraper",
-        "get-bitcoin-nodes"
+        "get-bitcoin-nodes",
+        "simple-sheets-put"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -816,5 +839,5 @@
         "reshard-c4-data",
         "fix-git"
     ],
-    "accuracy": 0.4857142857142857
+    "accuracy": 0.5
 }

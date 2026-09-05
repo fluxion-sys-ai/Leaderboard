@@ -807,11 +807,80 @@
             "agent_ended_at": "2026-09-05T14:59:51.474565+00:00",
             "test_started_at": "2026-09-05T14:59:54.856693+00:00",
             "test_ended_at": "2026-09-05T15:00:01.737342+00:00"
+        },
+        {
+            "id": "bea12d24-6270-451b-aecb-e65271a8877f",
+            "trial_name": "heterogeneous-dates.1-of-1.museq56",
+            "task_id": "heterogeneous-dates",
+            "instruction": "I'm headed to San Francisco and need to know how much the temperature changes each day. \n\nUse the files `daily_temp_sf_high.csv` and `daily_temp_sf_low.csv` to calculate the average\ndifference between the daily high and daily low temperatures. Save this number in a \nfile called `avg_temp.txt`. This file should only contain the number you calculate.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_avg_temp_file_exists": "passed",
+                "test_avg_temp_file_format": "passed",
+                "test_avg_temp_value": "passed"
+            },
+            "recording_path": "museq56/heterogeneous-dates/heterogeneous-dates.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 14352,
+            "total_output_tokens": 1840,
+            "trial_started_at": "2026-09-05T15:00:13.560416+00:00",
+            "trial_ended_at": "2026-09-05T15:01:57.284235+00:00",
+            "agent_started_at": "2026-09-05T15:00:41.156112+00:00",
+            "agent_ended_at": "2026-09-05T15:01:35.486265+00:00",
+            "test_started_at": "2026-09-05T15:01:38.868927+00:00",
+            "test_ended_at": "2026-09-05T15:01:45.477470+00:00"
+        },
+        {
+            "id": "a6ced3fe-0702-429b-b691-16bb9f4b29b6",
+            "trial_name": "simple-web-scraper.1-of-1.museq56",
+            "task_id": "simple-web-scraper",
+            "instruction": "Create a simple web scraper that collects book information from a bookstore website. requests, beautifulsoup4, and pandas are installed.\n\nTasks to complete:\n1. Create a Python script that scrapes data from http://server:8000\n2. The script should extract the following information for each book:\n   - Title\n   - Author\n   - Year published\n   - Rating\n   - Price\n3. Save the collected data to a CSV file named 'books.csv' with columns [\"title\", \"author\", \"year\", \"rating\", \"price\"]\n4. Create a simple summary report showing:\n   - Total number of books scraped\n   - Average book price\n   - Highest rated book\n\nThe bookstore website has a simple HTML structure with the following elements:\n- Each book is contained in a <div class=\"book\"> element\n- Title is in <div class=\"book-title\">\n- Author is in <div class=\"book-author\">\n- Year, rating, and price are in <span> elements with classes \"book-year\", \"book-rating\", and \"book-price\"\n- A template looks like '''\n  <div class=\"book\">\n      <div class=\"book-title\">{title}</div>\n      <div class=\"book-author\">by {author}</div>\n      <div class=\"book-details\">\n          <span class=\"book-year\">Published: {year}</span>\n          <span class=\"book-rating\">Rating: {rating}/5</span>\n          <span class=\"book-price\">${price}</span>\n      </div>\n  </div>\n  '''\n\nThe report should be saved to a file named 'report.txt'.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_csv_file_exists": "passed",
+                "test_csv_structure": "passed",
+                "test_data_completeness": "passed",
+                "test_data_accuracy": "passed",
+                "test_report_exists": "passed"
+            },
+            "recording_path": "museq56/simple-web-scraper/simple-web-scraper.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 11224,
+            "total_output_tokens": 1511,
+            "trial_started_at": "2026-09-05T15:01:57.289530+00:00",
+            "trial_ended_at": "2026-09-05T15:03:56.989561+00:00",
+            "agent_started_at": "2026-09-05T15:02:42.324051+00:00",
+            "agent_ended_at": "2026-09-05T15:03:27.974024+00:00",
+            "test_started_at": "2026-09-05T15:03:31.356950+00:00",
+            "test_ended_at": "2026-09-05T15:03:34.999145+00:00"
+        },
+        {
+            "id": "e8177bb1-f32d-44a0-a4d4-17e46958c9f3",
+            "trial_name": "jupyter-notebook-server.1-of-1.museq56",
+            "task_id": "jupyter-notebook-server",
+            "instruction": "Set up a secure Jupyter Notebook server with the following requirements:\n\n1. Install Jupyter Notebook with the necessary dependencies\n2. Configure the server to:\n   - Run on port 8888\n   - Accept connections from any IP address\n   - Use password authentication (set password to \"benchmarkpass\")\n   - Generate a self-signed SSL certificate for HTTPS\n3. Create a sample notebook named \"test_notebook.ipynb\" in the current directory with:\n   - A markdown cell explaining what Jupyter Notebook is\n   - A code cell that defines and plots a simple sine wave using matplotlib\n4. Start the Jupyter server in the background so it's running when tests execute. You should allow Jupyter to run as root.\n\nThe test will verify that:\n- The server is running on port 8888 with HTTPS\n- Password authentication is enabled with the specified password\n- The sample notebook exists and contains the required cells",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_jupyter_server_running": "passed",
+                "test_sample_notebook_exists": "passed",
+                "test_jupyter_config_exists": "failed",
+                "test_password_authentication": "failed"
+            },
+            "recording_path": "museq56/jupyter-notebook-server/jupyter-notebook-server.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 407421,
+            "total_output_tokens": 8228,
+            "trial_started_at": "2026-09-05T15:03:56.994372+00:00",
+            "trial_ended_at": "2026-09-05T15:11:06.929380+00:00",
+            "agent_started_at": "2026-09-05T15:04:12.379547+00:00",
+            "agent_ended_at": "2026-09-05T15:10:50.714080+00:00",
+            "test_started_at": "2026-09-05T15:10:50.761583+00:00",
+            "test_ended_at": "2026-09-05T15:10:54.977521+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 16,
-    "n_unresolved": 14,
+    "n_resolved": 18,
+    "n_unresolved": 15,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -828,7 +897,9 @@
         "crack-7z-hash.hard",
         "crack-7z-hash",
         "path-tracing",
-        "modernize-fortran-build"
+        "modernize-fortran-build",
+        "heterogeneous-dates",
+        "simple-web-scraper"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -844,7 +915,8 @@
         "cron-broken-network",
         "build-initramfs-qemu",
         "get-bitcoin-nodes",
-        "raman-fitting"
+        "raman-fitting",
+        "jupyter-notebook-server"
     ],
-    "accuracy": 0.5333333333333333
+    "accuracy": 0.5454545454545454
 }

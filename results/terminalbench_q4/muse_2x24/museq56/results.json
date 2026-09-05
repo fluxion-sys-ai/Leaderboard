@@ -1181,11 +1181,55 @@
             "agent_ended_at": "2026-09-05T16:39:38.568238+00:00",
             "test_started_at": "2026-09-05T16:39:41.958796+00:00",
             "test_ended_at": "2026-09-05T16:39:48.912956+00:00"
+        },
+        {
+            "id": "2f8f48e8-6eb3-4640-9a01-7dd5819e74ce",
+            "trial_name": "organization-json-generator.1-of-1.museq56",
+            "task_id": "organization-json-generator",
+            "instruction": "Create a JSON processor that transforms CSV data into a structured JSON file following the schema defined in schema.json. Requirements: 1. Use the provided CSV files (departments.csv, employees.csv, projects.csv) as input data 2. Generate a file called 'organization.json' that follows the schema defined. 3. The output must include: Organization metadata, Department information with employees and projects, Statistical calculations",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_file_exists": "passed",
+                "test_organization_structure": "passed",
+                "test_relationships_integrity": "passed",
+                "test_statistics_calculations": "passed"
+            },
+            "recording_path": "museq56/organization-json-generator/organization-json-generator.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 54357,
+            "total_output_tokens": 3785,
+            "trial_started_at": "2026-09-05T16:40:01.727667+00:00",
+            "trial_ended_at": "2026-09-05T16:42:19.254556+00:00",
+            "agent_started_at": "2026-09-05T16:40:11.658270+00:00",
+            "agent_ended_at": "2026-09-05T16:41:57.280473+00:00",
+            "test_started_at": "2026-09-05T16:42:00.666619+00:00",
+            "test_ended_at": "2026-09-05T16:42:07.562710+00:00"
+        },
+        {
+            "id": "66955d20-c8ac-426e-8542-a6162fe73e18",
+            "trial_name": "reshard-c4-data.1-of-1.museq56",
+            "task_id": "reshard-c4-data",
+            "instruction": "Help me prepare a version of the data in the c4_sample/ folder for upload to a remote server. Call this folder \"c4_reshard/\".\n\nDue to the constraints of the server, I need the maximum number of files in each folder to be 30 and the maximum filesize to be 15MB.\n\nI also need a script that can revert the contents of c4_reshard/ back to the original state such that it matches what was originally in c4_sample.\n\nHowever, don't actually run the revert script yet.\n\nPlease call the script \"revert.py\" and place it in the parent directory of c4_sample/.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_revert": "passed",
+                "test_reformat_success": "failed"
+            },
+            "recording_path": "museq56/reshard-c4-data/reshard-c4-data.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 82301,
+            "total_output_tokens": 5512,
+            "trial_started_at": "2026-09-05T16:42:19.259283+00:00",
+            "trial_ended_at": "2026-09-05T16:49:12.260114+00:00",
+            "agent_started_at": "2026-09-05T16:45:56.501168+00:00",
+            "agent_ended_at": "2026-09-05T16:48:43.566282+00:00",
+            "test_started_at": "2026-09-05T16:48:46.966996+00:00",
+            "test_ended_at": "2026-09-05T16:48:57.402819+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 26,
-    "n_unresolved": 21,
+    "n_resolved": 27,
+    "n_unresolved": 22,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1212,7 +1256,8 @@
         "prove-plus-comm",
         "fix-pandas-version",
         "hello-world",
-        "crack-7z-hash.easy"
+        "crack-7z-hash.easy",
+        "organization-json-generator"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1235,7 +1280,8 @@
         "intrusion-detection",
         "path-tracing-reverse",
         "sqlite-db-truncate",
-        "hf-model-inference"
+        "hf-model-inference",
+        "reshard-c4-data"
     ],
-    "accuracy": 0.5531914893617021
+    "accuracy": 0.5510204081632653
 }

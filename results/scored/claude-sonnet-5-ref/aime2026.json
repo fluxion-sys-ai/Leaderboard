@@ -1,12 +1,15 @@
 {
   "metric": "accuracy",
-  "score": 1.0,
-  "n": 3,
-  "passed": 3,
+  "score": 0.9333,
+  "n": 30,
+  "passed": 28,
   "ci95": [
-    0.4385,
-    1.0
+    0.7868,
+    0.9815
   ],
+  "failure_breakdown": {
+    "wrong_answer": 2
+  },
   "model": "claude-sonnet-5-ref",
   "benchmark": "aime2026",
   "quant": null,
@@ -14,14 +17,14 @@
   "n_ctx": null,
   "temperature": 1.0,
   "gguf_path": null,
-  "run_ts": 1788554535,
+  "run_ts": 1788566881,
   "perf": {
     "prefill_tps": 0.0,
     "decode_tps": 0.0,
     "ttft_ms": 0.0,
-    "mean_prompt_tokens": 139.67,
-    "mean_completion_tokens": 2369.0,
-    "total_gen_tokens": 7107,
+    "mean_prompt_tokens": 200.63,
+    "mean_completion_tokens": 11201.77,
+    "total_gen_tokens": 336053,
     "model_load_s": 0.0,
     "gguf_mb": 0.0,
     "peak_vram_mb": null

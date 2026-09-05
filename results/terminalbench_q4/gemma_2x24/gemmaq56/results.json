@@ -1104,10 +1104,54 @@
             "agent_ended_at": "2026-09-05T08:42:33.474114+00:00",
             "test_started_at": "2026-09-05T08:42:36.864947+00:00",
             "test_ended_at": "2026-09-05T08:42:43.624622+00:00"
+        },
+        {
+            "id": "b7237d42-3e04-4dad-b5b9-acdf1e7148d4",
+            "trial_name": "path-tracing.1-of-1.gemmaq56",
+            "task_id": "path-tracing",
+            "instruction": "I've put an image at image.ppm that I rendered programmatically. Write a c program image.c that I can run and compile and will generate an image that's as close as possible to the image I put here.\nSpecifically, I will compute the normalized L2 similarity in [0,1] and yours must match with 0.8 similarity.\nYour image.c file should not read image.ppm, or otherwise read that image file. Your output should be to a new file reconstructed.ppm.\nI will test it by calling gcc -o image image.c -lm && ./image and expect that the reconstructed file will be basically identical.",
+            "is_resolved": true,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_image_c_exists": "passed",
+                "test_image_compiles": "passed",
+                "test_runs_and_produces_output": "passed",
+                "test_image_similarity": "passed"
+            },
+            "recording_path": "gemmaq56/path-tracing/path-tracing.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-05T08:42:55.907119+00:00",
+            "trial_ended_at": "2026-09-05T09:02:41.554686+00:00",
+            "agent_started_at": "2026-09-05T08:45:19.211088+00:00",
+            "agent_ended_at": "2026-09-05T09:02:19.415889+00:00",
+            "test_started_at": "2026-09-05T09:02:22.821032+00:00",
+            "test_ended_at": "2026-09-05T09:02:28.197652+00:00"
+        },
+        {
+            "id": "48da6d2a-a781-453e-858c-d5d4f759b93f",
+            "trial_name": "csv-to-parquet.1-of-1.gemmaq56",
+            "task_id": "csv-to-parquet",
+            "instruction": "Convert the file '/app/data.csv' into a Parquet file named '/app/data.parquet'. The CSV file contains sample data with headers.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_parquet_exists": "passed",
+                "test_data_matches": "passed"
+            },
+            "recording_path": "gemmaq56/csv-to-parquet/csv-to-parquet.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 30789,
+            "total_output_tokens": 1577,
+            "trial_started_at": "2026-09-05T09:02:41.559422+00:00",
+            "trial_ended_at": "2026-09-05T09:07:24.296072+00:00",
+            "agent_started_at": "2026-09-05T09:02:56.687212+00:00",
+            "agent_ended_at": "2026-09-05T09:06:59.836421+00:00",
+            "test_started_at": "2026-09-05T09:07:03.227989+00:00",
+            "test_ended_at": "2026-09-05T09:07:11.554572+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 28,
+    "n_resolved": 30,
     "n_unresolved": 22,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -1137,7 +1181,9 @@
         "hello-world",
         "crack-7z-hash.hard",
         "openssl-selfsigned-cert",
-        "heterogeneous-dates"
+        "heterogeneous-dates",
+        "path-tracing",
+        "csv-to-parquet"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1163,5 +1209,5 @@
         "sqlite-db-truncate",
         "path-tracing-reverse"
     ],
-    "accuracy": 0.56
+    "accuracy": 0.5769230769230769
 }

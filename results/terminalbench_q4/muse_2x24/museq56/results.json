@@ -517,11 +517,32 @@
             "agent_ended_at": "2026-09-05T13:06:27.574153+00:00",
             "test_started_at": "2026-09-05T13:06:30.955864+00:00",
             "test_ended_at": "2026-09-05T13:07:48.152417+00:00"
+        },
+        {
+            "id": "07d14bcb-ca3c-49cc-827f-df2957dab5dc",
+            "trial_name": "cron-broken-network.1-of-1.museq56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_curl_file_exists": "passed",
+                "test_curl_file_content": "failed"
+            },
+            "recording_path": "museq56/cron-broken-network/cron-broken-network.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 170674,
+            "total_output_tokens": 6888,
+            "trial_started_at": "2026-09-05T13:08:00.552286+00:00",
+            "trial_ended_at": "2026-09-05T13:19:08.864443+00:00",
+            "agent_started_at": "2026-09-05T13:08:42.298493+00:00",
+            "agent_ended_at": "2026-09-05T13:17:47.617265+00:00",
+            "test_started_at": "2026-09-05T13:17:51.006895+00:00",
+            "test_ended_at": "2026-09-05T13:18:56.822575+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 7,
-    "n_unresolved": 10,
+    "n_unresolved": 11,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -541,7 +562,8 @@
         "blind-maze-explorer-algorithm",
         "grid-pattern-transform",
         "qemu-startup",
-        "qemu-alpine-ssh"
+        "qemu-alpine-ssh",
+        "cron-broken-network"
     ],
-    "accuracy": 0.4117647058823529
+    "accuracy": 0.3888888888888889
 }

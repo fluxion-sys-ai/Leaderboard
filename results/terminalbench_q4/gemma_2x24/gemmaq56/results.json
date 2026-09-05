@@ -134,11 +134,32 @@
             "agent_ended_at": "2026-09-05T02:38:35.518957+00:00",
             "test_started_at": "2026-09-05T02:38:38.901711+00:00",
             "test_ended_at": "2026-09-05T02:41:17.447256+00:00"
+        },
+        {
+            "id": "cc6b71d5-961d-479d-9cf8-00ba0c9f62eb",
+            "trial_name": "run-pdp11-code.1-of-1.gemmaq56",
+            "task_id": "run-pdp11-code",
+            "instruction": "In /app/data.hex is the output of hexdump on a binary file. Figure out what kind of file it is, then figure out how to run it, and tell me what the output of that program is.",
+            "is_resolved": false,
+            "failure_mode": "unknown_agent_error",
+            "parser_results": {
+                "test_out_file_exists": "failed",
+                "test_out_file_content": "failed"
+            },
+            "recording_path": "gemmaq56/run-pdp11-code/run-pdp11-code.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": null,
+            "total_output_tokens": null,
+            "trial_started_at": "2026-09-05T02:41:29.481640+00:00",
+            "trial_ended_at": "2026-09-05T03:01:51.570793+00:00",
+            "agent_started_at": "2026-09-05T02:41:33.763391+00:00",
+            "agent_ended_at": "2026-09-05T03:01:25.620297+00:00",
+            "test_started_at": "2026-09-05T03:01:29.080806+00:00",
+            "test_ended_at": "2026-09-05T03:01:37.314889+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 3,
-    "n_unresolved": 3,
+    "n_unresolved": 4,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -147,7 +168,8 @@
     "unresolved_ids": [
         "super-benchmark-upet",
         "build-linux-kernel-qemu",
-        "swe-bench-astropy-2"
+        "swe-bench-astropy-2",
+        "run-pdp11-code"
     ],
-    "accuracy": 0.5
+    "accuracy": 0.42857142857142855
 }

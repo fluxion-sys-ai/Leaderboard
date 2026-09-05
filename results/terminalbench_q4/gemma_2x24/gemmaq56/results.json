@@ -529,10 +529,33 @@
             "agent_ended_at": "2026-09-05T05:48:08.083331+00:00",
             "test_started_at": "2026-09-05T05:48:11.468112+00:00",
             "test_ended_at": "2026-09-05T05:48:22.605888+00:00"
+        },
+        {
+            "id": "6e86b6fa-9725-43d9-930a-09aad56adb6c",
+            "trial_name": "prove-plus-comm.1-of-1.gemmaq56",
+            "task_id": "prove-plus-comm",
+            "instruction": "Fix the incomplete proof of addition commutativity in the file plus_comm.v. The file contains a partial proof that needs to be completed.\n\nThe theorem states that addition is commutative for natural numbers (forall n m : nat, n + m = m + n).\nThe proof attempt uses induction but is missing some crucial steps.\n\nYour task is to:\n1. Analyze the incomplete proof in plus_comm.v\n2. Add the missing steps to complete the proof\n3. Compile the completed proof using coqc\n\nThe proof should be completed using Coq's tactics and the final compiled proof should be in plus_comm.vo.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_proof_file_exists": "passed",
+                "test_compiled_proof_exists": "passed",
+                "test_proof_contents": "passed",
+                "test_compiled_proof_content": "passed"
+            },
+            "recording_path": "gemmaq56/prove-plus-comm/prove-plus-comm.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 13303,
+            "total_output_tokens": 1729,
+            "trial_started_at": "2026-09-05T05:48:36.514635+00:00",
+            "trial_ended_at": "2026-09-05T05:55:10.798460+00:00",
+            "agent_started_at": "2026-09-05T05:50:25.012578+00:00",
+            "agent_ended_at": "2026-09-05T05:54:45.244205+00:00",
+            "test_started_at": "2026-09-05T05:54:48.633630+00:00",
+            "test_ended_at": "2026-09-05T05:54:57.657503+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 12,
+    "n_resolved": 13,
     "n_unresolved": 12,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -546,7 +569,8 @@
         "pytorch-model-cli.easy",
         "swe-bench-langcodes",
         "new-encrypt-command",
-        "cartpole-rl-training"
+        "cartpole-rl-training",
+        "prove-plus-comm"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -562,5 +586,5 @@
         "intrusion-detection",
         "solana-data"
     ],
-    "accuracy": 0.5
+    "accuracy": 0.52
 }

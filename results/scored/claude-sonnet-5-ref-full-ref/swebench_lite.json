@@ -1,0 +1,29 @@
+{
+  "score": 0.5,
+  "metric": "swebench_lite_resolved_pct",
+  "n": 8,
+  "resolved": 4,
+  "detail": {
+    "resolved_ids": [
+      "django__django-12284",
+      "pytest-dev__pytest-8906",
+      "scikit-learn__scikit-learn-11040",
+      "sympy__sympy-13971"
+    ],
+    "unresolved_ids": [
+      "django__django-11283",
+      "matplotlib__matplotlib-23476",
+      "sympy__sympy-23262"
+    ],
+    "error_ids": [],
+    "completed_ids": [
+      "django__django-11283",
+      "django__django-12284",
+      "matplotlib__matplotlib-23476",
+      "pytest-dev__pytest-8906",
+      "scikit-learn__scikit-learn-11040",
+      "sympy__sympy-13971",
+      "sympy__sympy-23262"
+    ]
+  }
+}

@@ -857,11 +857,31 @@
             "agent_ended_at": "2026-09-05T07:34:35.452651+00:00",
             "test_started_at": "2026-09-05T07:34:38.859151+00:00",
             "test_ended_at": "2026-09-05T07:34:45.554999+00:00"
+        },
+        {
+            "id": "1cd0b1f1-286d-40be-8156-af559bea20bd",
+            "trial_name": "sqlite-db-truncate.1-of-1.gemmaq56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "gemmaq56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 66327,
+            "total_output_tokens": 4517,
+            "trial_started_at": "2026-09-05T07:34:57.494999+00:00",
+            "trial_ended_at": "2026-09-05T07:47:11.974894+00:00",
+            "agent_started_at": "2026-09-05T07:35:02.185521+00:00",
+            "agent_ended_at": "2026-09-05T07:46:50.382772+00:00",
+            "test_started_at": "2026-09-05T07:46:53.773636+00:00",
+            "test_ended_at": "2026-09-05T07:47:00.347248+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 19,
-    "n_unresolved": 20,
+    "n_unresolved": 21,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -903,7 +923,8 @@
         "reshard-c4-data",
         "fix-git",
         "build-initramfs-qemu",
-        "chess-best-move"
+        "chess-best-move",
+        "sqlite-db-truncate"
     ],
-    "accuracy": 0.48717948717948717
+    "accuracy": 0.475
 }

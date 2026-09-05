@@ -1,0 +1,29 @@
+{
+  "score": 0.15,
+  "metric": "swebench_lite_resolved_pct",
+  "n": 20,
+  "resolved": 3,
+  "detail": {
+    "resolved_ids": [
+      "django__django-14787",
+      "mwaskom__seaborn-3010",
+      "sympy__sympy-20212"
+    ],
+    "unresolved_ids": [
+      "psf__requests-2674",
+      "sympy__sympy-13177",
+      "sympy__sympy-16281",
+      "sympy__sympy-22840"
+    ],
+    "error_ids": [],
+    "completed_ids": [
+      "django__django-14787",
+      "mwaskom__seaborn-3010",
+      "psf__requests-2674",
+      "sympy__sympy-13177",
+      "sympy__sympy-16281",
+      "sympy__sympy-20212",
+      "sympy__sympy-22840"
+    ]
+  }
+}

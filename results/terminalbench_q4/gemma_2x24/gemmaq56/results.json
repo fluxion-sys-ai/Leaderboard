@@ -1014,10 +1014,31 @@
             "agent_ended_at": "2026-09-05T08:09:33.682864+00:00",
             "test_started_at": "2026-09-05T08:09:37.063866+00:00",
             "test_ended_at": "2026-09-05T08:09:44.661922+00:00"
+        },
+        {
+            "id": "084136a2-881f-475c-8ec9-1dfba01453eb",
+            "trial_name": "crack-7z-hash.hard.1-of-1.gemmaq56",
+            "task_id": "crack-7z-hash.hard",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "gemmaq56/crack-7z-hash.hard/crack-7z-hash.hard.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 249841,
+            "total_output_tokens": 5607,
+            "trial_started_at": "2026-09-05T08:09:56.281945+00:00",
+            "trial_ended_at": "2026-09-05T08:16:51.869465+00:00",
+            "agent_started_at": "2026-09-05T08:10:08.448384+00:00",
+            "agent_ended_at": "2026-09-05T08:16:30.609833+00:00",
+            "test_started_at": "2026-09-05T08:16:33.998783+00:00",
+            "test_ended_at": "2026-09-05T08:16:39.975095+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 25,
+    "n_resolved": 26,
     "n_unresolved": 21,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -1044,7 +1065,8 @@
         "modernize-fortran-build",
         "organization-json-generator",
         "processing-pipeline",
-        "hello-world"
+        "hello-world",
+        "crack-7z-hash.hard"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1069,5 +1091,5 @@
         "chess-best-move",
         "sqlite-db-truncate"
     ],
-    "accuracy": 0.5434782608695652
+    "accuracy": 0.5531914893617021
 }

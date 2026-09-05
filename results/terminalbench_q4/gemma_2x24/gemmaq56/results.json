@@ -1060,11 +1060,33 @@
             "agent_ended_at": "2026-09-05T08:21:15.923580+00:00",
             "test_started_at": "2026-09-05T08:21:19.299986+00:00",
             "test_ended_at": "2026-09-05T08:21:26.676708+00:00"
+        },
+        {
+            "id": "b133f3f2-27ca-47a9-bb12-3f982b853015",
+            "trial_name": "path-tracing-reverse.1-of-1.gemmaq56",
+            "task_id": "path-tracing-reverse",
+            "instruction": "I've compiled a program at ./mystery. Write a C program called mystery.c that performs an identical operation.\nYou can do this by observing input output behavior, decompiling the program, or anything else.\nThe effect of running ./mystery should be identical to running gcc -o reversed mystery.c -lm && ./reversed\nshould be completely identical.\nYour c program must be <10k when compressed.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_image_c_exists": "passed",
+                "test_image_compiles": "passed",
+                "test_image_similarity": "failed"
+            },
+            "recording_path": "gemmaq56/path-tracing-reverse/path-tracing-reverse.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-05T08:21:38.306356+00:00",
+            "trial_ended_at": "2026-09-05T08:39:40.367076+00:00",
+            "agent_started_at": "2026-09-05T08:22:19.568005+00:00",
+            "agent_ended_at": "2026-09-05T08:39:19.770890+00:00",
+            "test_started_at": "2026-09-05T08:39:23.188789+00:00",
+            "test_ended_at": "2026-09-05T08:39:28.476654+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 27,
-    "n_unresolved": 21,
+    "n_unresolved": 22,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1115,7 +1137,8 @@
         "fix-git",
         "build-initramfs-qemu",
         "chess-best-move",
-        "sqlite-db-truncate"
+        "sqlite-db-truncate",
+        "path-tracing-reverse"
     ],
-    "accuracy": 0.5625
+    "accuracy": 0.5510204081632653
 }

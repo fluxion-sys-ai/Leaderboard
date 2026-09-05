@@ -1096,11 +1096,31 @@
             "agent_ended_at": "2026-09-05T16:08:27.426721+00:00",
             "test_started_at": "2026-09-05T16:08:30.821690+00:00",
             "test_ended_at": "2026-09-05T16:08:35.993582+00:00"
+        },
+        {
+            "id": "288da578-61fe-4451-8663-5e774994c3aa",
+            "trial_name": "sqlite-db-truncate.1-of-1.museq56",
+            "task_id": "sqlite-db-truncate",
+            "instruction": "I have a sqlite database in /app/trunc.db that was corrupted. Recover as many of the rows as possible, and create a JSON file in /app/recover.json. The output should have the format [{\"word\": \"testwordXY\", \"value\": M}, {\"word\": \"testwordZZ\",\"value\": N}, ...]",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_json_data": "failed"
+            },
+            "recording_path": "museq56/sqlite-db-truncate/sqlite-db-truncate.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 526406,
+            "total_output_tokens": 16075,
+            "trial_started_at": "2026-09-05T16:08:48.247468+00:00",
+            "trial_ended_at": "2026-09-05T16:20:54.290950+00:00",
+            "agent_started_at": "2026-09-05T16:08:52.998466+00:00",
+            "agent_ended_at": "2026-09-05T16:20:31.455944+00:00",
+            "test_started_at": "2026-09-05T16:20:34.844530+00:00",
+            "test_ended_at": "2026-09-05T16:20:42.642533+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 24,
-    "n_unresolved": 19,
+    "n_unresolved": 20,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -1146,7 +1166,8 @@
         "password-recovery",
         "gpt2-codegolf",
         "intrusion-detection",
-        "path-tracing-reverse"
+        "path-tracing-reverse",
+        "sqlite-db-truncate"
     ],
-    "accuracy": 0.5581395348837209
+    "accuracy": 0.5454545454545454
 }

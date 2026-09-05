@@ -372,11 +372,29 @@
             "agent_ended_at": "2026-09-05T04:43:18.915769+00:00",
             "test_started_at": "2026-09-05T04:43:22.302098+00:00",
             "test_ended_at": "2026-09-05T04:44:18.763769+00:00"
+        },
+        {
+            "id": "a4fd6b63-69fe-4d1f-a82d-497655ee303f",
+            "trial_name": "cron-broken-network.1-of-1.gemmaq56",
+            "task_id": "cron-broken-network",
+            "instruction": "For some reason I can't curl example.com, can you figure out why and what I should do to fix it?",
+            "is_resolved": null,
+            "failure_mode": "parse_error",
+            "parser_results": null,
+            "recording_path": "gemmaq56/cron-broken-network/cron-broken-network.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 208700,
+            "total_output_tokens": 6495,
+            "trial_started_at": "2026-09-05T04:44:32.049126+00:00",
+            "trial_ended_at": "2026-09-05T04:54:35.663233+00:00",
+            "agent_started_at": "2026-09-05T04:45:09.981678+00:00",
+            "agent_ended_at": "2026-09-05T04:54:16.801056+00:00",
+            "test_started_at": "2026-09-05T04:54:20.192775+00:00",
+            "test_ended_at": "2026-09-05T04:54:23.447365+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 8,
-    "n_unresolved": 9,
+    "n_unresolved": 10,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -396,7 +414,8 @@
         "blind-maze-explorer-5x5",
         "train-fasttext",
         "qemu-alpine-ssh",
-        "qemu-startup"
+        "qemu-startup",
+        "cron-broken-network"
     ],
-    "accuracy": 0.47058823529411764
+    "accuracy": 0.4444444444444444
 }

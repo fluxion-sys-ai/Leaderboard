@@ -171,11 +171,79 @@
             "agent_ended_at": "2026-09-05T18:17:41.777155+00:00",
             "test_started_at": "2026-09-05T18:17:45.171239+00:00",
             "test_ended_at": "2026-09-05T18:18:49.750565+00:00"
+        },
+        {
+            "id": "717028c9-7db4-47a4-8eae-e2d54f69e876",
+            "trial_name": "configure-git-webserver.1-of-1.clauderef",
+            "task_id": "configure-git-webserver",
+            "instruction": "Configure a git server so that I can run on my computer\n    git clone user@server:/git/server\n    echo \"hello world\" > hello.html\n    git add index.html\n    git commit -m \"add index\"\n    git push origin webserver\nAnd have this data then be pushed to a webserver running on port 8080 so if I run\n    curl https://server:8080/hello.html\nthen I see the output \"hello world\"",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_hello_file_exists_example": "failed"
+            },
+            "recording_path": "clauderef/configure-git-webserver/configure-git-webserver.1-of-1.clauderef/sessions/agent.cast",
+            "total_input_tokens": 213422,
+            "total_output_tokens": 6707,
+            "trial_started_at": "2026-09-05T18:16:48.048660+00:00",
+            "trial_ended_at": "2026-09-05T18:22:14.106452+00:00",
+            "agent_started_at": "2026-09-05T18:16:52.372877+00:00",
+            "agent_ended_at": "2026-09-05T18:21:24.105552+00:00",
+            "test_started_at": "2026-09-05T18:21:27.497298+00:00",
+            "test_ended_at": "2026-09-05T18:22:01.925509+00:00"
+        },
+        {
+            "id": "9ce1c293-b729-4561-8173-5cc74fc155a3",
+            "trial_name": "nginx-request-logging.1-of-1.clauderef",
+            "task_id": "nginx-request-logging",
+            "instruction": "Set up an Nginx web server with advanced request logging and custom configurations. Your task is to:\n\n1. Install Nginx web server\n2. Configure the server to:\n   - Listen on port 8080\n   - Serve static files from /var/www/html\n   - Implement detailed request logging that logs timestamps ($time_local), request methods ($request_method), response status codes ($status), and user agents ($http_user_agent, double-quote the user agent in logs), save to `/var/log/nginx/benchmark-access.log`\n   - Set up rate limiting to allow only 10 requests per second per IP address\n   Place the configuration in `/etc/nginx/conf.d/benchmark-site.conf`.\n3. Create a simple index.html file in the document root with the content:\n   \"Welcome to the benchmark webserver\"\n4. Create a custom 404.html page with the content:\n   \"Page not found - Please check your URL\"\n5. Start the Nginx server and ensure it's running properly\n\nThe solution should minimize the number of commands while ensuring all requirements are met. The web server should be accessible on localhost:8080 after the setup is complete.",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_nginx_installed": "passed",
+                "test_nginx_running": "passed",
+                "test_index_page_content": "passed",
+                "test_custom_404_page": "passed",
+                "test_nginx_config_syntax": "passed",
+                "test_log_file_creation": "passed",
+                "test_log_file_format": "passed",
+                "test_nginx_config_settings": "failed"
+            },
+            "recording_path": "clauderef/nginx-request-logging/nginx-request-logging.1-of-1.clauderef/sessions/agent.cast",
+            "total_input_tokens": 10891,
+            "total_output_tokens": 1082,
+            "trial_started_at": "2026-09-05T18:22:14.111406+00:00",
+            "trial_ended_at": "2026-09-05T18:24:03.680382+00:00",
+            "agent_started_at": "2026-09-05T18:22:20.217265+00:00",
+            "agent_ended_at": "2026-09-05T18:23:34.378207+00:00",
+            "test_started_at": "2026-09-05T18:23:37.762637+00:00",
+            "test_ended_at": "2026-09-05T18:23:43.335493+00:00"
+        },
+        {
+            "id": "7b7b2579-2aed-4b07-9990-84fa25f94ed8",
+            "trial_name": "extract-moves-from-video.1-of-1.clauderef",
+            "task_id": "extract-moves-from-video",
+            "instruction": "Download this video of someone playing zork. https://www.youtube.com/watch?v=ZCbvyPbhRfA. Then transcribe the entire contents of the text, and create a file /app/solution.txt that has all the moves they input, one per line, in the format 'n' or 'get bag' etc.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_solution_file_exists": "failed",
+                "test_solution_content_similarity": "failed"
+            },
+            "recording_path": "clauderef/extract-moves-from-video/extract-moves-from-video.1-of-1.clauderef/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-05T18:19:02.380698+00:00",
+            "trial_ended_at": "2026-09-05T18:30:32.298253+00:00",
+            "agent_started_at": "2026-09-05T18:19:06.642510+00:00",
+            "agent_ended_at": "2026-09-05T18:30:06.761721+00:00",
+            "test_started_at": "2026-09-05T18:30:10.179782+00:00",
+            "test_ended_at": "2026-09-05T18:30:17.192673+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 5,
-    "n_unresolved": 2,
+    "n_unresolved": 5,
     "resolved_ids": [
         "blind-maze-explorer-algorithm.hard",
         "blind-maze-explorer-algorithm.easy",
@@ -185,7 +253,10 @@
     ],
     "unresolved_ids": [
         "git-multibranch",
-        "decommissioning-service-with-sensitive-data"
+        "decommissioning-service-with-sensitive-data",
+        "configure-git-webserver",
+        "nginx-request-logging",
+        "extract-moves-from-video"
     ],
-    "accuracy": 0.7142857142857143
+    "accuracy": 0.5
 }

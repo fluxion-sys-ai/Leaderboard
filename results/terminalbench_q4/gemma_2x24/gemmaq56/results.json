@@ -596,11 +596,31 @@
             "agent_ended_at": "2026-09-05T06:10:20.650224+00:00",
             "test_started_at": "2026-09-05T06:10:24.041013+00:00",
             "test_ended_at": "2026-09-05T06:10:29.980943+00:00"
+        },
+        {
+            "id": "a0a4194e-b90b-4c31-8d52-22f71c7959bb",
+            "trial_name": "gpt2-codegolf.1-of-1.gemmaq56",
+            "task_id": "gpt2-codegolf",
+            "instruction": "I have downloaded the gpt-2 weights stored as a TF .ckpt. Write me a dependency-free C file that samples from the model with arg-max sampling. Call your program gpt2.c, I will compile with gcc -O3 -lm. It should read the .ckpt and the .bpe file. Your c program must be <5000 bytes. I will run it ./a.out gpt2-124M.ckpt vocab.bpe \"[input string here]\" and you should continue the output under whatever GPT-2 would print for the next 20 tokens.",
+            "is_resolved": false,
+            "failure_mode": "agent_timeout",
+            "parser_results": {
+                "test_gpt2_implementation": "failed"
+            },
+            "recording_path": "gemmaq56/gpt2-codegolf/gpt2-codegolf.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "trial_started_at": "2026-09-05T06:10:45.302116+00:00",
+            "trial_ended_at": "2026-09-05T06:29:23.056197+00:00",
+            "agent_started_at": "2026-09-05T06:11:59.838493+00:00",
+            "agent_ended_at": "2026-09-05T06:29:00.042719+00:00",
+            "test_started_at": "2026-09-05T06:29:03.441489+00:00",
+            "test_ended_at": "2026-09-05T06:29:11.343372+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 14,
-    "n_unresolved": 13,
+    "n_unresolved": 14,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -630,7 +650,8 @@
         "cron-broken-network",
         "intrusion-detection",
         "solana-data",
-        "jupyter-notebook-server"
+        "jupyter-notebook-server",
+        "gpt2-codegolf"
     ],
-    "accuracy": 0.5185185185185185
+    "accuracy": 0.5
 }

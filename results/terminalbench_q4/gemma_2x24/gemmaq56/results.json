@@ -1082,10 +1082,32 @@
             "agent_ended_at": "2026-09-05T08:39:19.770890+00:00",
             "test_started_at": "2026-09-05T08:39:23.188789+00:00",
             "test_ended_at": "2026-09-05T08:39:28.476654+00:00"
+        },
+        {
+            "id": "aa9c297b-f526-4bb5-83aa-ec4ff39d279a",
+            "trial_name": "heterogeneous-dates.1-of-1.gemmaq56",
+            "task_id": "heterogeneous-dates",
+            "instruction": "I'm headed to San Francisco and need to know how much the temperature changes each day. \n\nUse the files `daily_temp_sf_high.csv` and `daily_temp_sf_low.csv` to calculate the average\ndifference between the daily high and daily low temperatures. Save this number in a \nfile called `avg_temp.txt`. This file should only contain the number you calculate.",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_avg_temp_file_exists": "passed",
+                "test_avg_temp_file_format": "passed",
+                "test_avg_temp_value": "passed"
+            },
+            "recording_path": "gemmaq56/heterogeneous-dates/heterogeneous-dates.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 9724,
+            "total_output_tokens": 1303,
+            "trial_started_at": "2026-09-05T08:39:40.371541+00:00",
+            "trial_ended_at": "2026-09-05T08:42:55.902073+00:00",
+            "agent_started_at": "2026-09-05T08:40:08.922153+00:00",
+            "agent_ended_at": "2026-09-05T08:42:33.474114+00:00",
+            "test_started_at": "2026-09-05T08:42:36.864947+00:00",
+            "test_ended_at": "2026-09-05T08:42:43.624622+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 27,
+    "n_resolved": 28,
     "n_unresolved": 22,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -1114,7 +1136,8 @@
         "processing-pipeline",
         "hello-world",
         "crack-7z-hash.hard",
-        "openssl-selfsigned-cert"
+        "openssl-selfsigned-cert",
+        "heterogeneous-dates"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -1140,5 +1163,5 @@
         "sqlite-db-truncate",
         "path-tracing-reverse"
     ],
-    "accuracy": 0.5510204081632653
+    "accuracy": 0.56
 }

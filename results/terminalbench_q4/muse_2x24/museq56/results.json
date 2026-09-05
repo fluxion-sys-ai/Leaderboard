@@ -674,10 +674,52 @@
             "agent_ended_at": "2026-09-05T14:05:21.384838+00:00",
             "test_started_at": "2026-09-05T14:05:24.774479+00:00",
             "test_ended_at": "2026-09-05T14:07:24.918709+00:00"
+        },
+        {
+            "id": "67e0fe17-c731-4316-82d4-1e810d369bfb",
+            "trial_name": "crack-7z-hash.hard.1-of-1.museq56",
+            "task_id": "crack-7z-hash.hard",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "museq56/crack-7z-hash.hard/crack-7z-hash.hard.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 656481,
+            "total_output_tokens": 5913,
+            "trial_started_at": "2026-09-05T14:07:39.038829+00:00",
+            "trial_ended_at": "2026-09-05T14:21:32.932284+00:00",
+            "agent_started_at": "2026-09-05T14:13:20.871129+00:00",
+            "agent_ended_at": "2026-09-05T14:21:08.889902+00:00",
+            "test_started_at": "2026-09-05T14:21:12.276967+00:00",
+            "test_ended_at": "2026-09-05T14:21:21.029653+00:00"
+        },
+        {
+            "id": "01418f2b-c4d1-4b0a-9ea4-5f09982a9314",
+            "trial_name": "crack-7z-hash.1-of-1.museq56",
+            "task_id": "crack-7z-hash",
+            "instruction": "You need to create a file called \"solution.txt\" with the word found \"secrete_file.txt\" in the \"secrets.7z\" archive.\nThe password is unknown, but I know that the password is a 4-digit number.\nUse the john the ripper binaries in the \"/app/john/run\" directory.\nThe final \"solution.txt\" should be located at \"/app/solution.txt\".",
+            "is_resolved": true,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_solution_file": "passed",
+                "test_solution_content": "passed"
+            },
+            "recording_path": "museq56/crack-7z-hash/crack-7z-hash.1-of-1.museq56/sessions/agent.cast",
+            "total_input_tokens": 145852,
+            "total_output_tokens": 3140,
+            "trial_started_at": "2026-09-05T14:21:32.937288+00:00",
+            "trial_ended_at": "2026-09-05T14:25:36.957479+00:00",
+            "agent_started_at": "2026-09-05T14:21:45.089698+00:00",
+            "agent_ended_at": "2026-09-05T14:25:13.422250+00:00",
+            "test_started_at": "2026-09-05T14:25:16.810499+00:00",
+            "test_ended_at": "2026-09-05T14:25:25.050204+00:00"
         }
     ],
     "pass_at_k": {},
-    "n_resolved": 12,
+    "n_resolved": 14,
     "n_unresolved": 12,
     "resolved_ids": [
         "eval-mteb.hard",
@@ -691,7 +733,9 @@
         "processing-pipeline",
         "swe-bench-langcodes",
         "csv-to-parquet",
-        "cartpole-rl-training"
+        "cartpole-rl-training",
+        "crack-7z-hash.hard",
+        "crack-7z-hash"
     ],
     "unresolved_ids": [
         "super-benchmark-upet",
@@ -707,5 +751,5 @@
         "cron-broken-network",
         "build-initramfs-qemu"
     ],
-    "accuracy": 0.5
+    "accuracy": 0.5384615384615384
 }

@@ -552,11 +552,34 @@
             "agent_ended_at": "2026-09-05T05:54:45.244205+00:00",
             "test_started_at": "2026-09-05T05:54:48.633630+00:00",
             "test_ended_at": "2026-09-05T05:54:57.657503+00:00"
+        },
+        {
+            "id": "af4e95f7-42de-4c03-a700-808a51149e33",
+            "trial_name": "jupyter-notebook-server.1-of-1.gemmaq56",
+            "task_id": "jupyter-notebook-server",
+            "instruction": "Set up a secure Jupyter Notebook server with the following requirements:\n\n1. Install Jupyter Notebook with the necessary dependencies\n2. Configure the server to:\n   - Run on port 8888\n   - Accept connections from any IP address\n   - Use password authentication (set password to \"benchmarkpass\")\n   - Generate a self-signed SSL certificate for HTTPS\n3. Create a sample notebook named \"test_notebook.ipynb\" in the current directory with:\n   - A markdown cell explaining what Jupyter Notebook is\n   - A code cell that defines and plots a simple sine wave using matplotlib\n4. Start the Jupyter server in the background so it's running when tests execute. You should allow Jupyter to run as root.\n\nThe test will verify that:\n- The server is running on port 8888 with HTTPS\n- Password authentication is enabled with the specified password\n- The sample notebook exists and contains the required cells",
+            "is_resolved": false,
+            "failure_mode": "unset",
+            "parser_results": {
+                "test_jupyter_server_running": "passed",
+                "test_sample_notebook_exists": "passed",
+                "test_jupyter_config_exists": "failed",
+                "test_password_authentication": "failed"
+            },
+            "recording_path": "gemmaq56/jupyter-notebook-server/jupyter-notebook-server.1-of-1.gemmaq56/sessions/agent.cast",
+            "total_input_tokens": 88069,
+            "total_output_tokens": 3151,
+            "trial_started_at": "2026-09-05T05:55:10.804415+00:00",
+            "trial_ended_at": "2026-09-05T06:00:13.002941+00:00",
+            "agent_started_at": "2026-09-05T05:55:27.832726+00:00",
+            "agent_ended_at": "2026-09-05T05:59:56.599870+00:00",
+            "test_started_at": "2026-09-05T05:59:56.647784+00:00",
+            "test_ended_at": "2026-09-05T06:00:00.876121+00:00"
         }
     ],
     "pass_at_k": {},
     "n_resolved": 13,
-    "n_unresolved": 12,
+    "n_unresolved": 13,
     "resolved_ids": [
         "eval-mteb.hard",
         "conda-env-conflict-resolution",
@@ -584,7 +607,8 @@
         "qemu-startup",
         "cron-broken-network",
         "intrusion-detection",
-        "solana-data"
+        "solana-data",
+        "jupyter-notebook-server"
     ],
-    "accuracy": 0.52
+    "accuracy": 0.5
 }

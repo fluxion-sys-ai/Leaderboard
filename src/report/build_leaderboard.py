@@ -1073,24 +1073,24 @@ def _frontier_ref_callout() -> str:
             return d["n_resolved"] / t * 100 if t else None
         except Exception:
             return None
-    scores = [("IFBench", _sc("ifbench.json"), "300"), ("AIME 2026", _sc("aime2026.json"), "30"),
-              ("PinchBench", _sc("pinchbench.json"), "20"), ("Terminal", _term(), "12*"),
-              ("SWE-bench", _sc("swebench_lite.json"), "8*")]
-    chips = "".join(
-        f'<span style="display:inline-block;margin:3px 7px 3px 0;padding:4px 11px;border-radius:7px;'
-        f'background:var(--s2);border:1px solid rgba(78,201,143,.35);font-family:\'JetBrains Mono\',monospace;font-size:12px">'
-        f'{name} <b style="color:#4EC98F">{v:.1f}</b><span style="color:var(--mut);font-size:9px"> /{n}</span></span>'
-        for name, v, n in scores if v is not None)
-    return (f'<div style="margin:14px 0 2px;padding:11px 15px;border:1.5px solid #4EC98F;border-radius:11px;'
+    scores = [("IFBench", _sc("ifbench.json")), ("AIME", _sc("aime2026.json")),
+              ("Pinch", _sc("pinchbench.json")), ("Terminal", _term()), ("SWE", _sc("swebench_lite.json"))]
+    # Header + score cells reuse the table's own th.sc / td.sc classes so columns share the
+    # exact 54px width + right-alignment of the score cells in the tables below.
+    head = '<th class="ml">Frontier reference</th>' + "".join(f'<th class="sc">{n}</th>' for n, _ in scores)
+    cells = '<td class="ml">Claude Sonnet 5 <span style="color:#4EC98F">✦</span></td>' + "".join(
+        (f'<td class="sc" style="background:rgba(78,201,143,.18);color:var(--tx);font-weight:700">{v:.1f}</td>'
+         if v is not None else '<td class="sc na">—</td>') for _, v in scores)
+    return (f'<div class="scroll" style="border:1.5px solid #4EC98F;margin:12px 0 4px;'
             f'background:linear-gradient(90deg,rgba(78,201,143,.10),transparent)">'
-            f'<div style="font-weight:700;font-size:12px;color:#4EC98F;letter-spacing:.03em;margin-bottom:7px">'
-            f'✦ FRONTIER REFERENCE · Claude Sonnet 5 '
-            f'<span style="color:var(--mut);font-weight:400">API anchor — how close is edge to frontier</span></div>'
-            f'<div style="margin-bottom:6px">{chips}</div>'
-            f'<div class="mut" style="font-size:10.5px;line-height:1.5">Full-precision API baseline, <b>not an edge model</b>. '
-            f'<b>*</b> Terminal (n=12) &amp; SWE (n=8) are small stratified samples (wide CI); SWE uses the Agentless harness '
-            f'(one-shot localize→repair, no agentic loop), which understates frontier models vs their agentic ceiling. '
-            f'Even so, SWE 50%25 vs the edge models’ 2–25%25 shows the frontier gap.</div></div>'.replace("%25", "%"))
+            f'<div style="padding:8px 12px 2px;font-weight:700;font-size:12px;color:#4EC98F;letter-spacing:.03em">'
+            f'✦ FRONTIER REFERENCE '
+            f'<span style="color:var(--mut);font-weight:400">Claude Sonnet 5 · API anchor — how close is edge to frontier</span></div>'
+            f'<table style="margin:2px 0"><thead><tr>{head}</tr></thead><tbody><tr>{cells}</tr></tbody></table>'
+            f'<div class="mut" style="padding:2px 12px 9px;font-size:10.5px;line-height:1.5">Full-precision API baseline, '
+            f'<b>not an edge model</b>. Terminal (n=12) &amp; SWE (n=8) are small stratified samples (wide CI); SWE uses the '
+            f'Agentless harness (one-shot localize→repair, no agentic loop), which understates frontier models vs their '
+            f'agentic ceiling. Even so, SWE 50 vs the edge models’ 2–25 shows the frontier gap.</div></div>')
 
 
 def build() -> str:
@@ -1122,7 +1122,6 @@ def build() -> str:
 <button id="tg" onclick="theme()" title="light / dark">◐</button>
 </header>
 <div class="meta">{len(rows)} models · {n_cells} cells · click a header to sort · a score for its config</div>
-{_frontier_ref_callout()}
 {_universal_html()}
 {_deviations_html()}
 <nav>
@@ -1131,6 +1130,7 @@ def build() -> str:
 <button class="tab" data-v="v2" onclick="tab(this)">Dimensions</button>
 <button class="tab" data-v="v3" onclick="tab(this)">Averages &amp; charts</button>
 </nav>
+{_frontier_ref_callout()}
 <div id="v4" class="view on"><div class="scroll">{_frontier_tab()}</div></div>
 <div id="v1" class="view"><div class="scroll">{_bench_table(rows)}</div></div>
 <div id="v2" class="view">{_dim_tables(rows)}</div>

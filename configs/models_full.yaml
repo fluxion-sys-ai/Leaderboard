@@ -119,3 +119,9 @@ models:
     top_p: 0.95
     provider:
       allow_fallbacks: true
+    # Extended thinking ON — matches how Anthropic reports Sonnet 5's headline numbers.
+    # Anthropic via OpenRouter needs reasoning.max_tokens (a thinking BUDGET); effort is a no-op here
+    # (verified: effort→reasoning_len 0, max_tokens→reasoning engaged). 4000 is adaptive (used as needed).
+    extra_body:
+      reasoning:
+        max_tokens: 4000

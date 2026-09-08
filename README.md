@@ -281,6 +281,31 @@ OpenRouter (parallel):
   `ps -eo args | grep '[x]name.sh'` — **not** `pgrep -f name`, which self-matches the checking shell
   and would silently hide dead loops.
 
+## Frontier reference
+
+The **Frontier · full vs Q4** tab (the default view) also carries a **frontier anchor** — `Claude Sonnet 5`
+(closed model, run via the OpenRouter API, full precision) — as a standout callout under the tabs, so every
+edge score reads in context ("how close is edge to frontier"). It's a *reference row*, not an edge model:
+it runs the identical fixed harness (Agentless SWE, no agentic loop) so the comparison is apples-to-apples,
+which means its numbers sit below Anthropic's headline (agentic + extended-thinking) figures — by design.
+
+## Repository structure
+
+- **`src/`** — Python package: `report/build_leaderboard.py` (the HTML generator), `models/` (llama.cpp +
+  OpenRouter runners), `utils/`.
+- **root entry points** — `run_benchmark.py` (generate), `rescore_all.py` / `score_official.py` (score),
+  `import_pinchbench.py` (import PinchBench harness results into `scored/`).
+- **`scripts/`** — orchestration. Active pipeline: `weekend_auto.sh` (board loop), `tb80_full_queue.sh` +
+  `terminalbench_q4_run.sh` (Terminal), `swe_agentless_run.sh` + `swe_full_select.sh` (SWE),
+  `pinchbench_full_run.sh`, `frontier_auto.py`. Retired one-offs live in `scripts/archive/` and
+  `scripts/orchestration/archive/`.
+- **`configs/`** — `models*.yaml` (per-model slug + recommended sampling), `benchmarks.yaml`, and the
+  stratified sample task-lists (`*_sample.txt`, `swe_lite_strat50_full51.txt`).
+- **`results/`** — `scored/<model>/<bench>.json` (what the board reads), `raw/` (per-task generations),
+  `terminalbench*/`, `swe_agentless/`. Dead/retired artifacts are parked in **`archive/`**.
+- **`docs/`** — `index.html` (served by GitHub Pages), `notes/` (historical planning docs). Root
+  `leaderboard.html` is a copy of `docs/index.html`.
+
 ## Roadmap
 
 - **Harness fix for harmony models** — read the analysis channel so gpt-oss's agentic isn't understated

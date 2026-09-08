@@ -598,6 +598,18 @@ def _fr_spec(model_key, bench, precision):
                 f'letter-spacing:.04em">{tag}</b> <b>{new_txt if is_new else old_txt}</b>')
 
     parts = []
+    # ── Set size at the very TOP: full set vs partial/sample, with the denominator explicit ──
+    if bench == "terminal":
+        _f80 = _terminal_full80(model_key, q4=(precision == "q4")) is not None
+        _setsz = ("<b>full set</b> · 80 tasks (79 run — play-zork excluded)" if _f80
+                  else "<b>partial</b> · 24-task stratified sample (of 80)")
+    else:
+        _setsz = {"ifbench": "<b>full set</b> · 300 tasks",
+                  "aime2026": "<b>full set</b> · 30 problems",
+                  "pinchbench": "<b>full set</b> · 116 tasks",
+                  "swe": "<b>partial</b> · 51-instance stratified sample (of 300)"}.get(bench, "")
+    if _setsz:
+        parts.append(f'<b style="color:var(--acc2)">SET:</b> {_setsz}')
     # ── Lead with the ONE thing that changed OLD→NEW for this bench (timeout / selection) ──
     if bench == "terminal":
         is2x = _has_2x_q4(model_key) if precision == "q4" else _has_2x_full(model_key)

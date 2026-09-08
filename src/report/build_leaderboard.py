@@ -1057,6 +1057,42 @@ def _frontier_tab() -> str:
         + _terminal_2x_bars() + _q4_terminal_2x_bars() + _full_swe_bars() + _q4_swe_bars())
 
 
+def _frontier_ref_callout() -> str:
+    """Standout banner for the Claude Sonnet 5 frontier reference — the edge-vs-frontier anchor.
+    Reads all 5 scores live; small-sample Terminal/SWE are flagged with an asterisk."""
+    def _sc(f):
+        try:
+            v = json.load(open(REPO_ROOT / "results" / "scored" / "claude-sonnet-5-ref" / f)).get("score")
+            return v * 100 if isinstance(v, (int, float)) and v <= 1 else v
+        except Exception:
+            return None
+    def _term():
+        try:
+            d = json.load(open(REPO_ROOT / "results" / "terminalbench" / "claude_ref" / "clauderef" / "results.json"))
+            t = d["n_resolved"] + d["n_unresolved"]
+            return d["n_resolved"] / t * 100 if t else None
+        except Exception:
+            return None
+    scores = [("IFBench", _sc("ifbench.json"), "300"), ("AIME 2026", _sc("aime2026.json"), "30"),
+              ("PinchBench", _sc("pinchbench.json"), "20"), ("Terminal", _term(), "12*"),
+              ("SWE-bench", _sc("swebench_lite.json"), "8*")]
+    chips = "".join(
+        f'<span style="display:inline-block;margin:3px 7px 3px 0;padding:4px 11px;border-radius:7px;'
+        f'background:var(--s2);border:1px solid rgba(78,201,143,.35);font-family:\'JetBrains Mono\',monospace;font-size:12px">'
+        f'{name} <b style="color:#4EC98F">{v:.1f}</b><span style="color:var(--mut);font-size:9px"> /{n}</span></span>'
+        for name, v, n in scores if v is not None)
+    return (f'<div style="margin:14px 0 2px;padding:11px 15px;border:1.5px solid #4EC98F;border-radius:11px;'
+            f'background:linear-gradient(90deg,rgba(78,201,143,.10),transparent)">'
+            f'<div style="font-weight:700;font-size:12px;color:#4EC98F;letter-spacing:.03em;margin-bottom:7px">'
+            f'✦ FRONTIER REFERENCE · Claude Sonnet 5 '
+            f'<span style="color:var(--mut);font-weight:400">API anchor — how close is edge to frontier</span></div>'
+            f'<div style="margin-bottom:6px">{chips}</div>'
+            f'<div class="mut" style="font-size:10.5px;line-height:1.5">Full-precision API baseline, <b>not an edge model</b>. '
+            f'<b>*</b> Terminal (n=12) &amp; SWE (n=8) are small stratified samples (wide CI); SWE uses the Agentless harness '
+            f'(one-shot localize→repair, no agentic loop), which understates frontier models vs their agentic ceiling. '
+            f'Even so, SWE 50%25 vs the edge models’ 2–25%25 shows the frontier gap.</div></div>'.replace("%25", "%"))
+
+
 def build() -> str:
     # Frontier reproductions (`*-full` = OpenRouter full/fp8, `*-q4f` = local Q4) run at
     # VENDOR-DEFAULT params and belong ONLY to the Frontier tab (which reads raw cells
@@ -1086,6 +1122,7 @@ def build() -> str:
 <button id="tg" onclick="theme()" title="light / dark">◐</button>
 </header>
 <div class="meta">{len(rows)} models · {n_cells} cells · click a header to sort · a score for its config</div>
+{_frontier_ref_callout()}
 {_universal_html()}
 {_deviations_html()}
 <nav>

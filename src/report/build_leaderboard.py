@@ -941,18 +941,19 @@ def _per_bench_bars() -> str:
         if not data:
             continue
         rows = "".join(
-            f'<div style="display:flex;align-items:center;gap:8px;margin:2px 0">'
-            f'<div style="width:118px;font-size:11px;text-align:right'
-            + (';color:#4EC98F;font-weight:700' if '✦' in n else '') + f'">{n}</div>'
-            f'<div class="bar-track" style="max-width:300px"><div class="bar-fill" '
+            f'<div style="display:flex;align-items:center;gap:6px;margin:1.5px 0">'
+            f'<div style="width:96px;font-size:10px;text-align:right;white-space:nowrap;overflow:hidden;'
+            'text-overflow:ellipsis' + (';color:#4EC98F;font-weight:700' if '✦' in n else '') + f'">{n}</div>'
+            f'<div class="bar-track" style="height:13px"><div class="bar-fill" '
             f'style="width:{max(2, v):.0f}%;{heat(v / 100)}"></div></div>'
-            f'<div style="width:40px;font-size:11px;font-family:\'JetBrains Mono\',monospace">{v:.1f}</div></div>'
+            f'<div style="width:34px;font-size:10px;font-family:\'JetBrains Mono\',monospace">{v:.1f}</div></div>'
             for n, v in data)
-        blocks.append(f'<div style="flex:1 1 340px;min-width:300px;margin:6px 0 12px">'
-                      f'<div style="font-weight:600;font-size:12px;margin-bottom:4px">{label}</div>{rows}</div>')
-    return ('<h3 class="dimh">Per-benchmark comparison<span class="mut"> · all models + frontier reference · '
-            'full precision · ranked</span></h3>'
-            f'<div style="display:flex;flex-wrap:wrap;gap:22px;margin-top:6px">{"".join(blocks)}</div>')
+        blocks.append(f'<div style="margin:0 0 12px"><div style="font-weight:600;font-size:11.5px;'
+                      f'color:var(--acc2);margin-bottom:3px">{label}</div>{rows}</div>')
+    # Vertical stack — designed to sit in a narrow right-hand column beside the frontier tables.
+    return ('<div style="font-weight:700;font-size:12px;margin-bottom:8px">Per-benchmark '
+            '<span class="mut" style="font-weight:400">· all models + frontier ref · full precision</span></div>'
+            f'{"".join(blocks)}')
 
 
 def _frontier_tab() -> str:
@@ -1105,15 +1106,21 @@ def _frontier_tab() -> str:
                        + '</tr>')
 
     sub = 'font-weight:600;margin:16px 0 4px;font-size:13px'
+    tables = (
+        f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
+        f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
+        f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
+        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>')
     return (
         '<h3 class="dimh">Frontier — Muse Glimmer reproduction'
         '<span class="mut"> · vendor-recommended sampling · scores ×100 · '
         '<b>click a number to see its exact params</b></span></h3>'
-        f'<div style="{sub};margin-top:6px">Full precision <span class="mut">· OpenRouter (bf16 / fp8)</span></div>'
-        f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
-        f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
-        f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>'
-        + _per_bench_bars()
+        # Two columns: the full+Q4 tables (left, horizontally scrollable) and the per-benchmark
+        # comparison bars stacked in a right-hand column; wraps below on narrow screens.
+        '<div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap">'
+        f'<div style="flex:1 1 560px;min-width:0;overflow-x:auto">{tables}</div>'
+        f'<div style="flex:0 0 300px">{_per_bench_bars()}</div>'
+        '</div>'
         + _terminal_2x_bars() + _q4_terminal_2x_bars() + _full_swe_bars() + _q4_swe_bars())
 
 

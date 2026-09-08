@@ -908,6 +908,53 @@ def _q4_swe_bars() -> str:
             + svg + cap)
 
 
+def _per_bench_bars() -> str:
+    """One horizontal bar chart per benchmark, ranking ALL frontier-tab models + the Claude reference,
+    so each benchmark is comparable at a glance. Full precision. Reads scored files + terminal dirs live."""
+    MODELS = [("Qwen3.8-27B", "qwen3.8-27b-full", "qwen38"), ("Muse 30B", "muse-glimmer-30b-full", "muse"),
+              ("Qwen3.6-27B", "qwen3.6-27b-full", "qwen27"), ("Qwen3.6-35B", "qwen3.6-35b-a3b-full", "qwen35"),
+              ("Gemma-4-31B", "gemma-4-31b-full", "gemma"), ("Claude Sonnet 5 ✦", "claude-sonnet-5-ref", "claude")]
+
+    def _scd(d, b):
+        try:
+            v = json.load(open(REPO_ROOT / "results" / "scored" / d / f"{b}.json")).get("score")
+            return v * 100 if isinstance(v, (int, float)) and v <= 1 else v
+        except Exception:
+            return None
+
+    def _term(key):
+        p = ((REPO_ROOT / "results" / "terminalbench" / "claude_ref" / "clauderef" / "results.json")
+             if key == "claude" else
+             (REPO_ROOT / "results" / "terminalbench" / f"{key}_full80" / "results.json"))
+        try:
+            d = json.load(open(p)); t = d["n_resolved"] + d["n_unresolved"]
+            return d["n_resolved"] / t * 100 if t else None
+        except Exception:
+            return None
+
+    BENCHES = [("IFBench", "ifbench", "s"), ("AIME 2026", "aime2026", "s"), ("PinchBench", "pinchbench", "s"),
+               ("Terminal-Bench", "terminal", "t"), ("SWE-bench Lite", "swebench_lite", "s")]
+    blocks = []
+    for label, key, kind in BENCHES:
+        data = [(disp, (_term(tk) if kind == "t" else _scd(d, key))) for disp, d, tk in MODELS]
+        data = sorted([(n, v) for n, v in data if v is not None], key=lambda x: -x[1])
+        if not data:
+            continue
+        rows = "".join(
+            f'<div style="display:flex;align-items:center;gap:8px;margin:2px 0">'
+            f'<div style="width:118px;font-size:11px;text-align:right'
+            + (';color:#4EC98F;font-weight:700' if '✦' in n else '') + f'">{n}</div>'
+            f'<div class="bar-track" style="max-width:300px"><div class="bar-fill" '
+            f'style="width:{max(2, v):.0f}%;{heat(v / 100)}"></div></div>'
+            f'<div style="width:40px;font-size:11px;font-family:\'JetBrains Mono\',monospace">{v:.1f}</div></div>'
+            for n, v in data)
+        blocks.append(f'<div style="flex:1 1 340px;min-width:300px;margin:6px 0 12px">'
+                      f'<div style="font-weight:600;font-size:12px;margin-bottom:4px">{label}</div>{rows}</div>')
+    return ('<h3 class="dimh">Per-benchmark comparison<span class="mut"> · all models + frontier reference · '
+            'full precision · ranked</span></h3>'
+            f'<div style="display:flex;flex-wrap:wrap;gap:22px;margin-top:6px">{"".join(blocks)}</div>')
+
+
 def _frontier_tab() -> str:
     """Frontier tab — Muse Glimmer reproduction: full-precision (OpenRouter) vs Q4 (local),
     on the recommended-limit benches. Renders whatever is scored so far; '·' = still running."""
@@ -1066,6 +1113,7 @@ def _frontier_tab() -> str:
         f'<table id="vfr-full"><thead>{full_head}</thead><tbody>{"".join(full_body)}</tbody></table>'
         f'<div style="{sub}">Q4 quantized <span class="mut">· local A100 · llama.cpp</span></div>'
         f'<table id="vfr-q4"><thead>{q4_head}</thead><tbody>{"".join(q4_body)}</tbody></table>'
+        + _per_bench_bars()
         + _terminal_2x_bars() + _q4_terminal_2x_bars() + _full_swe_bars() + _q4_swe_bars())
 
 

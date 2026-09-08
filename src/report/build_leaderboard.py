@@ -588,11 +588,12 @@ def _fr_spec(model_key, bench, precision):
         samp += " · reasoning xhigh"
     temp = "localize 0 · repair 0.8" if bench == "swe" else "1.0"
 
-    def _badge(is_new, new_txt, old_txt):
+    def _badge(is_new, new_txt, old_txt, old_tag="OLD"):
         # One clean pill at the TOP of the card saying whether the shown number is the NEW config
-        # or still the OLD one — this is the only thing that differs, so it leads.
+        # or still the OLD one — this is the only thing that differs, so it leads. old_tag lets a
+        # cell say "MV" (majority-vote, a FINAL result) instead of "OLD" (which implies pending).
         col = "#0c2418;background:#4EC98F" if is_new else "#2a1d08;background:#e0a458"
-        tag = "NEW" if is_new else "OLD"
+        tag = "NEW" if is_new else old_tag
         return (f'<b style="color:{col};padding:2px 8px;border-radius:6px;font-size:11px;'
                 f'letter-spacing:.04em">{tag}</b> <b>{new_txt if is_new else old_txt}</b>')
 
@@ -619,8 +620,10 @@ def _fr_spec(model_key, bench, precision):
         _repro = "reproduction" in _selraw or "rerank" in _selraw
         _wf = "whole-function" in _selraw or "wholefunc" in _selraw
         swe_ctx = (inst, _repro, _wf)
-        parts.append(_badge(_repro, "repair-10 + repro-40 + rerank",
-                            "majority-vote over 10 · repro-40 not run yet"))
+        _old_swe = ("majority-vote — repro-40 N/A (this MoE emits prose, not parseable patches)"
+                    if model_key == "qwen35"
+                    else "majority-vote (final — repro-40 rerank does not beat it)")
+        parts.append(_badge(_repro, "repair-10 + repro-40 + rerank", _old_swe, old_tag="MV"))
 
     # ── Uniform, compact config lines (same order for every cell) ──
     parts.append(f'<b>precision:</b> {precision.upper()} · {serve}')

@@ -950,10 +950,11 @@ def _per_bench_bars() -> str:
             for n, v in data)
         blocks.append(f'<div style="margin:0 0 12px"><div style="font-weight:600;font-size:11.5px;'
                       f'color:var(--acc2);margin-bottom:3px">{label}</div>{rows}</div>')
-    # Vertical stack — designed to sit in a narrow right-hand column beside the frontier tables.
+    # 2-column grid — sits in a right-hand region beside the frontier tables (wraps below when narrow).
     return ('<div style="font-weight:700;font-size:12px;margin-bottom:8px">Per-benchmark '
             '<span class="mut" style="font-weight:400">· all models + frontier ref · full precision</span></div>'
-            f'{"".join(blocks)}')
+            '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 20px">'
+            f'{"".join(blocks)}</div>')
 
 
 def _frontier_tab() -> str:
@@ -1118,8 +1119,8 @@ def _frontier_tab() -> str:
         # Two columns: the full+Q4 tables (left, horizontally scrollable) and the per-benchmark
         # comparison bars stacked in a right-hand column; wraps below on narrow screens.
         '<div style="display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap">'
-        f'<div style="flex:1 1 560px;min-width:0;overflow-x:auto">{tables}</div>'
-        f'<div style="flex:0 0 300px">{_per_bench_bars()}</div>'
+        f'<div style="flex:2 1 500px;min-width:0;overflow-x:auto">{tables}</div>'
+        f'<div style="flex:1 1 480px;min-width:0">{_per_bench_bars()}</div>'
         '</div>'
         + _terminal_2x_bars() + _q4_terminal_2x_bars() + _full_swe_bars() + _q4_swe_bars())
 
